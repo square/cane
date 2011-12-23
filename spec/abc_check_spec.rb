@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'abc_check'
+require 'cane/abc_check'
 
 describe AbcCheck do
   it 'creates an AbcMaxViolation for each method above the threshold' do

@@ -1,6 +1,6 @@
 require 'ripper'
 
-require 'abc_max_violation'
+require 'cane/abc_max_violation'
 
 # Borrowed heavily from metric_abc
 class AbcCheck < Struct.new(:opts)

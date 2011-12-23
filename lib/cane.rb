@@ -1,4 +1,4 @@
-require 'abc_check'
+require 'cane/abc_check'
 require 'cane/violation_formatter'
 
 module Cane
