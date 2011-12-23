@@ -6,30 +6,18 @@ Fails your build if code quality thresholds are not met.
 
 ## Usage
 
-Add `cane` to your `Gemfile`:
+    gem install cane
+    cane --abc-glob '{lib,spec}/**/*.rb' --abc-max 15
 
-    gem 'cane'
+Your main build task should run this, probably via `bundle exec`. It will have
+a non-zero exit code if any quality checks fail. Also, a report:
 
-Then add a task to your `Rakefile`:
-
-    task :quality do
-      Cane.run(
-        style:    { files: '{lib,spec}/**/*.rb' },
-        abc:      { files: 'lib/**/*.rb', max: 12, avg: 6 },
-        coverage: { min: 95 }
-      )
-
-    end
-
-Your main build task should depend or run this task. It will have a non-zero
-exit code if any quality checks fail. Also, a report:
-
-    > rake cane
+    > cane
 
     Methods exceeded maximum allowed ABC complexity:
 
-      lib/cane.rb:52   Cane#sample    13
-      lib/cane.rb:73   Cane#sample_2  13
+      lib/cane.rb  Cane > sample    23
+      lib/cane.rb  Cane > sample_2  17
 
     Lines violated style requirements:
 

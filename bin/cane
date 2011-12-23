@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+
+options = {
+  abc: { files: 'lib/**/*.rb', max: 0 }
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: cane [options]"
+
+  opts.on("--abc-glob GLOB", "Glob to run ABC metrics over") do |glob|
+    options[:abc][:files] = glob
+  end
+
+  opts.on("--abc-max MAX", "Maximum allowed ABC complexity") do |max|
+    options[:abc][:max] = max.to_i
+  end
+end.parse!
+
+require 'cane'
+
+result = Cane.run(options)
+
+exit(1) unless result
