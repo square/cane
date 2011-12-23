@@ -5,22 +5,32 @@ require 'optparse'
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 options = {
-  abc: { files: 'lib/**/*.rb', max: 0 },
+  abc: { files: abc_glob_default = 'lib/**/*.rb', max: 0 },
   style: { files: 'lib/**/*.rb' }
 }
 
 OptionParser.new do |opts|
+  def default(message, default_value)
+    "%s (default: %s)" % [message, default_value]
+  end
+
   opts.banner = "Usage: cane [options]"
 
-  opts.on("--abc-glob GLOB", "Glob to run ABC metrics over") do |glob|
+  opts.on("--abc-glob GLOB",
+          default("Glob to run ABC metrics over", options[:abc][:files]),
+         ) do |glob|
     options[:abc][:files] = glob
   end
 
-  opts.on("--abc-max MAX", "Maximum allowed ABC complexity") do |max|
+  opts.on("--abc-max MAX",
+          default("Maximum allowed ABC complexity", options[:abc][:max]),
+         ) do |max|
     options[:abc][:max] = max.to_i
   end
 
-  opts.on("--style-glob GLOB", "Glob to run style metrics over") do |glob|
+  opts.on("--style-glob GLOB",
+          default("Glob to run style metrics over", options[:style][:files]),
+         ) do |glob|
     options[:style][:files] = glob
   end
 end.parse!
