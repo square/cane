@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+
+require 'cane'
+
+result = Cane.run(
+  abc: { files: 'lib/**/*.rb', max: 10 }
+)
+
+exit(1) unless result
