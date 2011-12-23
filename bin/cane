@@ -4,6 +4,8 @@ require 'optparse'
 
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
+require 'cane/version'
+
 options = {
   abc: { files: abc_glob_default = 'lib/**/*.rb', max: 0 },
   style: { files: 'lib/**/*.rb' }
@@ -32,6 +34,17 @@ OptionParser.new do |opts|
           default("Glob to run style metrics over", options[:style][:files]),
          ) do |glob|
     options[:style][:files] = glob
+  end
+
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+
+  # Another typical switch to print the version.
+  opts.on_tail("--version", "Show version") do
+    puts Cane::VERSION
+    exit
   end
 end.parse!
 
