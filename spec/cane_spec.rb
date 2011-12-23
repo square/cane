@@ -1,8 +1,11 @@
 require 'spec_helper'
 
-require 'cane'
-
 describe 'Cane' do
+  def run(args)
+    cane_bin = File.expand_path("../../bin/cane", __FILE__)
+    `#{cane_bin} #{args}`
+  end
+
   it 'fails if ABC metric does not meet requirements' do
     file_name = make_file(<<-RUBY)
       class Harness
@@ -16,10 +19,8 @@ describe 'Cane' do
       end
     RUBY
 
-    Cane.run(
-      abc: { files: file_name, max: 1 },
-      out: StringIO.new
-    ).should_not be
+    run("--abc-glob #{file_name} --abc-max 1")
+    $?.exitstatus.should == 1
   end
 
   it 'passes if ABC metric meets requirements' do
@@ -33,9 +34,7 @@ describe 'Cane' do
       end
     RUBY
 
-    Cane.run(
-      abc: { files: file_name, max: 2 },
-      out: StringIO.new
-    ).should be
+    run("--abc-glob #{file_name} --abc-max 2")
+    $?.exitstatus.should == 0
   end
 end
