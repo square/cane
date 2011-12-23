@@ -23,18 +23,14 @@ describe 'Cane' do
     $?.exitstatus.should == 1
   end
 
-  it 'passes if ABC metric meets requirements' do
+  it 'fails if style metrics do not meet requirements' do
     file_name = make_file(<<-RUBY)
-      def complex_method(a)
-        if a < 2
-          return "low"
-        else
-          return "high"
-        end
+      class A_Harness
       end
     RUBY
 
-    run("--abc-glob #{file_name} --abc-max 2")
-    $?.exitstatus.should == 0
+    output = run("--style-glob #{file_name}")
+    $?.exitstatus.should == 1
+    output.should include("Lines violated style requirements")
   end
 end

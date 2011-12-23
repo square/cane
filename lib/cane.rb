@@ -1,4 +1,5 @@
 require 'cane/abc_check'
+require 'cane/style_check'
 require 'cane/violation_formatter'
 
 module Cane
@@ -6,7 +7,12 @@ module Cane
     out = opts.fetch(:out, $stdout)
 
     abc = opts.fetch(:abc)
-    violations = AbcCheck.new(abc).violations
+    violations = [
+      AbcCheck,
+      StyleCheck
+    ].map {|check|
+      check.new(abc).violations
+    }.flatten
 
     if violations.any?
       out.puts ViolationFormatter.new(violations).to_s
