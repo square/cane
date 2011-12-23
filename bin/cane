@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 require 'cane'
 
 result = Cane.run(
-  abc: { files: 'lib/**/*.rb', max: 10 }
+  abc: { files: 'lib/**/*.rb', max: 0 }
 )
 
 exit(1) unless result

@@ -1,19 +1,19 @@
 require 'abc_check'
+require 'cane/violation_formatter'
 
-class Cane
-  def self.run(opts)
+module Cane
+  def run(opts)
     out = opts.fetch(:out, $stdout)
 
     abc = opts.fetch(:abc)
     violations = AbcCheck.new(abc).violations
 
     if violations.any?
-      violations.each do |v|
-        out.puts(v.to_s)
-      end
+      out.puts ViolationFormatter.new(violations).to_s
       false
     else
       true
     end
   end
+  module_function :run
 end
