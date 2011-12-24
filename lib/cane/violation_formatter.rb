@@ -6,8 +6,8 @@ module Cane
       return '' if violations.empty?
 
       build_string do |out|
-        violations.group_by(&:class).each do |klass, violations|
-          output_group_header(klass, out)
+        violations.group_by(&:description).each do |description, violations|
+          output_group_header(description, out)
 
           column_widths = calculate_columm_widths(violations)
 
@@ -41,9 +41,9 @@ module Cane
       out.puts
     end
 
-    def output_group_header(klass, out)
+    def output_group_header(description, out)
       out.puts
-      out.puts klass.description + ":"
+      out.puts description + ":"
       out.puts
     end
   end
