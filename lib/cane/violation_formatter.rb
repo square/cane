@@ -5,46 +5,42 @@ module Cane
     def to_s
       return '' if violations.empty?
 
-      build_string do |out|
-        violations.group_by(&:description).each do |description, violations|
-          output_group_header(description, out)
-
-          column_widths = calculate_columm_widths(violations)
-
-          violations.each do |v|
-            output_violation(v, column_widths, out)
-          end
-        end
-        out.puts
-      end
+      grouped_violations.map do |description, violations|
+        format_group_header(description) +
+          format_violations(violations)
+      end.flatten.join("\n") + "\n\n"
     end
 
     protected
 
-    def build_string
-      out = StringIO.new(buffer = "")
-      yield out
-      buffer
+    def format_group_header(description)
+      ["", description + ":", ""]
+    end
+
+    def format_violations(violations)
+      column_widths = calculate_columm_widths(violations)
+
+      violations.map do |violation|
+        format_violation(violation, column_widths)
+      end
+    end
+
+    def format_violation(violation, column_widths)
+      [
+        '  ' + violation.columns.map.with_index { |column, index|
+          "%-#{column_widths[index]}s" % column
+        }.join('  ')
+      ]
     end
 
     def calculate_columm_widths(violations)
-      violations.map do |v|
-        v.columns.map { |x| x.to_s.length }
-      end.transpose.map(&:max)
+      violations.map { |violation|
+        violation.columns.map { |x| x.to_s.length }
+      }.transpose.map(&:max)
     end
 
-    def output_violation(v, column_widths, out)
-      out.print('  ')
-      v.columns.each.with_index do |c, i|
-        out.print("%-#{column_widths[i] + 2}s" % c)
-      end
-      out.puts
-    end
-
-    def output_group_header(description, out)
-      out.puts
-      out.puts description + ":"
-      out.puts
+    def grouped_violations
+      violations.group_by(&:description)
     end
   end
 end

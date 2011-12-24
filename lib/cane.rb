@@ -21,7 +21,7 @@ module Cane
     end
 
     def run
-      outputter.puts ViolationFormatter.new(violations)
+      outputter.print ViolationFormatter.new(violations)
 
       violations.length == 0
     end
