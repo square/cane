@@ -17,7 +17,9 @@ OptionParser.new do |opts|
     "%s (default: %s)" % [message, default_value]
   end
 
-  opts.banner = "Usage: cane [options]"
+  opts.banner  = "Usage:   cane [options]"
+  opts.separator "Example: cane --no-style --abc-glob 'lib/**/*.rb'"
+  opts.separator ""
 
   opts.on("--abc-glob GLOB",
           default("Glob to run ABC metrics over", options[:abc][:files]),
@@ -50,6 +52,8 @@ OptionParser.new do |opts|
   opts.on("--no-style", "Disable style checking") do |style|
     options.delete(:style)
   end
+
+  opts.separator ""
 
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
