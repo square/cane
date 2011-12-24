@@ -7,7 +7,7 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 require 'cane/version'
 
 defaults = {
-  abc: { files: abc_glob_default = 'lib/**/*.rb', max: 0 },
+  abc: { files: abc_glob_default = 'lib/**/*.rb', max: 15 },
   style: { files: 'lib/**/*.rb' }
 }
 options = defaults.dup
