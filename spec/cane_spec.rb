@@ -1,9 +1,25 @@
 require 'spec_helper'
+require "stringio"
+require 'cane/cli'
 
 describe 'Cane' do
+  def capture_stdout &block
+    real_stdout, $stdout = $stdout, StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = real_stdout
+  end
+
   def run(args)
-    cane_bin = File.expand_path("../../bin/cane", __FILE__)
-    `#{cane_bin} --no-style --no-abc #{args}`
+    capture_stdout do
+      result = Cane::CLI.run(%w(--no-style --no-abc) + args.split(' '))
+      if result
+        `echo 1`
+      else
+        `bash -c "exit 1"`
+      end
+    end
   end
 
   it 'fails if ABC metric does not meet requirements' do

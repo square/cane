@@ -79,7 +79,7 @@ module Cane
           puts Cane::VERSION
           exit
         end
-      end.parse!
+      end.parse!(args)
 
       Cane.run(options)
     end
