@@ -6,10 +6,11 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'cane/version'
 
-options = {
+defaults = {
   abc: { files: abc_glob_default = 'lib/**/*.rb', max: 0 },
   style: { files: 'lib/**/*.rb' }
 }
+options = defaults.dup
 
 OptionParser.new do |opts|
   def default(message, default_value)
@@ -21,19 +22,33 @@ OptionParser.new do |opts|
   opts.on("--abc-glob GLOB",
           default("Glob to run ABC metrics over", options[:abc][:files]),
          ) do |glob|
+
+    options[:abc] ||= defaults[:abc]
     options[:abc][:files] = glob
   end
 
   opts.on("--abc-max MAX",
           default("Maximum allowed ABC complexity", options[:abc][:max]),
          ) do |max|
+
+    options[:abc] ||= defaults[:abc]
     options[:abc][:max] = max.to_i
+  end
+
+  opts.on("--no-abc", "Disable ABC checking") do |style|
+    options.delete(:abc)
   end
 
   opts.on("--style-glob GLOB",
           default("Glob to run style metrics over", options[:style][:files]),
          ) do |glob|
+
+    options[:style] ||= defaults[:style]
     options[:style][:files] = glob
+  end
+
+  opts.on("--no-style", "Disable style checking") do |style|
+    options.delete(:style)
   end
 
   opts.on_tail("-h", "--help", "Show this message") do

@@ -25,7 +25,6 @@ module Cane
       end.flatten
     end
 
-
     def find_violations_in_file(file_name)
       source    = File.open(file_name, 'r')
       file_path = Pathname.new(file_name)

@@ -6,12 +6,15 @@ module Cane
   def run(opts)
     out = opts.fetch(:out, $stdout)
 
-    abc = opts.fetch(:abc)
-    violations = [
-      AbcCheck,
-      StyleCheck
-    ].map {|check|
-      check.new(abc).violations
+    violations = {
+      abc:   AbcCheck,
+      style: StyleCheck
+    }.map {|key, check|
+      if opts[key]
+        check.new(opts[key]).violations
+      else
+        []
+      end
     }.flatten
 
     if violations.any?
