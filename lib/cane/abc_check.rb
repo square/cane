@@ -11,7 +11,9 @@ class AbcCheck < Struct.new(:opts)
       @nesting    = []
       process_ast(@ast)
       @complexity.map do |x|
-        AbcMaxViolation.new(file_name, x.first, x.last) if x.last > opts.fetch(:max)
+        if x.last > opts.fetch(:max)
+          AbcMaxViolation.new(file_name, x.first, x.last)
+        end
       end.compact
     end.flatten.sort_by(&:complexity).reverse
   end
@@ -35,22 +37,26 @@ class AbcCheck < Struct.new(:opts)
   end
 
   def calculate_abc(method_node)
-    a = calculate_assignments(method_node)
-    b = calculate_branches(method_node)
-    c = calculate_conditions(method_node)
+    a = count_nodes(method_node, assignment_nodes)
+    b = count_nodes(method_node, branch_nodes) + 1
+    c = count_nodes(method_node, condition_nodes)
     abc = Math.sqrt(a**2 + b**2 + c**2).round
     abc
   end
 
-  def calculate_assignments(node)
-    node.flatten.select{|n| [:assign, :opassign].include?(n)}.size.to_f
+  def assignment_nodes
+    [:assign, :opassign]
   end
 
-  def calculate_branches(node)
-    node.flatten.select{|n| [:call, :fcall, :brace_block, :do_block].include?(n)}.size.to_f + 1.0
+  def count_nodes(node, types)
+    node.flatten.select { |n| types.include?(n) }.size.to_f
   end
 
-  def calculate_conditions(node, sum=0)
-    node.flatten.select{|n| [:==, :===, :"<>", :"<=", :">=", :"=~", :>, :<, :else, :"<=>"].include?(n)}.size.to_f
+  def branch_nodes
+    [:call, :fcall, :brace_block, :do_block]
+  end
+
+  def condition_nodes
+    [:==, :===, :"<>", :"<=", :">=", :"=~", :>, :<, :else, :"<=>"]
   end
 end

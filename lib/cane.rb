@@ -11,7 +11,7 @@ module Cane
       abc:       AbcCheck,
       style:     StyleCheck,
       threshold: ThresholdCheck
-    }.map {|key, check|
+    }.map { |key, check|
       if opts[key]
         check.new(opts[key]).violations
       else

@@ -10,7 +10,7 @@ module Cane
         out.puts
 
         column_widths = violations.map do |v|
-          v.columns.map {|x| x.to_s.length }
+          v.columns.map { |x| x.to_s.length }
         end.transpose.map(&:max)
 
         violations.each do |v|
