@@ -53,21 +53,4 @@ describe 'Cane' do
     exitstatus.should == 1
     output.should include("Quality threshold crossed")
   end
-
-  it 'allows checking to be disabled' do
-    file_name = make_file(<<-RUBY + ' ')
-      class Harness
-        def complex_method(a)
-          if a < 2
-            return "low"
-          else
-            return "high"
-          end
-        end
-      end
-    RUBY
-
-    output, exitstatus = run("--no-style --no-abc")
-    exitstatus.should == 0
-  end
 end
