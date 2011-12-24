@@ -5,39 +5,48 @@ require 'cane/abc_max_violation'
 # Borrowed heavily from metric_abc
 class AbcCheck < Struct.new(:opts)
   def violations
-    Dir[opts.fetch(:files)].map do |file_name|
+    order file_names.map { |file_name|
       find_violations(file_name)
-    end.flatten.sort_by(&:complexity).reverse
+    }.flatten
   end
+
+  protected
 
   def find_violations(file_name)
-    @ast        = Ripper::SexpBuilder.new(File.read(file_name)).parse
-    @complexity = {}
-    @nesting    = []
-    process_ast(@ast)
-    @complexity.map do |x|
-      if x.last > opts.fetch(:max)
-        AbcMaxViolation.new(file_name, x.first, x.last)
-      end
-    end.compact
+    ast = sexps_from_file(file_name)
+
+    process_ast(ast).
+      select { |nesting, complexity| complexity > max_allowed_complexity }.
+      map { |x| AbcMaxViolation.new(file_name, x.first, x.last) }
   end
 
-  def process_ast(node)
-    backup_nesting = @nesting.clone
-
-    if node[0] == :def
-      @nesting << node[1][1]
-      @complexity[@nesting.join(" > ")] = calculate_abc(node)
-    elsif node[0] == :class || node[0] == :module
-      if node[1][1][1].is_a? Symbol
-        @nesting << node[1][1][1]
+  # Recursive function to process an AST. The `complexity` variable mutates,
+  # which is a bit confusing. `nesting` does not.
+  def process_ast(node, complexity = {}, nesting = [])
+    if method_nodes.include?(node[0])
+      nesting = nesting + [node[1][1]]
+      complexity[nesting.join(" > ")] = calculate_abc(node)
+    elsif container_nodes.include?(node[0])
+      parent = if node[1][1][1].is_a?(Symbol)
+        node[1][1][1]
       else
-        @nesting << node[1][-1][1]
+        node[1][-1][1]
       end
+      nesting = nesting + [parent]
     end
 
-    node[1..-1].each { |n| process_ast(n) if n } if node.is_a? Array
-    @nesting = backup_nesting
+    if node.is_a? Array
+      node[1..-1].each { |n| process_ast(n, complexity, nesting) if n }
+    end
+    complexity
+  end
+
+  def sexps_from_file(file_name)
+    Ripper::SexpBuilder.new(File.read(file_name)).parse
+  end
+
+  def max_allowed_complexity
+    opts.fetch(:max)
   end
 
   def calculate_abc(method_node)
@@ -48,12 +57,28 @@ class AbcCheck < Struct.new(:opts)
     abc
   end
 
+  def count_nodes(node, types)
+    node.flatten.select { |n| types.include?(n) }.length
+  end
+
+  def file_names
+    Dir[opts.fetch(:files)]
+  end
+
+  def order(result)
+    result.sort_by(&:complexity).reverse
+  end
+
   def assignment_nodes
     [:assign, :opassign]
   end
 
-  def count_nodes(node, types)
-    node.flatten.select { |n| types.include?(n) }.size.to_f
+  def method_nodes
+    [:def]
+  end
+
+  def container_nodes
+    [:class, :module]
   end
 
   def branch_nodes

@@ -1,5 +1,5 @@
 class ThresholdViolation < Struct.new(:name, :operator, :value, :limit)
-  def self.description
+  def description
     "Quality threshold crossed"
   end
 

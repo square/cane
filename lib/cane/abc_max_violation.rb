@@ -3,7 +3,7 @@ class AbcMaxViolation < Struct.new(:file_name, :detail, :complexity)
     [file_name, detail, complexity]
   end
 
-  def self.description
+  def description
     "Methods exceeded maximum allowed ABC complexity"
   end
 end

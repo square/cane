@@ -5,26 +5,40 @@ require 'cane/violation_formatter'
 
 module Cane
   def run(opts)
-    out = opts.fetch(:out, $stdout)
+    Runner.new(opts).run
+  end
+  module_function :run
 
-    violations = {
+  class Runner
+    CHECKERS = {
       abc:       AbcCheck,
       style:     StyleCheck,
       threshold: ThresholdCheck
-    }.map { |key, check|
-      if opts[key]
-        check.new(opts[key]).violations
-      else
-        []
-      end
-    }.flatten
+    }
 
-    if violations.any?
-      out.puts ViolationFormatter.new(violations).to_s
-      false
-    else
-      true
+    def initialize(opts)
+      @opts = opts
+    end
+
+    def run
+      outputter.print ViolationFormatter.new(violations)
+
+      violations.length == 0
+    end
+
+    protected
+
+    attr_reader :opts
+
+    def violations
+      @violations ||= CHECKERS.
+        select { |key, _| opts.has_key?(key) }.
+        map { |key, check| check.new(opts.fetch(key)).violations }.
+        flatten
+    end
+
+    def outputter
+      opts.fetch(:out, $stdout)
     end
   end
-  module_function :run
 end
