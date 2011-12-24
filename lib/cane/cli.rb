@@ -1,0 +1,117 @@
+require 'cane'
+require 'cane/version'
+
+module Cane
+  class CLI < Struct.new(:args)
+    DEFAULTS = {
+      abc_glob:   'lib/**/*.rb',
+      abc_max:    '15',
+      style_glob: '{lib,spec}/**/*.rb'
+    }
+
+    def self.run(args)
+      new(args).run
+    end
+
+    def run
+      add_abc_options
+      add_style_options
+      add_threshold_options
+
+      add_version
+      add_help
+
+      parser.parse!(args)
+
+      Cane.run(translate_options)
+    end
+
+    def add_abc_options
+      add_option(%w(--abc-glob GLOB), "Glob to run ABC metrics over")
+      add_option(%w(--abc-max VALUE),
+                 "Report any methods with complexity greater than VALUE")
+      add_option(%w(--no-abc), "Disable ABC checking")
+
+      parser.separator ""
+    end
+
+    def add_style_options
+      add_option(%w(--style-glob GLOB), "Glob to run style metrics over")
+      add_option(%w(--no-style), "Disable style checking")
+
+      parser.separator ""
+    end
+
+    def add_threshold_options
+      desc = "If FILE contains a single number, verify it is >= to THRESHOLD."
+      parser.on("--gte FILE,THRESHOLD", Array, desc) do |opts|
+        (options[:threshold] ||= []) << opts.unshift(:>=)
+      end
+
+      parser.separator ""
+    end
+
+    def add_version
+      # Another typical switch to print the version.
+      parser.on_tail("--version", "Show version") do
+        puts Cane::VERSION
+        exit
+      end
+    end
+
+    def add_help
+      parser.on_tail("-h", "--help", "Show this message") do
+        puts parser
+        exit
+      end
+    end
+
+    def translate_options
+      result = {}
+      result[:abc] = {
+        files: option_with_default(:abc_glob),
+        max:   option_with_default(:abc_max).to_i
+      } unless check_disabled(:no_abc, [:abc_glob, :abc_max])
+
+      result[:style] = {
+        files: option_with_default(:style_glob)
+      } unless check_disabled(:no_style, [:style_glob])
+
+      result[:threshold] = options.fetch(:threshold, [])
+
+      result
+    end
+
+    def check_disabled(check, params)
+      ((params + [check]) & options.keys) == [check]
+    end
+
+    def add_option(option, description)
+      option_key = option[0].gsub('--', '').tr('-', '_').to_sym
+
+      if DEFAULTS.has_key?(option_key)
+        description += " (default: %s)" % DEFAULTS[option_key]
+      end
+
+      parser.on(option.join(' '), description) do |v|
+        options[option_key] = v
+      end
+    end
+
+    def default(message, default_value)
+      "%s (default: %s)" % [message, default_value]
+    end
+
+    def options
+      @options ||= {}
+    end
+
+    def option_with_default(key)
+      options.fetch(key, DEFAULTS.fetch(key))
+    end
+
+    def parser
+      @parser ||= OptionParser.new
+    end
+  end
+end

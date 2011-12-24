@@ -1,9 +1,23 @@
 require 'spec_helper'
+require "stringio"
+require 'cane/cli'
 
 describe 'Cane' do
+  def capture_stdout &block
+    real_stdout, $stdout = $stdout, StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = real_stdout
+  end
+
   def run(args)
-    cane_bin = File.expand_path("../../bin/cane", __FILE__)
-    `#{cane_bin} --no-style --no-abc #{args}`
+    result = nil
+    output = capture_stdout do
+      result = Cane::CLI.run(%w(--no-style --no-abc) + args.split(' '))
+    end
+
+    [output, result ? 0 : 1]
   end
 
   it 'fails if ABC metric does not meet requirements' do
@@ -19,23 +33,24 @@ describe 'Cane' do
       end
     RUBY
 
-    run("--abc-glob #{file_name} --abc-max 1")
-    $?.exitstatus.should == 1
+    _, exitstatus = run("--abc-glob #{file_name} --abc-max 1")
+
+    exitstatus.should == 1
   end
 
   it 'fails if style metrics do not meet requirements' do
     file_name = make_file("whitespace ")
 
-    output = run("--style-glob #{file_name}")
-    $?.exitstatus.should == 1
+    output, exitstatus = run("--style-glob #{file_name}")
+    exitstatus.should == 1
     output.should include("Lines violated style requirements")
   end
 
   it 'allows checking of a value in a file' do
     file_name = make_file("89")
 
-    output = run("--gte #{file_name},90")
-    $?.exitstatus.should == 1
+    output, exitstatus = run("--gte #{file_name},90")
+    exitstatus.should == 1
     output.should include("Quality threshold crossed")
   end
 
@@ -52,7 +67,7 @@ describe 'Cane' do
       end
     RUBY
 
-    output = run("--no-style --no-abc")
-    $?.exitstatus.should == 0
+    output, exitstatus = run("--no-style --no-abc")
+    exitstatus.should == 0
   end
 end
