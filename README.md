@@ -1,8 +1,8 @@
 # Cane
 
-> Discipline will set you free.
-
 Fails your build if code quality thresholds are not met.
+
+> Discipline will set you free.
 
 ## Usage
 
@@ -23,6 +23,24 @@ a non-zero exit code if any quality checks fail. Also, a report:
 
       lib/cane.rb:20   Line length >80
       lib/cane.rb:42   Trailing whitespace
+
+Customize behaviour with a wealth of options:
+
+    > cane --help
+    Usage:   cane [options]
+    Example: cane --no-style --abc-glob 'lib/**/*.rb'
+
+            --abc-glob GLOB              Glob to run ABC metrics over (default: lib/**/*.rb)
+            --abc-max MAX                Maximum allowed ABC complexity (default: 15)
+            --no-abc                     Disable ABC checking
+
+            --style-glob GLOB            Glob to run style metrics over (default: lib/**/*.rb)
+            --no-style                   Disable style checking
+
+            --gte FILE,THRESHOLD         If FILE contains a single number, verify it is >= to THRESHOLD.
+
+        -h, --help                       Show this message
+            --version                    Show version
 
 ## Integrating with SimpleCov
 
