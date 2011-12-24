@@ -13,7 +13,7 @@ end
 
 desc "Run cane to check quality metrics"
 task :quality do
-  puts `bin/cane`
+  puts `bin/cane --abc-max 10`
   exit $?.exitstatus unless $?.exitstatus == 0
 end
 
