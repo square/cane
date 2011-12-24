@@ -1,15 +1,16 @@
 require 'tailor'
-require 'tailor/file_line'
 
 require 'cane/style_violation'
 
-# This monkey-patch is required since `print_problem` is marked private in the
-# 3rd party library.
-module Tailor
-  class FileLine
+module Cane
+  # Provide a wrapper around Tailor that has an interface matching what we want
+  class FileLine < Tailor::FileLine
+    def initialize(source_line)
+      super(source_line, nil, nil)
+    end
+
     def print_problem(message)
-      message = message.gsub(/\[.+\]\s+/, '')
-      @problems << StyleViolation.new(@file_path, @line_number, message)
+      @problems << message.gsub(/\[.+\]\s+/, '')
     end
 
     def problems
@@ -27,9 +28,7 @@ module Tailor
       too_long?
     end
   end
-end
 
-module Cane
   class StyleCheck < Struct.new(:opts)
     def violations
       Dir[opts.fetch(:files)].map do |file_name|
@@ -37,12 +36,20 @@ module Cane
       end.flatten
     end
 
+    protected
+
     def find_violations_in_file(file_name)
       source    = File.open(file_name, 'r')
       file_path = Pathname.new(file_name)
 
       source.each_line.map.with_index do |source_line, line_number|
-        Tailor::FileLine.new(source_line, file_path, line_number + 1).problems
+        violations_for_line(file_path, source_line, line_number)
+      end
+    end
+
+    def violations_for_line(file_path, source_line, line_number)
+      FileLine.new(source_line).problems.map do |message|
+        StyleViolation.new(file_path, line_number + 1, message)
       end
     end
   end
