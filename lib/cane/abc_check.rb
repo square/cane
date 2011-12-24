@@ -6,16 +6,20 @@ require 'cane/abc_max_violation'
 class AbcCheck < Struct.new(:opts)
   def violations
     Dir[opts.fetch(:files)].map do |file_name|
-      @ast        = Ripper::SexpBuilder.new(File.read(file_name)).parse
-      @complexity = {}
-      @nesting    = []
-      process_ast(@ast)
-      @complexity.map do |x|
-        if x.last > opts.fetch(:max)
-          AbcMaxViolation.new(file_name, x.first, x.last)
-        end
-      end.compact
+      find_violations(file_name)
     end.flatten.sort_by(&:complexity).reverse
+  end
+
+  def find_violations(file_name)
+    @ast        = Ripper::SexpBuilder.new(File.read(file_name)).parse
+    @complexity = {}
+    @nesting    = []
+    process_ast(@ast)
+    @complexity.map do |x|
+      if x.last > opts.fetch(:max)
+        AbcMaxViolation.new(file_name, x.first, x.last)
+      end
+    end.compact
   end
 
   def process_ast(node)
