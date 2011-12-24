@@ -12,28 +12,12 @@ class AbcCheck < Struct.new(:opts)
 
   protected
 
-  def file_names
-    Dir[opts.fetch(:files)]
-  end
-
-  def order(result)
-    result.sort_by(&:complexity).reverse
-  end
-
-  def sexps_from_file(file_name)
-    Ripper::SexpBuilder.new(File.read(file_name)).parse
-  end
-
   def find_violations(file_name)
     ast = sexps_from_file(file_name)
 
     process_ast(ast).
       select { |nesting, complexity| complexity > max_allowed_complexity }.
       map { |x| AbcMaxViolation.new(file_name, x.first, x.last) }
-  end
-
-  def max_allowed_complexity
-    opts.fetch(:max)
   end
 
   # Recursive function to process an AST. The `complexity` variable mutates,
@@ -57,6 +41,14 @@ class AbcCheck < Struct.new(:opts)
     complexity
   end
 
+  def sexps_from_file(file_name)
+    Ripper::SexpBuilder.new(File.read(file_name)).parse
+  end
+
+  def max_allowed_complexity
+    opts.fetch(:max)
+  end
+
   def calculate_abc(method_node)
     a = count_nodes(method_node, assignment_nodes)
     b = count_nodes(method_node, branch_nodes) + 1
@@ -65,12 +57,20 @@ class AbcCheck < Struct.new(:opts)
     abc
   end
 
-  def assignment_nodes
-    [:assign, :opassign]
-  end
-
   def count_nodes(node, types)
     node.flatten.select { |n| types.include?(n) }.length
+  end
+
+  def file_names
+    Dir[opts.fetch(:files)]
+  end
+
+  def order(result)
+    result.sort_by(&:complexity).reverse
+  end
+
+  def assignment_nodes
+    [:assign, :opassign]
   end
 
   def method_nodes
