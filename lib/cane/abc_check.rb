@@ -13,7 +13,7 @@ class AbcCheck < Struct.new(:opts)
       @complexity.map do |x|
         AbcMaxViolation.new(file_name, x.first, x.last) if x.last > opts.fetch(:max)
       end.compact
-    end.flatten
+    end.flatten.sort_by(&:complexity).reverse
   end
 
   def process_ast(node)

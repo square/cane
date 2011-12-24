@@ -1,6 +1,6 @@
-class AbcMaxViolation < Struct.new(:file_name, :detail, :line)
+class AbcMaxViolation < Struct.new(:file_name, :detail, :complexity)
   def columns
-    [file_name, detail, line]
+    [file_name, detail, complexity]
   end
 
   def self.description
