@@ -7,6 +7,6 @@ describe ThresholdCheck do
     check = ThresholdCheck.new([[:>=, 'bogus_file', 20]])
     violations = check.violations
     violations.length.should == 1
-    violations[0].should include("unavailable")
+    violations[0].to_s.should include("unavailable")
   end
 end
