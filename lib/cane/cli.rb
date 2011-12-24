@@ -71,15 +71,19 @@ module Cane
       result[:abc] = {
         files: option_with_default(:abc_glob),
         max:   option_with_default(:abc_max).to_i
-      } unless ([:abc_glob, :abc_max, :no_abc] & options.keys) == [:no_abc]
+      } unless check_disabled(:no_abc, [:abc_glob, :abc_max])
 
       result[:style] = {
         files: option_with_default(:style_glob)
-      } unless ([:style_glob, :no_style] & options.keys) == [:no_style]
+      } unless check_disabled(:no_style, [:style_glob])
 
       result[:threshold] = options.fetch(:threshold, [])
 
       result
+    end
+
+    def check_disabled(check, params)
+      ((params + [check]) & options.keys) == [check]
     end
 
     def add_option(option, description)
