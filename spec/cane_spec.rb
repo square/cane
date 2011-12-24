@@ -31,6 +31,14 @@ describe 'Cane' do
     output.should include("Lines violated style requirements")
   end
 
+  it 'allows checking of a value in a file' do
+    file_name = make_file("89")
+
+    output = run("--gte #{file_name},90")
+    $?.exitstatus.should == 1
+    output.should include("Quality threshold crossed")
+  end
+
   it 'allows checking to be disabled' do
     file_name = make_file(<<-RUBY + ' ')
       class Harness

@@ -24,6 +24,26 @@ a non-zero exit code if any quality checks fail. Also, a report:
       lib/cane.rb:20   Line length >80
       lib/cane.rb:42   Trailing whitespace
 
-    Minimum code coverage exceeded:
+## Integrating with SimpleCov
 
-      90% < 92%
+Any value in a file can be used as a threshold:
+
+    > echo "89" > coverage/covered_percent
+    > cane --gte 'coverage/covered_percent,90'
+
+    Quality threshold crossed
+
+      coverage/covered_percent is 89, should be >= 90
+
+You can use a `SimpleCov` formatter to create the required file:
+
+    class SimpleCov::Formatter::QualityFormatter
+      def format(result)
+        SimpleCov::Formatter::HTMLFormatter.new.format(result)
+        File.open("coverage/covered_percent", "w") do |f|
+          f.puts result.source_files.covered_percent.to_f
+        end
+      end
+    end
+
+    SimpleCov.formatter = SimpleCov::Formatter::QualityFormatter

@@ -1,5 +1,6 @@
 require 'cane/abc_check'
 require 'cane/style_check'
+require 'cane/threshold_check'
 require 'cane/violation_formatter'
 
 module Cane
@@ -7,8 +8,9 @@ module Cane
     out = opts.fetch(:out, $stdout)
 
     violations = {
-      abc:   AbcCheck,
-      style: StyleCheck
+      abc:       AbcCheck,
+      style:     StyleCheck,
+      threshold: ThresholdCheck
     }.map {|key, check|
       if opts[key]
         check.new(opts[key]).violations

@@ -7,8 +7,9 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 require 'cane/version'
 
 defaults = {
-  abc: { files: abc_glob_default = 'lib/**/*.rb', max: 15 },
-  style: { files: 'lib/**/*.rb' }
+  abc:       { files: abc_glob_default = 'lib/**/*.rb', max: 15 },
+  style:     { files: 'lib/**/*.rb' },
+  threshold: []
 }
 options = defaults.dup
 
@@ -41,6 +42,8 @@ OptionParser.new do |opts|
     options.delete(:abc)
   end
 
+  opts.separator ""
+
   opts.on("--style-glob GLOB",
           default("Glob to run style metrics over", options[:style][:files]),
          ) do |glob|
@@ -51,6 +54,15 @@ OptionParser.new do |opts|
 
   opts.on("--no-style", "Disable style checking") do |style|
     options.delete(:style)
+  end
+
+  opts.separator ""
+
+  opts.on("--gte FILE,THRESHOLD", Array,
+          "If FILE contains a single number, verify it is >= to THRESHOLD."
+         ) do |opts|
+
+    options[:threshold] << opts.unshift(:>=)
   end
 
   opts.separator ""
