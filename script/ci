@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+bundler_version="1.0.18"
+
+source "$HOME/.rvm/scripts/rvm"
+
+function install_ruby_if_needed() {
+  echo "Checking for $1..."
+  if ! rvm list rubies | grep $1 > /dev/null; then
+    echo "Ruby not found $1..."
+    rvm install $1
+  fi
+}
+
+function switch_ruby() {
+  install_ruby_if_needed $1 && rvm use $1
+}
+
+function install_bundler_if_needed() {
+  echo "Checking for Bundler $bundler_version..."
+  if ! gem list --installed bundler --version "$bundler_version" > /dev/null; then
+    gem install bundler --version "$bundler_version" --source http://mirrors.squareup.com/rubygems
+  fi
+}
+
+function update_gems_if_needed() {
+  echo "Installing gems..."
+  bundle check || bundle install
+}
+
+function run_tests() {
+  bundle exec rake
+}
+
+function prepare_and_run() {
+  switch_ruby $1 &&
+  install_bundler_if_needed &&
+  update_gems_if_needed &&
+  run_tests
+}
+
+function tag_green_build() {
+  tag_name="ci-cane-master/latest"
+  git tag -f -m "tagging green build" "$tag_name"
+  git push -f origin "$tag_name"
+}
+
+prepare_and_run "1.9.3-p0" &&
+  tag_green_build
