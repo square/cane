@@ -3,6 +3,8 @@ require 'stringio'
 module Cane
   class ViolationFormatter < Struct.new(:violations)
     def to_s
+      return '' if violations.empty?
+
       out = StringIO.new(buffer = "")
       violations.group_by(&:class).each do |klass, violations|
         out.puts
