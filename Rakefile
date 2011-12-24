@@ -13,7 +13,7 @@ end
 
 desc "Run cane to check quality metrics"
 task :quality do
-  puts `bin/cane --abc-max 10 --gte coverage/covered_percent,95 --no-style`
+  puts `bin/cane --abc-max 10 --gte coverage/covered_percent,95`
   exit $?.exitstatus unless $?.exitstatus == 0
 end
 

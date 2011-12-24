@@ -27,6 +27,27 @@ module Cane
       class_line?  && snake_case_class?
       too_long?
     end
+
+    # A copy of the parent method, except also strips text out of strings
+    # quoted by "".
+    def spacing_problems
+      problem_count = 0
+
+      # Disregard text in regexps
+      self.gsub!(/\/.*?\//, "''")
+      self.gsub!(/'.*?'/, "''")
+      self.gsub!(/".*?"/, '""')
+
+      SPACING_CONDITIONS.each_pair do |condition, values|
+        unless self.scan(values.first).empty?
+          problem_count += 1
+          @line_problem_count += 1
+          print_problem values[1]
+        end
+      end
+
+      problem_count
+    end
   end
 
   class StyleCheck < Struct.new(:opts)
