@@ -2,7 +2,7 @@ require 'spec_helper'
 
 require 'cane/abc_check'
 
-describe AbcCheck do
+describe Cane::AbcCheck do
   it 'creates an AbcMaxViolation for each method above the threshold' do
     file_name = make_file(<<-RUBY)
       class Harness
@@ -17,9 +17,9 @@ describe AbcCheck do
       end
     RUBY
 
-    violations = AbcCheck.new(files: file_name, max: 1).violations
+    violations = described_class.new(files: file_name, max: 1).violations
     violations.length.should == 1
-    violations[0].should be_instance_of(AbcMaxViolation)
+    violations[0].should be_instance_of(Cane::AbcMaxViolation)
     violations[0].to_s.should include("Harness")
     violations[0].to_s.should include("complex_method")
   end
@@ -38,7 +38,7 @@ describe AbcCheck do
       end
     RUBY
 
-    violations = AbcCheck.new(files: file_name, max: 0).violations
+    violations = described_class.new(files: file_name, max: 0).violations
     violations.length.should == 2
     complexities = violations.map(&:complexity)
     complexities.should == complexities.sort.reverse
