@@ -14,33 +14,48 @@ a non-zero exit code if any quality checks fail. Also, a report:
 
     > cane
 
-    Methods exceeded maximum allowed ABC complexity:
+    Methods exceeded maximum allowed ABC complexity (2):
 
       lib/cane.rb  Cane > sample    23
       lib/cane.rb  Cane > sample_2  17
 
-    Lines violated style requirements:
+    Lines violated style requirements (2):
 
       lib/cane.rb:20   Line length >80
       lib/cane.rb:42   Trailing whitespace
 
+    Classes are not documented (1):
+      lib/cane:3  SomeClass
+
 Customize behaviour with a wealth of options:
 
     > cane --help
-    Usage:   cane [options]
-    Example: cane --no-style --abc-glob 'lib/**/*.rb'
-
+    Usage: cane [options]
             --abc-glob GLOB              Glob to run ABC metrics over (default: lib/**/*.rb)
-            --abc-max MAX                Maximum allowed ABC complexity (default: 15)
+            --abc-max VALUE              Report any methods with complexity greater than VALUE (default: 15)
             --no-abc                     Disable ABC checking
 
-            --style-glob GLOB            Glob to run style metrics over (default: lib/**/*.rb)
+            --style-glob GLOB            Glob to run style metrics over (default: {lib,spec}/**/*.rb)
+            --style-measure VALUE        Max line length (default: 80)
             --no-style                   Disable style checking
+
+            --doc-glob GLOB              Glob to run documentation metrics over (default: lib/**/*.rb)
+            --no-doc                     Disable documentation checking
 
             --gte FILE,THRESHOLD         If FILE contains a single number, verify it is >= to THRESHOLD.
 
-        -h, --help                       Show this message
+            --max-violations VALUE       Max allowed violations (default: 0)
+
             --version                    Show version
+        -h, --help                       Show this message
+
+## Adding to a legacy project
+
+Cane can be configured to still pass in the presence of a set number of
+violations using the `--max-violations` option. This is ideal for retrofitting
+on to an existing application that may already have many violations. By setting
+the maximum to the current number, no immediate changes will be required to
+your existing code base, but you will be protected from things getting worse.
 
 ## Integrating with SimpleCov
 
