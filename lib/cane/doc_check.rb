@@ -1,18 +1,7 @@
 module Cane
-  class UndocumentedClassViolation < Struct.new(:file_name, :number, :line)
-    def description
-      "Classes are not documented"
-    end
 
-    def columns
-      ["%s:%i" % [file_name, number], extract_class_name(line)]
-    end
-
-    def extract_class_name(line)
-      line.match(/class (\S+)/)[1]
-    end
-  end
-
+  # Creates violations for class definitions that do not have an explantory
+  # comment immediately preceeding.
   class DocCheck < Struct.new(:opts)
     def violations
       file_names.map { |file_name|
@@ -43,4 +32,20 @@ module Cane
       line =~ /^\s*#/
     end
   end
+
+  # Value object used by DocCheck.
+  class UndocumentedClassViolation < Struct.new(:file_name, :number, :line)
+    def description
+      "Classes are not documented"
+    end
+
+    def columns
+      ["%s:%i" % [file_name, number], extract_class_name(line)]
+    end
+
+    def extract_class_name(line)
+      line.match(/class (\S+)/)[1]
+    end
+  end
+
 end

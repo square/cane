@@ -1,3 +1,4 @@
+# Value object used by StyleCheck.
 class StyleViolation < Struct.new(:file_name, :line, :message)
   def description
     "Lines violated style requirements"
