@@ -32,24 +32,24 @@ module Cane
       end
 
       def add_abc_options
-        add_option(%w(--abc-glob GLOB), "Glob to run ABC metrics over")
-        add_option(%w(--abc-max VALUE), "Ignore methods under this complexity")
-        add_option(%w(--no-abc), "Disable ABC checking")
+        add_option %w(--abc-glob GLOB), "Glob to run ABC metrics over"
+        add_option %w(--abc-max VALUE), "Ignore methods under this complexity"
+        add_option %w(--no-abc), "Disable ABC checking"
 
         parser.separator ""
       end
 
       def add_style_options
-        add_option(%w(--style-glob GLOB), "Glob to run style metrics over")
-        add_option(%w(--style-measure VALUE), "Max line length")
-        add_option(%w(--no-style), "Disable style checking")
+        add_option %w(--style-glob GLOB), "Glob to run style metrics over"
+        add_option %w(--style-measure VALUE), "Max line length"
+        add_option %w(--no-style), "Disable style checking"
 
         parser.separator ""
       end
 
       def add_doc_options
-        add_option(%w(--doc-glob GLOB), "Glob to run doc checks over")
-        add_option(%w(--no-doc), "Disable documentation checking")
+        add_option %w(--doc-glob GLOB), "Glob to run documentation checks over"
+        add_option %w(--no-doc), "Disable documentation checking"
 
         parser.separator ""
       end
@@ -64,13 +64,12 @@ module Cane
       end
 
       def add_cane_options
-        add_option(%w(--max-violations VALUE), "Max allowed violations")
+        add_option %w(--max-violations VALUE), "Max allowed violations"
 
         parser.separator ""
       end
 
       def add_version
-        # Another typical switch to print the version.
         parser.on_tail("--version", "Show version") do
           puts Cane::VERSION
           exit
