@@ -10,6 +10,9 @@ module Cane
   end
   module_function :run
 
+  # Orchestrates the running of checks per the provided configuration, and
+  # hands the result to a formatter for display. This is the core of the
+  # application, but for the actual entry point see `Cane::CLI`.
   class Runner
     CHECKERS = {
       abc:       AbcCheck,

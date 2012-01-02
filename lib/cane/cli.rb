@@ -2,6 +2,9 @@ require 'cane'
 require 'cane/version'
 
 module Cane
+  # The main entry point for the application. Parses, documents, and provides
+  # defaults for command-line options before translating them to a hash
+  # suitable to be passed to `Cane.run`.
   class CLI < Struct.new(:args)
     DEFAULTS = {
       abc_glob:       'lib/**/*.rb',
