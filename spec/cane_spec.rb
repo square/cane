@@ -46,6 +46,14 @@ describe 'Cane' do
     output.should include("Lines violated style requirements")
   end
 
+  it 'allows upper bound of failed checks' do
+    file_name = make_file("whitespace ")
+
+    output, exitstatus = run("--style-glob #{file_name} --max-violations 1")
+    exitstatus.should == 0
+    output.should include("Lines violated style requirements")
+  end
+
   it 'allows checking of a value in a file' do
     file_name = make_file("89")
 

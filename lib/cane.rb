@@ -23,7 +23,7 @@ module Cane
     def run
       outputter.print ViolationFormatter.new(violations)
 
-      violations.length == 0
+      violations.length <= opts.fetch(:max_violations)
     end
 
     protected
