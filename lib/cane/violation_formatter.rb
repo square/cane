@@ -6,15 +6,15 @@ module Cane
       return '' if violations.empty?
 
       grouped_violations.map do |description, violations|
-        format_group_header(description) +
+        format_group_header(description, violations) +
           format_violations(violations)
       end.flatten.join("\n") + "\n\n"
     end
 
     protected
 
-    def format_group_header(description)
-      ["", description + ":", ""]
+    def format_group_header(description, violations)
+      ["", "%s (%i):" % [description, violations.length], ""]
     end
 
     def format_violations(violations)
