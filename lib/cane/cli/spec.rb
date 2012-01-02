@@ -101,10 +101,6 @@ module Cane
         end
       end
 
-      def default(message, default_value)
-        "%s (default: %s)" % [message, default_value]
-      end
-
       def options
         @options ||= {}
       end
