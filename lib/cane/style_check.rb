@@ -21,32 +21,27 @@ module Cane
 
     def find_problems
       # This is weird. These methods actually have side-effects! We capture
-      # the effects my monkey-patching FileLine above.
+      # the effects my monkey-patching #print_problem above.
       spacing_problems
       method_line? && camel_case_method?
       class_line?  && snake_case_class?
       too_long?
     end
 
-    # A copy of the parent method, except also strips text out of strings
-    # quoted by "".
+    # A copy of the parent method that only uses a small subset of the spacing
+    # checks we actually want (the others are too buggy or controversial).
     def spacing_problems
-      problem_count = 0
-
-      # Disregard text in regexps
-      self.gsub!(/\/.*?\//, "''")
-      self.gsub!(/'.*?'/, "''")
-      self.gsub!(/".*?"/, '""')
-
-      SPACING_CONDITIONS.each_pair do |condition, values|
+      spacing_conditions.each_pair do |condition, values|
         unless self.scan(values.first).empty?
-          problem_count += 1
-          @line_problem_count += 1
           print_problem values[1]
         end
       end
+    end
 
-      problem_count
+    def spacing_conditions
+      SPACING_CONDITIONS.select {|k, _|
+        [:hard_tabbed, :trailing_whitespace].include?(k)
+      }
     end
   end
 
