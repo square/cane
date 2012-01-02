@@ -8,6 +8,7 @@ module Cane
       abc_max:        '15',
       style_glob:     '{lib,spec}/**/*.rb',
       style_measure:  '80',
+      doc_glob:       'lib/**/*.rb',
       max_violations: '0',
     }
 
@@ -18,6 +19,7 @@ module Cane
     def run
       add_abc_options
       add_style_options
+      add_doc_options
       add_threshold_options
       add_cane_options
 
@@ -42,6 +44,13 @@ module Cane
       add_option(%w(--style-glob GLOB), "Glob to run style metrics over")
       add_option(%w(--style-measure VALUE), "Max line length")
       add_option(%w(--no-style), "Disable style checking")
+
+      parser.separator ""
+    end
+
+    def add_doc_options
+      add_option(%w(--doc-glob GLOB), "Glob to run documentation metrics over")
+      add_option(%w(--no-doc), "Disable documentation checking")
 
       parser.separator ""
     end
@@ -79,6 +88,7 @@ module Cane
     def translate_options
       result = {}
       translate_abc_options(result)
+      translate_doc_options(result)
       translate_style_options(result)
 
       result[:threshold] = options.fetch(:threshold, [])
@@ -99,6 +109,12 @@ module Cane
         files:   option_with_default(:style_glob),
         measure: option_with_default(:style_measure).to_i,
       } unless check_disabled(:no_style, [:style_glob])
+    end
+
+    def translate_doc_options(result)
+      result[:doc] = {
+        files: option_with_default(:doc_glob),
+      } unless check_disabled(:no_doc, [:doc_glob])
     end
 
     def check_disabled(check, params)

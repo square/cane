@@ -11,10 +11,11 @@ describe 'Cane' do
     $stdout = real_stdout
   end
 
-  def run(args)
+  def run(cli_args)
     result = nil
     output = capture_stdout do
-      result = Cane::CLI.run(%w(--no-style --no-abc) + args.split(' '))
+      default_cli_opts = %w(--no-style --no-abc --no-doc)
+      result = Cane::CLI.run(default_cli_opts + cli_args.split(' '))
     end
 
     [output, result ? 0 : 1]
@@ -68,5 +69,13 @@ describe 'Cane' do
     output, exitstatus = run("--gte #{file_name},90")
     exitstatus.should == 1
     output.should include("Quality threshold crossed")
+  end
+
+  it 'allows checking of class documentation' do
+    file_name = make_file("class NoDoc")
+
+    output, exitstatus = run("--doc-glob #{file_name}")
+    exitstatus.should == 1
+    output.should include("Classes are not documented")
   end
 end

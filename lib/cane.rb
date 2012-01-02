@@ -1,5 +1,6 @@
 require 'cane/abc_check'
 require 'cane/style_check'
+require 'cane/doc_check'
 require 'cane/threshold_check'
 require 'cane/violation_formatter'
 
@@ -13,6 +14,7 @@ module Cane
     CHECKERS = {
       abc:       AbcCheck,
       style:     StyleCheck,
+      doc:       DocCheck,
       threshold: ThresholdCheck
     }
 
