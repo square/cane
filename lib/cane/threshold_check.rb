@@ -1,5 +1,7 @@
 require 'cane/threshold_violation'
 
+# Configurable check that allows the contents of a file to be compared against
+# a given value.
 class ThresholdCheck < Struct.new(:checks)
   def violations
     checks.map do |operator, file, limit|
@@ -19,6 +21,8 @@ class ThresholdCheck < Struct.new(:checks)
     end
   end
 
+  # Null object for all cases when the value to be compared against cannot be
+  # read.
   class UnavailableValue
     def >=(_); false end
     def to_s; 'unavailable' end

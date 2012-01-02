@@ -1,3 +1,4 @@
+# Value object used by ThresholdCheck.
 class ThresholdViolation < Struct.new(:name, :operator, :value, :limit)
   def description
     "Quality threshold crossed"
