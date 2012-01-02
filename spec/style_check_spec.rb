@@ -11,7 +11,7 @@ describe Cane::StyleCheck do
     ].join("\n")
     file_name = make_file(ruby)
 
-    violations = Cane::StyleCheck.new(files: file_name, max: 1).violations
+    violations = Cane::StyleCheck.new(files: file_name, measure: 80).violations
     violations.length.should == 2
     violations[0].should be_instance_of(StyleViolation)
   end

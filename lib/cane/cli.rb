@@ -7,6 +7,7 @@ module Cane
       abc_glob:       'lib/**/*.rb',
       abc_max:        '15',
       style_glob:     '{lib,spec}/**/*.rb',
+      style_measure:  '80',
       max_violations: '0',
     }
 
@@ -39,6 +40,7 @@ module Cane
 
     def add_style_options
       add_option(%w(--style-glob GLOB), "Glob to run style metrics over")
+      add_option(%w(--style-measure VALUE), "Max line length")
       add_option(%w(--no-style), "Disable style checking")
 
       parser.separator ""
@@ -94,7 +96,8 @@ module Cane
 
     def translate_style_options(result)
       result[:style] = {
-        files: option_with_default(:style_glob)
+        files:   option_with_default(:style_glob),
+        measure: option_with_default(:style_measure).to_i,
       } unless check_disabled(:no_style, [:style_glob])
     end
 

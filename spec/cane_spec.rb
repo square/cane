@@ -46,6 +46,14 @@ describe 'Cane' do
     output.should include("Lines violated style requirements")
   end
 
+  it 'allows measure to be configured' do
+    file_name = make_file("toolong")
+
+    output, exitstatus = run("--style-glob #{file_name} --style-measure 3")
+    exitstatus.should == 1
+    output.should include("Lines violated style requirements")
+  end
+
   it 'allows upper bound of failed checks' do
     file_name = make_file("whitespace ")
 

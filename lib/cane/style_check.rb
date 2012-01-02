@@ -5,7 +5,11 @@ require 'cane/style_violation'
 module Cane
   # Provide a wrapper around Tailor that has an interface matching what we want
   class FileLine < Tailor::FileLine
-    def initialize(source_line)
+    attr_accessor :opts
+
+    def initialize(source_line, opts)
+      self.opts = opts
+
       super(source_line, nil, nil)
     end
 
@@ -43,6 +47,21 @@ module Cane
         [:hard_tabbed, :trailing_whitespace].include?(k)
       }
     end
+
+    # Copy of parent method using a configurable line length.
+    def too_long?
+      length = self.length
+      if length > line_length_max
+        print_problem "Line is >#{line_length_max} characters (#{length})"
+        return true
+      end
+
+      false
+    end
+
+    def line_length_max
+      opts.fetch(:measure)
+    end
   end
 
   class StyleCheck < Struct.new(:opts)
@@ -64,7 +83,7 @@ module Cane
     end
 
     def violations_for_line(file_path, source_line, line_number)
-      FileLine.new(source_line).problems.map do |message|
+      FileLine.new(source_line, opts).problems.map do |message|
         StyleViolation.new(file_path, line_number + 1, message)
       end
     end
