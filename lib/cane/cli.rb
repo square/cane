@@ -8,7 +8,12 @@ module Cane
   module CLI
 
     def run(args)
-      Cane.run(Spec.new.parse(args))
+      opts = Spec.new.parse(args)
+      if opts
+        Cane.run(opts)
+      else
+        true
+      end
     end
     module_function :run
 

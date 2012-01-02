@@ -78,4 +78,18 @@ describe 'Cane' do
     exitstatus.should == 1
     output.should include("Classes are not documented")
   end
+
+  it 'displays a help message' do
+    output, exitstatus = run("--help")
+
+    exitstatus.should == 0
+    output.should include("Usage:")
+  end
+
+  it 'displays version' do
+    output, exitstatus = run("--version")
+
+    exitstatus.should == 0
+    output.should include(Cane::VERSION)
+  end
 end

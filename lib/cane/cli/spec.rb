@@ -15,6 +15,10 @@ module Cane
         max_violations: '0',
       }
 
+      # Exception to indicate that no further processing is required and the
+      # program can exit. This is used to handle --help and --version flags.
+      class OptionsHandled < RuntimeError; end
+
       def initialize
         add_abc_options
         add_style_options
@@ -29,6 +33,8 @@ module Cane
       def parse(args)
         parser.parse!(args)
         Translator.new(options, DEFAULTS).to_hash
+      rescue OptionsHandled
+        nil
       end
 
       def add_abc_options
@@ -72,14 +78,14 @@ module Cane
       def add_version
         parser.on_tail("--version", "Show version") do
           puts Cane::VERSION
-          exit
+          raise OptionsHandled
         end
       end
 
       def add_help
         parser.on_tail("-h", "--help", "Show this message") do
           puts parser
-          exit
+          raise OptionsHandled
         end
       end
 
