@@ -1,6 +1,9 @@
 require 'stringio'
 
 module Cane
+
+  # Computes a string to be displayed as output from an array of violations
+  # computed by the checks.
   class ViolationFormatter < Struct.new(:violations)
     def to_s
       return '' if violations.empty?
