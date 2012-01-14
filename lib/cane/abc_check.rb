@@ -46,7 +46,7 @@ module Cane
     end
 
     def sexps_from_file(file_name)
-      Ripper::SexpBuilder.new(File.read(file_name)).parse
+      Ripper::SexpBuilder.new(File.open(file_name, 'r:utf-8').read).parse
     end
 
     def max_allowed_complexity

@@ -11,9 +11,9 @@ module Cane
 
     def find_violations(file_name)
       last_line = ""
-      File.read(file_name).lines.map.with_index do |line, line_number|
+      File.open(file_name, 'r:utf-8').lines.map.with_index do |line, number|
         result = if class_definition?(line) && !comment?(last_line)
-          UndocumentedClassViolation.new(file_name, line_number + 1, line)
+          UndocumentedClassViolation.new(file_name, number + 1, line)
         end
         last_line = line
         result
