@@ -80,3 +80,10 @@ You can use a `SimpleCov` formatter to create the required file:
     end
 
     SimpleCov.formatter = SimpleCov::Formatter::QualityFormatter
+
+## Compatibility
+
+Requires MRI 1.9, since it depends on the `ripper` library to calculate
+complexity metrics. This only applies to the Ruby used to run Cane, not the
+project it is being run against. In other words, you can run Cane against your
+1.8 project.
