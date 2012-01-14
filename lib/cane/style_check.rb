@@ -17,7 +17,7 @@ module Cane
     protected
 
     def find_violations_in_file(file_name)
-      source    = File.open(file_name, 'r')
+      source    = File.open(file_name, 'r:utf-8')
       file_path = Pathname.new(file_name)
 
       source.each_line.map.with_index do |source_line, line_number|
