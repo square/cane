@@ -87,3 +87,16 @@ Requires MRI 1.9, since it depends on the `ripper` library to calculate
 complexity metrics. This only applies to the Ruby used to run Cane, not the
 project it is being run against. In other words, you can run Cane against your
 1.8 project.
+
+## Support
+
+[Ask questions on Stack
+Overflow](http://stackoverflow.com/questions/ask?tags=ruby+cane). We keep an
+eye on new cane questions.
+
+## Contributing
+
+Fork and patch! Before any changes are merged to master, we need you to sign an
+[Individual Contributor
+Agreement](https://spreadsheets.google.com/a/squareup.com/spreadsheet/viewform?formkey=dDViT2xzUHAwRkI3X3k5Z0lQM091OGc6MQ&ndplr=1)
+(Google Form).
