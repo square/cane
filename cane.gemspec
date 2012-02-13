@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.files         = Dir.glob("{spec,lib}/**/*.rb") + %w(
                         README.md
                         HISTORY.md
+                        LICENSE
                         cane.gemspec
                       )
   gem.test_files    = Dir.glob("spec/**/*.rb")
