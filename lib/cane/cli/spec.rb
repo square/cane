@@ -31,10 +31,19 @@ module Cane
       end
 
       def parse(args)
-        parser.parse!(args)
+        parser.parse!(get_default_options + args)
+
         Translator.new(options, DEFAULTS).to_hash
       rescue OptionsHandled
         nil
+      end
+
+      def get_default_options
+        if File.exists?('./.cane')
+          File.read('./.cane').gsub("\n", ' ').split(' ')
+        else
+          []
+        end
       end
 
       def add_abc_options
