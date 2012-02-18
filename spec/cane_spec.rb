@@ -92,4 +92,11 @@ describe 'Cane' do
     exitstatus.should == 0
     output.should include(Cane::VERSION)
   end
+
+  it 'uses the last of conflicting arguments' do
+    file_name = make_file("class NoDoc")
+
+    run("--doc-glob #{file_name} --no-doc").should == run("--no-doc")
+    run("--no-doc --doc-glob #{file_name}").should == run("--doc-glob #{file_name}")
+  end
 end
