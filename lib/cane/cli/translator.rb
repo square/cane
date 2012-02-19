@@ -37,7 +37,9 @@ module Cane
       end
 
       def check_disabled(check, params)
-        ((params + [check]) & options.keys) == [check]
+        relevant_options = options.keys & params + [check]
+
+        check == relevant_options[-1]
       end
 
       def option_with_default(key)
