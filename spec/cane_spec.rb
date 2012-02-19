@@ -14,8 +14,7 @@ describe 'Cane' do
   def run(cli_args)
     result = nil
     output = capture_stdout do
-      default_cli_opts = %w(--no-style --no-abc --no-doc)
-      result = Cane::CLI.run(default_cli_opts + cli_args.split(' '))
+      result = Cane::CLI.run(cli_args.split(' '))
     end
 
     [output, result ? 0 : 1]
@@ -91,5 +90,12 @@ describe 'Cane' do
 
     exitstatus.should == 0
     output.should include(Cane::VERSION)
+  end
+
+  it 'uses the last of conflicting arguments' do
+    file_name = make_file("class NoDoc")
+
+    run("--doc-glob #{file_name} --no-doc").should == run("--no-doc")
+    run("--no-doc --doc-glob #{file_name}").should == run("--doc-glob #{file_name}")
   end
 end
