@@ -31,6 +31,9 @@ Customize behaviour with a wealth of options:
 
     > cane --help
     Usage: cane [options]
+
+    You can also put these options in a .cane file.
+
             --abc-glob GLOB              Glob to run ABC metrics over (default: lib/**/*.rb)
             --abc-max VALUE              Report any methods with complexity greater than VALUE (default: 15)
             --no-abc                     Disable ABC checking
@@ -48,6 +51,17 @@ Customize behaviour with a wealth of options:
 
             --version                    Show version
         -h, --help                       Show this message
+
+Set default options into a `.cane` file.
+
+    > cat .cane
+    --no-doc
+    --abc-glob **/*.rb
+    > cane
+
+It works just like this.
+
+    > cane --no-doc --abc-glob '**/*.rb'
 
 ## Adding to a legacy project
 
