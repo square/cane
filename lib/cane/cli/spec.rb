@@ -20,6 +20,8 @@ module Cane
       class OptionsHandled < RuntimeError; end
 
       def initialize
+        add_banner
+
         add_abc_options
         add_style_options
         add_doc_options
@@ -44,6 +46,15 @@ module Cane
         else
           []
         end
+      end
+
+      def add_banner
+        parser.banner = <<-BANNER
+Usage: cane [options]
+
+You can also put these options in a .cane file.
+
+BANNER
       end
 
       def add_abc_options
