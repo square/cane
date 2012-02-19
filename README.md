@@ -52,14 +52,14 @@ Customize behaviour with a wealth of options:
             --version                    Show version
         -h, --help                       Show this message
 
-Set default options into a `.cane` file.
+Set default options into a `.cane` file:
 
     > cat .cane
     --no-doc
     --abc-glob **/*.rb
     > cane
 
-It works just like this.
+It works just like this:
 
     > cane --no-doc --abc-glob '**/*.rb'
 
