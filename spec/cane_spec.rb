@@ -79,15 +79,22 @@ describe 'Cane' do
     output.should include("Classes are not documented")
   end
 
-  it 'loads options from a .cane file' do
-    file_name = make_file("class NoDoc")
-    make_dot_cane("--doc-glob #{file_name}")
+  context 'with a .cane file' do
+    before(:each) do
+      file_name = make_file("class NoDoc")
+      make_dot_cane("--doc-glob #{file_name}")
+    end
 
-    output, exitstatus = run('')
-    exitstatus.should == 1
-    output.should include("Classes are not documented")
+    after(:each) do
+      unmake_dot_cane
+    end
 
-    unmake_dot_cane
+    it 'loads options from a .cane file' do
+      output, exitstatus = run('')
+
+      exitstatus.should == 1
+      output.should include("Classes are not documented")
+    end
   end
 
   it 'displays a help message' do
