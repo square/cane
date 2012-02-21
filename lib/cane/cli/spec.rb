@@ -20,6 +20,8 @@ module Cane
       class OptionsHandled < RuntimeError; end
 
       def initialize
+        add_banner
+
         add_abc_options
         add_style_options
         add_doc_options
@@ -31,10 +33,28 @@ module Cane
       end
 
       def parse(args)
-        parser.parse!(args)
+        parser.parse!(get_default_options + args)
+
         Translator.new(options, DEFAULTS).to_hash
       rescue OptionsHandled
         nil
+      end
+
+      def get_default_options
+        if File.exists?('./.cane')
+          File.read('./.cane').gsub("\n", ' ').split(' ')
+        else
+          []
+        end
+      end
+
+      def add_banner
+        parser.banner = <<-BANNER
+Usage: cane [options]
+
+You can also put these options in a .cane file.
+
+BANNER
       end
 
       def add_abc_options
