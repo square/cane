@@ -13,6 +13,7 @@ module Cane
         style_measure:  '80',
         doc_glob:       'lib/**/*.rb',
         max_violations: '0',
+        color: false,
       }
 
       # Exception to indicate that no further processing is required and the
@@ -22,6 +23,7 @@ module Cane
       def initialize
         add_banner
 
+        add_colors
         add_abc_options
         add_style_options
         add_doc_options
@@ -55,6 +57,12 @@ Usage: cane [options]
 You can also put these options in a .cane file.
 
 BANNER
+      end
+
+      def add_colors
+        parser.on("--color", "Colorize the output") do |opts|
+          options[:color] = true
+        end
       end
 
       def add_abc_options
