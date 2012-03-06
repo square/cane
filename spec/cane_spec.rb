@@ -54,6 +54,14 @@ describe 'Cane' do
     output.should include("Lines violated style requirements")
   end
 
+  it 'does not include trailing new lines in the character count' do
+    file_name = make_file('#' * 80 + "\n" + '#' * 80)
+
+    output, exitstatus = run("--style-glob #{file_name} --style-measure 80")
+    exitstatus.should == 0
+    output.should be_empty
+  end
+
   it 'allows upper bound of failed checks' do
     file_name = make_file("whitespace ")
 

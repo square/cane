@@ -81,7 +81,7 @@ module Cane
 
     # Copy of parent method using a configurable line length.
     def too_long?
-      length = self.length
+      length = self.chomp.length
       if length > line_length_max
         print_problem "Line is >#{line_length_max} characters (#{length})"
         return true
