@@ -11,6 +11,9 @@ class NoDoc; end # No doc
   class AlsoNoDoc; end
 [:class]
 # class Ignore
+class Meta
+  class << self; end
+end
     RUBY
 
     violations = described_class.new(files: file_name).violations
