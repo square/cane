@@ -25,7 +25,7 @@ module Cane
     end
 
     def class_definition?(line)
-      line =~ /^\s*class\s/
+      line =~ /^\s*class\s+/ and $'.index('<<') != 0
     end
 
     def comment?(line)
