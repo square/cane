@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
-
 require 'cane/cli'
 
 result = Cane::CLI.run(ARGV)
