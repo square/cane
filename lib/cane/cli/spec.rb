@@ -1,3 +1,4 @@
+require 'optparse'
 require 'cane/cli/translator'
 
 module Cane

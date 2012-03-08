@@ -1,5 +1,6 @@
 #!/usr/bin/env rake
 require "bundler/gem_tasks"
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
 begin
   require 'rspec/core/rake_task'
@@ -11,10 +12,16 @@ rescue LoadError
   $stderr.puts "rspec not available, spec task not provided"
 end
 
-desc "Run cane to check quality metrics"
-task :quality do
-  puts `bin/cane --abc-max 10 --gte coverage/covered_percent,99`
-  exit $?.exitstatus unless $?.exitstatus == 0
-end
+begin
+  require 'cane/rake_task'
 
-task :default => :quality
+  desc "Run cane to check quality metrics"
+  Cane::RakeTask.new(:quality) do |cane|
+    cane.abc_max = 10
+    cane.add_threshold 'coverage/covered_percent', :>=, 99
+  end
+
+  task :default => :quality
+rescue LoadError
+  warn $!.message
+end
