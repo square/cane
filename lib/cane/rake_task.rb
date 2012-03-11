@@ -42,6 +42,7 @@ module Cane
       unless ::Rake.application.last_comment
         desc %(Check code quality metrics with cane)
       end
+
       task name do
         require 'cane/cli'
         abort unless Cane.run(translated_options)
@@ -49,10 +50,14 @@ module Cane
     end
 
     def options
-      [ :abc_glob, :abc_max,
-        :style_glob, :style_measure,
-        :doc_glob, :max_violations
-      ].inject(:threshold => @threshold) do |opts, setting|
+      [
+        :abc_glob,
+        :abc_max,
+        :doc_glob,
+        :max_violations,
+        :style_glob,
+        :style_measure
+      ].inject(threshold: @threshold) do |opts, setting|
         value = self.send(setting)
         opts[setting] = value unless value.nil?
         opts
