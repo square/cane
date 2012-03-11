@@ -63,6 +63,25 @@ It works just like this:
 
     > cane --no-doc --abc-glob '**/*.rb'
 
+## Integrating with Rake
+
+    begin
+      require 'cane/rake_task'
+
+      desc "Run cane to check quality metrics"
+      Cane::RakeTask.new(:quality) do |cane|
+        cane.abc_max = 10
+        cane.add_threshold 'coverage/covered_percent', :>=, 99
+      end
+
+      task :default => :quality
+    rescue LoadError
+      warn "cane not available, quality task not provided."
+    end
+
+Rescuing `LoadError` is a good idea, since `rake -T` failing is totally
+frustrating.
+
 ## Adding to a legacy project
 
 Cane can be configured to still pass in the presence of a set number of
