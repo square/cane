@@ -9,7 +9,7 @@ begin
 
   task :default => :spec
 rescue LoadError
-  $stderr.puts "rspec not available, spec task not provided"
+  warn "rspec not available, spec task not provided"
 end
 
 begin
@@ -23,5 +23,5 @@ begin
 
   task :default => :quality
 rescue LoadError
-  warn $!.message
+  warn "cane not available, quality task not provided."
 end

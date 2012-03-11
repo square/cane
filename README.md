@@ -76,7 +76,7 @@ It works just like this:
 
       task :default => :quality
     rescue LoadError
-      warn "cane gem not available, quality task not provided."
+      warn "cane not available, quality task not provided."
     end
 
 Rescuing `LoadError` is a good idea, since `rake -T` failing is totally
