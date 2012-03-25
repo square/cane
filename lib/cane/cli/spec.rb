@@ -8,11 +8,11 @@ module Cane
     # documentation, parsing, and default values.
     class Spec
       DEFAULTS = {
-        abc_glob:       'lib/**/*.rb',
+        abc_glob:       '{app,lib}/**/*.rb',
         abc_max:        '15',
-        style_glob:     '{lib,spec}/**/*.rb',
+        style_glob:     '{app,lib,spec}/**/*.rb',
         style_measure:  '80',
-        doc_glob:       'lib/**/*.rb',
+        doc_glob:       '{app,lib}/**/*.rb',
         max_violations: '0',
       }
 
