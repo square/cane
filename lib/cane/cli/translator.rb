@@ -6,6 +6,7 @@ module Cane
     class Translator < Struct.new(:options, :defaults)
       def to_hash
         result = {}
+        translate_output_options(result)
         translate_abc_options(result)
         translate_doc_options(result)
         translate_style_options(result)
@@ -14,6 +15,12 @@ module Cane
         result[:max_violations] = option_with_default(:max_violations).to_i
 
         result
+      end
+
+      def translate_output_options(result)
+        result[:output] = {
+          color: option_with_default(:color)
+        }
       end
 
       def translate_abc_options(result)

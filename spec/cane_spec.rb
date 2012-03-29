@@ -104,6 +104,13 @@ describe 'Cane' do
     end
   end
 
+  it "accepts colored output" do
+    output, exitstatus = run("--help")
+
+    exitstatus.should == 0
+    output.should include("--color")
+  end
+
   it 'displays a help message' do
     output, exitstatus = run("--help")
 

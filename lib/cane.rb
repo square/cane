@@ -2,6 +2,7 @@ require 'cane/abc_check'
 require 'cane/style_check'
 require 'cane/doc_check'
 require 'cane/threshold_check'
+require 'cane/colored_formatter'
 require 'cane/violation_formatter'
 
 module Cane
@@ -26,7 +27,8 @@ module Cane
     end
 
     def run
-      outputter.print ViolationFormatter.new(violations)
+      klass = @opts[:output][:color] ? ColoredFormatter : ViolationFormatter
+      outputter.print klass.new(violations)
 
       violations.length <= opts.fetch(:max_violations)
     end
