@@ -10,6 +10,7 @@ module Cane
   #   Cane::RakeTask.new(:quality) do |cane|
   #     cane.abc_max = 10
   #     cane.doc_glob = 'lib/**/*.rb'
+  #     cane.no_style = true
   #     cane.add_threshold 'coverage/covered_percent', :>=, 99
   #   end
   class RakeTask < ::Rake::TaskLib
@@ -21,10 +22,14 @@ module Cane
     attr_accessor :abc_max
     # Glob to run style checks over (default: "{lib,spec}/**/*.rb")
     attr_accessor :style_glob
+    # TRUE to disable style checks
+    attr_accessor :no_style
     # Max line length (default: 80)
     attr_accessor :style_measure
     # Glob to run doc checks over (default: "lib/**/*.rb")
     attr_accessor :doc_glob
+    # TRUE to disable doc checks
+    attr_accessor :no_doc
     # Max violations to tolerate (default: 0)
     attr_accessor :max_violations
 
@@ -54,8 +59,10 @@ module Cane
         :abc_glob,
         :abc_max,
         :doc_glob,
+        :no_doc,
         :max_violations,
         :style_glob,
+        :no_style,
         :style_measure
       ].inject(threshold: @threshold) do |opts, setting|
         value = self.send(setting)
