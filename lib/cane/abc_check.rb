@@ -1,6 +1,7 @@
 require 'ripper'
 
 require 'cane/abc_max_violation'
+require 'cane/syntax_violation'
 
 module Cane
 
@@ -17,52 +18,84 @@ module Cane
     protected
 
     def find_violations(file_name)
-      ast = sexps_from_file(file_name)
-
-      process_ast(ast).
-        select { |nesting, complexity| complexity > max_allowed_complexity }.
-        map { |x| AbcMaxViolation.new(file_name, x.first, x.last) }
+      ast = Ripper::SexpBuilder.new(File.open(file_name, 'r:utf-8').read).parse
+      case ast
+      when nil
+        InvalidAst.new(file_name)
+      else
+        RubyAst.new(file_name, max_allowed_complexity, ast)
+      end.violations
     end
 
-    # Recursive function to process an AST. The `complexity` variable mutates,
-    # which is a bit confusing. `nesting` does not.
-    def process_ast(node, complexity = {}, nesting = [])
-      if method_nodes.include?(node[0])
-        nesting = nesting + [node[1][1]]
-        complexity[nesting.join(" > ")] = calculate_abc(node)
-      elsif container_nodes.include?(node[0])
-        parent = if node[1][1][1].is_a?(Symbol)
-          node[1][1][1]
-        else
-          node[1][-1][1]
+    # Null object for when the file cannot be parsed.
+    class InvalidAst < Struct.new(:file_name)
+      def violations
+        [SyntaxViolation.new(file_name)]
+      end
+    end
+
+    # Wrapper object around sexps returned from ripper.
+    class RubyAst < Struct.new(:file_name, :max_allowed_complexity, :sexps)
+      def violations
+        process_ast(sexps).
+          select { |nesting, complexity| complexity > max_allowed_complexity }.
+          map { |x| AbcMaxViolation.new(file_name, x.first, x.last) }
+      end
+
+      protected
+
+      # Recursive function to process an AST. The `complexity` variable mutates,
+      # which is a bit confusing. `nesting` does not.
+      def process_ast(node, complexity = {}, nesting = [])
+        if method_nodes.include?(node[0])
+          nesting = nesting + [node[1][1]]
+          complexity[nesting.join(" > ")] = calculate_abc(node)
+        elsif container_nodes.include?(node[0])
+          parent = if node[1][1][1].is_a?(Symbol)
+            node[1][1][1]
+          else
+            node[1][-1][1]
+          end
+          nesting = nesting + [parent]
         end
-        nesting = nesting + [parent]
+
+        if node.is_a? Array
+          node[1..-1].each { |n| process_ast(n, complexity, nesting) if n }
+        end
+        complexity
       end
 
-      if node.is_a? Array
-        node[1..-1].each { |n| process_ast(n, complexity, nesting) if n }
+      def calculate_abc(method_node)
+        a = count_nodes(method_node, assignment_nodes)
+        b = count_nodes(method_node, branch_nodes) + 1
+        c = count_nodes(method_node, condition_nodes)
+        abc = Math.sqrt(a**2 + b**2 + c**2).round
+        abc
       end
-      complexity
-    end
 
-    def sexps_from_file(file_name)
-      Ripper::SexpBuilder.new(File.open(file_name, 'r:utf-8').read).parse
-    end
+      def count_nodes(node, types)
+        node.flatten.select { |n| types.include?(n) }.length
+      end
 
-    def max_allowed_complexity
-      opts.fetch(:max)
-    end
+      def assignment_nodes
+        [:assign, :opassign]
+      end
 
-    def calculate_abc(method_node)
-      a = count_nodes(method_node, assignment_nodes)
-      b = count_nodes(method_node, branch_nodes) + 1
-      c = count_nodes(method_node, condition_nodes)
-      abc = Math.sqrt(a**2 + b**2 + c**2).round
-      abc
-    end
+      def method_nodes
+        [:def]
+      end
 
-    def count_nodes(node, types)
-      node.flatten.select { |n| types.include?(n) }.length
+      def container_nodes
+        [:class, :module]
+      end
+
+      def branch_nodes
+        [:call, :fcall, :brace_block, :do_block]
+      end
+
+      def condition_nodes
+        [:==, :===, :"<>", :"<=", :">=", :"=~", :>, :<, :else, :"<=>"]
+      end
     end
 
     def file_names
@@ -70,27 +103,11 @@ module Cane
     end
 
     def order(result)
-      result.sort_by(&:complexity).reverse
+      result.sort_by(&:sort_index).reverse
     end
 
-    def assignment_nodes
-      [:assign, :opassign]
-    end
-
-    def method_nodes
-      [:def]
-    end
-
-    def container_nodes
-      [:class, :module]
-    end
-
-    def branch_nodes
-      [:call, :fcall, :brace_block, :do_block]
-    end
-
-    def condition_nodes
-      [:==, :===, :"<>", :"<=", :">=", :"=~", :>, :<, :else, :"<=>"]
+    def max_allowed_complexity
+      opts.fetch(:max)
     end
   end
 end
