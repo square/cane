@@ -55,73 +55,27 @@ describe Cane::AbcCheck do
     violations[0].description.should be_instance_of(String)
   end
 
-  it 'creates an AbcMaxViolation for class methods above the threshold' do
-    file_name = make_file(<<-RUBY)
-      class Harness
-        def self.complex_method(a)
-          b = a
-          return b if b > 3
+  def self.it_should_extract_method_name(method_name, label=method_name)
+    it "creates an AbcMaxViolation for #{method_name}" do
+      file_name = make_file(<<-RUBY)
+        class Harness
+          def #{method_name}(a)
+            b = a
+            return b if b > 3
+          end
         end
-      end
-    RUBY
+      RUBY
 
-    violations = described_class.new(files: file_name, max: 1).violations
-    violations.length.should == 1
-    violations[0].should be_instance_of(Cane::AbcMaxViolation)
-    violations[0].columns.should == [file_name, "Harness > complex_method", 2]
+      violations = described_class.new(files: file_name, max: 1).violations
+      violations[0].detail.should == "Harness > #{label}"
+    end
   end
 
-  it 'creates an AbcMaxViolation for methods named after keywords' do
-    # Seen in the wild in actionpack:
-    #   lib/action_controller/vendor/html-scanner/html/tokenizer.rb
-    file_name = make_file(<<-RUBY)
-      class Harness
-        def next(a)
-          b = a
-          return b if b > 3
-        end
-      end
-    RUBY
-
-    violations = described_class.new(files: file_name, max: 1).violations
-    violations.length.should == 1
-    violations[0].should be_instance_of(Cane::AbcMaxViolation)
-    violations[0].columns.should == [file_name, "Harness > next", 2]
-  end
-
-  it 'creates an AbcMaxViolation for methods named after constants' do
-    # Seen in the wild in actionpack:
-    #  lib/action_dispatch/http/request.rb
-    file_name = make_file(<<-RUBY)
-      class Harness
-        def GET(a)
-          b = a
-          return b if b > 3
-        end
-      end
-    RUBY
-
-    violations = described_class.new(files: file_name, max: 1).violations
-    violations.length.should == 1
-    violations[0].should be_instance_of(Cane::AbcMaxViolation)
-    violations[0].columns.should == [file_name, "Harness > GET", 2]
-  end
-
-  it 'creates an AbcMaxViolation for backtick override' do
-    # Seen in the wild in actionpack:
-    #   lib/active_support/core_ext/kernel/agnostics.rb
-    file_name = make_file(<<-RUBY)
-      class Harness
-        def `(a)
-          b = a
-          return b if b > 3
-        end
-      end
-    RUBY
-
-    violations = described_class.new(files: file_name, max: 1).violations
-    violations.length.should == 1
-    violations[0].should be_instance_of(Cane::AbcMaxViolation)
-    violations[0].columns.should == [file_name, "Harness > `", 2]
-  end
+  # These method names all create different ASTs. Which is weird.
+  it_should_extract_method_name 'a'
+  it_should_extract_method_name 'self.a', 'a'
+  it_should_extract_method_name 'next'
+  it_should_extract_method_name 'GET'
+  it_should_extract_method_name '`'
+  it_should_extract_method_name '>='
 end
