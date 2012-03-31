@@ -9,5 +9,7 @@ module Cane
     def description
       "Methods exceeded maximum allowed ABC complexity"
     end
+
+    alias_method :sort_index, :complexity
   end
 end

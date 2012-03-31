@@ -1,6 +1,7 @@
 require 'ripper'
 
 require 'cane/abc_max_violation'
+require 'cane/syntax_violation'
 
 module Cane
 
@@ -18,6 +19,8 @@ module Cane
 
     def find_violations(file_name)
       ast = sexps_from_file(file_name)
+
+      return SyntaxViolation.new(file_name) unless ast
 
       process_ast(ast).
         select { |nesting, complexity| complexity > max_allowed_complexity }.
@@ -70,7 +73,7 @@ module Cane
     end
 
     def order(result)
-      result.sort_by(&:complexity).reverse
+      result.sort_by(&:sort_index).reverse
     end
 
     def assignment_nodes

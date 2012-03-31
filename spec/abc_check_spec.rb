@@ -43,4 +43,15 @@ describe Cane::AbcCheck do
     complexities = violations.map(&:complexity)
     complexities.should == complexities.sort.reverse
   end
+
+  it 'creates a SyntaxViolation when code cannot be parsed' do
+    file_name = make_file(<<-RUBY)
+      class Harness
+    RUBY
+
+    violations = described_class.new(files: file_name).violations
+    violations.length.should == 1
+    violations[0].should be_instance_of(Cane::SyntaxViolation)
+    violations[0].file_name.should == file_name
+  end
 end
