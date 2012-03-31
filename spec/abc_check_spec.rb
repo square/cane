@@ -20,8 +20,7 @@ describe Cane::AbcCheck do
     violations = described_class.new(files: file_name, max: 1).violations
     violations.length.should == 1
     violations[0].should be_instance_of(Cane::AbcMaxViolation)
-    violations[0].to_s.should include("Harness")
-    violations[0].to_s.should include("complex_method")
+    violations[0].columns.should == [file_name, "Harness > complex_method", 2]
   end
 
   it 'sorts violations by complexity' do
