@@ -52,6 +52,7 @@ describe Cane::AbcCheck do
     violations = described_class.new(files: file_name).violations
     violations.length.should == 1
     violations[0].should be_instance_of(Cane::SyntaxViolation)
-    violations[0].file_name.should == file_name
+    violations[0].columns.should == [file_name]
+    violations[0].description.should be_instance_of(String)
   end
 end
