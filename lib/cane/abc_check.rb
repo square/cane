@@ -51,11 +51,7 @@ module Cane
           nesting = nesting + [label_for(node)]
           complexity[nesting.join(" > ")] = calculate_abc(node)
         elsif container_nodes.include?(node[0])
-          parent = if node[1][1][1].is_a?(Symbol)
-            node[1][1][1]
-          else
-            node[1][-1][1]
-          end
+          parent  = node[1][-1][1]
           nesting = nesting + [parent]
         end
 
