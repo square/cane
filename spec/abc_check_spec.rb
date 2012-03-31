@@ -70,4 +70,58 @@ describe Cane::AbcCheck do
     violations[0].should be_instance_of(Cane::AbcMaxViolation)
     violations[0].columns.should == [file_name, "Harness > complex_method", 2]
   end
+
+  it 'creates an AbcMaxViolation for methods named after keywords' do
+    # Seen in the wild in actionpack:
+    #   lib/action_controller/vendor/html-scanner/html/tokenizer.rb
+    file_name = make_file(<<-RUBY)
+      class Harness
+        def next(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = described_class.new(files: file_name, max: 1).violations
+    violations.length.should == 1
+    violations[0].should be_instance_of(Cane::AbcMaxViolation)
+    violations[0].columns.should == [file_name, "Harness > next", 2]
+  end
+
+  it 'creates an AbcMaxViolation for methods named after constants' do
+    # Seen in the wild in actionpack:
+    #  lib/action_dispatch/http/request.rb
+    file_name = make_file(<<-RUBY)
+      class Harness
+        def GET(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = described_class.new(files: file_name, max: 1).violations
+    violations.length.should == 1
+    violations[0].should be_instance_of(Cane::AbcMaxViolation)
+    violations[0].columns.should == [file_name, "Harness > GET", 2]
+  end
+
+  it 'creates an AbcMaxViolation for backtick override' do
+    # Seen in the wild in actionpack:
+    #   lib/active_support/core_ext/kernel/agnostics.rb
+    file_name = make_file(<<-RUBY)
+      class Harness
+        def `(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = described_class.new(files: file_name, max: 1).violations
+    violations.length.should == 1
+    violations[0].should be_instance_of(Cane::AbcMaxViolation)
+    violations[0].columns.should == [file_name, "Harness > `", 2]
+  end
 end

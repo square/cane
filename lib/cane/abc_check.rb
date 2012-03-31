@@ -76,7 +76,9 @@ module Cane
       def label_for(node)
         # A default case is deliberately omitted since I know of no way this
         # could fail and want it to fail fast.
-        node.detect {|x| [:@ident, :@op].include?(x[0]) }[1]
+        node.detect {|x|
+          [:@ident, :@op, :@kw, :@const, :@backtick].include?(x[0])
+        }[1]
       end
 
       def count_nodes(node, types)
