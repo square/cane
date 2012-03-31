@@ -48,7 +48,7 @@ module Cane
       # which is a bit confusing. `nesting` does not.
       def process_ast(node, complexity = {}, nesting = [])
         if method_nodes.include?(node[0])
-          nesting = nesting + [node[1][1]]
+          nesting = nesting + [label_for(node)]
           complexity[nesting.join(" > ")] = calculate_abc(node)
         elsif container_nodes.include?(node[0])
           parent = if node[1][1][1].is_a?(Symbol)
@@ -73,6 +73,12 @@ module Cane
         abc
       end
 
+      def label_for(node)
+        # A default case is deliberately omitted since I know of no way this
+        # could fail and want it to fail fast.
+        node.detect {|x| [:@ident, :@op].include?(x[0]) }[1]
+      end
+
       def count_nodes(node, types)
         node.flatten.select { |n| types.include?(n) }.length
       end
@@ -82,7 +88,7 @@ module Cane
       end
 
       def method_nodes
-        [:def]
+        [:def, :defs]
       end
 
       def container_nodes

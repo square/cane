@@ -54,4 +54,20 @@ describe Cane::AbcCheck do
     violations[0].columns.should == [file_name]
     violations[0].description.should be_instance_of(String)
   end
+
+  it 'creates an AbcMaxViolation for class methods above the threshold' do
+    file_name = make_file(<<-RUBY)
+      class Harness
+        def self.complex_method(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = described_class.new(files: file_name, max: 1).violations
+    violations.length.should == 1
+    violations[0].should be_instance_of(Cane::AbcMaxViolation)
+    violations[0].columns.should == [file_name, "Harness > complex_method", 2]
+  end
 end
