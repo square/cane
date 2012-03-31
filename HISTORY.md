@@ -1,5 +1,11 @@
 # Cane History
 
+## 1.2.0 - 31 March 2012 (adce51b9)
+
+* Gracefully handle files with invalid syntax (#1)
+* Included class methods in ABC check (#8)
+* Can disable style and doc checks from rake task (#9)
+
 ## 1.1.0 - 24 March 2012 (ba8a74fc)
 
 * `app` added to default globs
