@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     cane (1.2.0)
-      tailor
 
 GEM
   remote: http://rubygems.org/
@@ -22,9 +21,6 @@ GEM
       multi_json (~> 1.0.3)
       simplecov-html (~> 0.5.3)
     simplecov-html (0.5.3)
-    tailor (0.1.5)
-      term-ansicolor (>= 1.0.5)
-    term-ansicolor (1.0.7)
 
 PLATFORMS
   ruby
