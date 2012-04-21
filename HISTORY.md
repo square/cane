@@ -1,5 +1,10 @@
 # Cane History
 
+## 1.3.0 - 20 April 2012 (c166dfa0)
+
+* Remove dependency on tailor. Fewer styles checks are performed, but the three
+  remaining are the only ones I've found useful.
+
 ## 1.2.0 - 31 March 2012 (adce51b9)
 
 * Gracefully handle files with invalid syntax (#1)
