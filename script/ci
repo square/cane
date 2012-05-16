@@ -39,11 +39,4 @@ function prepare_and_run() {
   run_tests
 }
 
-function tag_green_build() {
-  tag_name="ci-cane-master/latest"
-  git tag -f -m "tagging green build" "$tag_name"
-  git push -f origin "$tag_name"
-}
-
-prepare_and_run "1.9.3-p0" &&
-  tag_green_build
+prepare_and_run "1.9.3-p0"
