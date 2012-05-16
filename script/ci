@@ -19,7 +19,7 @@ function switch_ruby() {
 function install_bundler_if_needed() {
   echo "Checking for Bundler $bundler_version..."
   if ! gem list --installed bundler --version "$bundler_version" > /dev/null; then
-    gem install bundler --version "$bundler_version" --source http://mirrors.squareup.com/rubygems
+    gem install bundler --version "$bundler_version"
   fi
 }
 
