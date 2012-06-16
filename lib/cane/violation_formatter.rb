@@ -11,10 +11,14 @@ module Cane
       grouped_violations.map do |description, violations|
         format_group_header(description, violations) +
           format_violations(violations)
-      end.flatten.join("\n") + "\n\n"
+      end.flatten.join("\n") + "\n\n" + totals + "\n\n"
     end
 
     protected
+
+    def totals
+      "Total Violations: #{violations.count}"
+    end
 
     def format_group_header(description, violations)
       ["", "%s (%i):" % [description, violations.length], ""]
