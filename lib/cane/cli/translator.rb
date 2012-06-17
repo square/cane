@@ -8,6 +8,7 @@ module Cane
         result = {}
         translate_abc_options(result)
         translate_doc_options(result)
+        translate_encoding_options(result)
         translate_style_options(result)
 
         result[:threshold] = options.fetch(:threshold, [])
@@ -34,6 +35,12 @@ module Cane
         result[:doc] = {
           files: option_with_default(:doc_glob),
         } unless check_disabled(:no_doc, [:doc_glob])
+      end
+
+      def translate_encoding_options(result)
+        result[:encoding] = {
+          files: option_with_default(:encoding_glob),
+        } unless check_disabled(:no_encoding, [:encoding_glob])
       end
 
       def check_disabled(check, params)

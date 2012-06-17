@@ -33,7 +33,7 @@ describe 'Cane' do
       end
     RUBY
 
-    _, exitstatus = run("--abc-glob #{file_name} --abc-max 1")
+    _, exitstatus = run("--abc-glob #{file_name} --abc-max 1 --no-encoding")
 
     exitstatus.should == 1
   end
@@ -41,7 +41,7 @@ describe 'Cane' do
   it 'fails if style metrics do not meet requirements' do
     file_name = make_file("whitespace ")
 
-    output, exitstatus = run("--style-glob #{file_name}")
+    output, exitstatus = run("--style-glob #{file_name} --no-encoding")
     exitstatus.should == 1
     output.should include("Lines violated style requirements")
   end
@@ -57,7 +57,8 @@ describe 'Cane' do
   it 'does not include trailing new lines in the character count' do
     file_name = make_file('#' * 80 + "\n" + '#' * 80)
 
-    output, exitstatus = run("--style-glob #{file_name} --style-measure 80")
+    options = "--style-glob #{file_name} --style-measure 80 --no-encoding"
+    output, exitstatus = run(options)
     exitstatus.should == 0
     output.should be_empty
   end
@@ -65,7 +66,8 @@ describe 'Cane' do
   it 'allows upper bound of failed checks' do
     file_name = make_file("whitespace ")
 
-    output, exitstatus = run("--style-glob #{file_name} --max-violations 1")
+    options = "--style-glob #{file_name} --max-violations 1 --no-encoding"
+    output, exitstatus = run(options)
     exitstatus.should == 0
     output.should include("Lines violated style requirements")
   end
@@ -84,6 +86,14 @@ describe 'Cane' do
     output, exitstatus = run("--doc-glob #{file_name}")
     exitstatus.should == 1
     output.should include("Classes are not documented")
+  end
+
+  it 'allows checking of file encoding markers' do
+    file_name = make_file("puts 'foo'")
+
+    output, exitstatus = run("--encoding-glob #{file_name}")
+    exitstatus.should == 1
+    output.should include("Source file missing an encoding marker")
   end
 
   context 'with a .cane file' do

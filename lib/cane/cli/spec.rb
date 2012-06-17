@@ -13,6 +13,7 @@ module Cane
         style_glob:     '{app,lib,spec}/**/*.rb',
         style_measure:  '80',
         doc_glob:       '{app,lib}/**/*.rb',
+        encoding_glob:  '{app,lib}/**/*.rb',
         max_violations: '0',
       }
 
@@ -26,6 +27,7 @@ module Cane
         add_abc_options
         add_style_options
         add_doc_options
+        add_encoding_options
         add_threshold_options
         add_cane_options
 
@@ -62,6 +64,13 @@ BANNER
         add_option %w(--abc-glob GLOB), "Glob to run ABC metrics over"
         add_option %w(--abc-max VALUE), "Ignore methods under this complexity"
         add_option %w(--no-abc), "Disable ABC checking"
+
+        parser.separator ""
+      end
+
+      def add_encoding_options
+        add_option %w(--encoding-glob GLOB), "Glob to run encoding metrics over"
+        add_option %w(--no-encoding), "Disable Encoding checking"
 
         parser.separator ""
       end
