@@ -5,7 +5,7 @@ module Cane
   # Creates violations for files that do not meet style conventions. Only
   # highly obvious, probable, and non-controversial checks are performed here.
   # It is not the goal of the tool to provide an extensive style report, but
-  # only to prevent studid mistakes.
+  # only to prevent stupid mistakes.
   class StyleCheck < Struct.new(:opts)
     def violations
       file_list.map do |file_path|
