@@ -2,6 +2,7 @@ require 'ripper'
 
 require 'cane/abc_max_violation'
 require 'cane/syntax_violation'
+require 'set'
 
 module Cane
 
@@ -23,7 +24,7 @@ module Cane
       when nil
         InvalidAst.new(file_name)
       else
-        RubyAst.new(file_name, max_allowed_complexity, ast)
+        RubyAst.new(file_name, max_allowed_complexity, ast, exclusions)
       end.violations
     end
 
@@ -35,7 +36,8 @@ module Cane
     end
 
     # Wrapper object around sexps returned from ripper.
-    class RubyAst < Struct.new(:file_name, :max_allowed_complexity, :sexps)
+    class RubyAst < Struct.new(:file_name, :max_allowed_complexity,
+                               :sexps, :exclusions)
       def violations
         process_ast(sexps).
           select { |nesting, complexity| complexity > max_allowed_complexity }.
@@ -49,7 +51,9 @@ module Cane
       def process_ast(node, complexity = {}, nesting = [])
         if method_nodes.include?(node[0])
           nesting = nesting + [label_for(node)]
-          complexity[nesting.join(" > ")] = calculate_abc(node)
+          unless excluded?(node, *nesting)
+            complexity[nesting.join(" > ")] = calculate_abc(node)
+          end
         elsif container_nodes.include?(node[0])
           parent  = node[1][-1][1]
           nesting = nesting + [parent]
@@ -100,6 +104,14 @@ module Cane
       def condition_nodes
         [:==, :===, :"<>", :"<=", :">=", :"=~", :>, :<, :else, :"<=>"]
       end
+
+      METH_CHARS = { def: '#', defs: '.' }
+
+      def excluded?(node, *modules, meth_name)
+        meth_char = METH_CHARS.fetch(node.first)
+        description = [modules.join('::'), meth_name].join(meth_char)
+        exclusions.include?(description)
+      end
     end
 
     def file_names
@@ -112,6 +124,10 @@ module Cane
 
     def max_allowed_complexity
       opts.fetch(:max)
+    end
+
+    def exclusions
+      opts.fetch(:exclusions, []).to_set
     end
   end
 end
