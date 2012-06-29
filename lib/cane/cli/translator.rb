@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Cane
   module CLI
 
@@ -18,15 +20,17 @@ module Cane
 
       def translate_abc_options(result)
         result[:abc] = {
-          files: option_with_default(:abc_glob),
-          max:   option_with_default(:abc_max).to_i
+          files:      option_with_default(:abc_glob),
+          max:        option_with_default(:abc_max).to_i,
+          exclusions: exclusions_for('abc')
         } unless check_disabled(:no_abc, [:abc_glob, :abc_max])
       end
 
       def translate_style_options(result)
         result[:style] = {
-          files:   option_with_default(:style_glob),
-          measure: option_with_default(:style_measure).to_i,
+          files:      option_with_default(:style_glob),
+          measure:    option_with_default(:style_measure).to_i,
+          exclusions: exclusions_for('style')
         } unless check_disabled(:no_style, [:style_glob])
       end
 
@@ -44,6 +48,22 @@ module Cane
 
       def option_with_default(key)
         options.fetch(key, defaults.fetch(key))
+      end
+
+    private
+
+      def exclusions_for(tool)
+        Array(exclusions[tool])
+      end
+
+      def exclusions
+        @exclusions ||= begin
+          if file = options[:exclusions_file]
+            YAML.load_file(file)
+          else
+            {}
+          end
+        end
       end
     end
 

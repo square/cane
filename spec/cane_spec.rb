@@ -127,4 +127,37 @@ describe 'Cane' do
     run("--no-doc --doc-glob #{file_name}").should ==
       run("--doc-glob #{file_name}")
   end
+
+  it 'supports exclusions' do
+    line_with_whitespace = "whitespace "
+    file_name = make_file(<<-RUBY)
+      # #{line_with_whitespace}
+      class Harness
+        def complex_method(a)
+          if a < 2
+            return "low"
+          else
+            return "high"
+          end
+        end
+      end
+    RUBY
+
+    exclusions_file = make_file(<<-YAML)
+abc:
+  - Harness#complex_method
+style:
+  - #{file_name}
+    YAML
+
+    options = [
+      "--abc-glob", file_name,
+      "--abc-max", 1,
+      "--style-glob", file_name,
+      "--exclusions-file", exclusions_file
+    ].join(' ')
+
+    _, exitstatus = run(options)
+    exitstatus.should == 0
+  end
 end
