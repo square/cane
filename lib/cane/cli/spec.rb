@@ -92,6 +92,8 @@ BANNER
 
       def add_cane_options
         add_option %w(--max-violations VALUE), "Max allowed violations"
+        add_option %w(--exclusions-file FILE),
+                   "YAML file containing a list of exclusions"
 
         parser.separator ""
       end

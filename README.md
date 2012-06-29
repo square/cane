@@ -48,6 +48,7 @@ Customize behaviour with a wealth of options:
             --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD.
 
             --max-violations VALUE       Max allowed violations (default: 0)
+            --exclusions-file FILE       YAML file containing a list of exclusions
 
             --version                    Show version
         -h, --help                       Show this message
@@ -91,6 +92,8 @@ on to an existing application that may already have many violations. By setting
 the maximum to the current number, no immediate changes will be required to
 your existing code base, but you will be protected from things getting worse.
 
+You can also consider defining exclusions for each violation (see below).
+
 ## Integrating with SimpleCov
 
 Any value in a file can be used as a threshold:
@@ -114,6 +117,24 @@ You can use a `SimpleCov` formatter to create the required file:
     end
 
     SimpleCov.formatter = SimpleCov::Formatter::QualityFormatter
+
+## Defining Exclusions
+
+Occasionally, you may want to permanently ignore specific cane violations.
+Create a YAML file like so:
+
+    abc:
+      - Some::Fully::Qualified::Class.some_class_method
+      - Some::Fully::Qualified::Class#some_instance_method
+    style:
+      relative/path/to/some/file.rb
+      relative/path/to/some/other/file.rb
+
+Tell cane about this file using the `--exclusions-file` option:
+
+    > cane --exclusions-file path/to/exclusions.yml
+
+Currently, only the abc and style checks support exclusions.
 
 ## Compatibility
 

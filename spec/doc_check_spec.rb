@@ -22,9 +22,11 @@ end
     violations[0].should be_instance_of(Cane::UndocumentedClassViolation)
     violations[0].file_name.should == file_name
     violations[0].number.should == 3
+    violations[0].columns.last.should eq("NoDoc")
 
     violations[1].should be_instance_of(Cane::UndocumentedClassViolation)
     violations[1].file_name.should == file_name
     violations[1].number.should == 4
+    violations[1].columns.last.should eq("AlsoNoDoc")
   end
 end
