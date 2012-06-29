@@ -32,6 +32,8 @@ module Cane
     attr_accessor :no_doc
     # Max violations to tolerate (default: 0)
     attr_accessor :max_violations
+    # File containing list of exclusions in YAML format
+    attr_accessor :exclusions_file
 
     # Add a threshold check. If the file exists and it contains a number,
     # compare that number with the given value using the operator.
@@ -63,7 +65,8 @@ module Cane
         :max_violations,
         :style_glob,
         :no_style,
-        :style_measure
+        :style_measure,
+        :exclusions_file
       ].inject(threshold: @threshold) do |opts, setting|
         value = self.send(setting)
         opts[setting] = value unless value.nil?
