@@ -1,11 +1,12 @@
 require 'cane/style_violation'
+require 'set'
 
 module Cane
 
   # Creates violations for files that do not meet style conventions. Only
   # highly obvious, probable, and non-controversial checks are performed here.
   # It is not the goal of the tool to provide an extensive style report, but
-  # only to prevent studid mistakes.
+  # only to prevent stupid mistakes.
   class StyleCheck < Struct.new(:opts)
     def violations
       file_list.map do |file_path|
@@ -30,7 +31,7 @@ module Cane
     end
 
     def file_list
-      Dir[opts.fetch(:files)]
+      Dir[opts.fetch(:files)].reject { |f| excluded?(f) }
     end
 
     def measure
@@ -39,6 +40,14 @@ module Cane
 
     def map_lines(file_path, &block)
       File.open(file_path).each_line.map.with_index(&block)
+    end
+
+    def exclusions
+      @exclusions ||= opts.fetch(:exclusions, []).to_set
+    end
+
+    def excluded?(file)
+      exclusions.include?(file)
     end
   end
 

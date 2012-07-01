@@ -55,6 +55,43 @@ describe Cane::AbcCheck do
     violations[0].description.should be_instance_of(String)
   end
 
+  it 'skips declared exclusions' do
+    file_name = make_file(<<-RUBY)
+      class Harness
+        def instance_meth
+          true
+        end
+
+        def self.class_meth
+          true
+        end
+
+        module Nested
+          def i_meth
+            true
+          end
+
+          def self.c_meth
+            true
+          end
+
+          def other_meth
+            true
+          end
+        end
+      end
+    RUBY
+
+    exclusions = %w[ Harness#instance_meth  Harness.class_meth
+                     Harness::Nested#i_meth Harness::Nested.c_meth ]
+    violations = described_class.new(files: file_name, max: 0,
+                                     exclusions: exclusions).violations
+    violations.length.should == 1
+    violations[0].should be_instance_of(Cane::AbcMaxViolation)
+    columns = violations[0].columns
+    columns.should == [file_name, "Harness > Nested > other_meth", 1]
+  end
+
   def self.it_should_extract_method_name(method_name, label=method_name)
     it "creates an AbcMaxViolation for #{method_name}" do
       file_name = make_file(<<-RUBY)
