@@ -1,5 +1,10 @@
 # Cane History
 
+## 1.4.0 - 2 July 2012 (1afc999d)
+
+* Allow files and methods to be whitelisted (#16)
+* Show total number of violations in output (#14)
+
 ## 1.3.0 - 20 April 2012 (c166dfa0)
 
 * Remove dependency on tailor. Fewer styles checks are performed, but the three
