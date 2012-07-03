@@ -99,7 +99,7 @@ BANNER
       end
 
       def add_version
-        parser.on_tail("--version", "Show version") do
+        parser.on_tail("-v", "--version", "Show version") do
           puts Cane::VERSION
           raise OptionsHandled
         end
