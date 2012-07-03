@@ -127,8 +127,8 @@ Create a YAML file like so:
       - Some::Fully::Qualified::Class.some_class_method
       - Some::Fully::Qualified::Class#some_instance_method
     style:
-      relative/path/to/some/file.rb
-      relative/path/to/some/other/file.rb
+      - relative/path/to/some/file.rb
+      - relative/path/to/some/other/file.rb
 
 Tell cane about this file using the `--exclusions-file` option:
 
