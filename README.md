@@ -50,7 +50,7 @@ Customize behaviour with a wealth of options:
             --max-violations VALUE       Max allowed violations (default: 0)
             --exclusions-file FILE       YAML file containing a list of exclusions
 
-            --version                    Show version
+        -v, --version                    Show version
         -h, --help                       Show this message
 
 Set default options into a `.cane` file:
