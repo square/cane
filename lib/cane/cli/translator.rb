@@ -57,12 +57,10 @@ module Cane
       end
 
       def exclusions
-        @exclusions ||= begin
-          if file = options[:exclusions_file]
-            YAML.load_file(file)
-          else
-            {}
-          end
+        @exclusions ||= if file = options[:exclusions_file]
+          YAML.load_file(file)
+        else
+          {}
         end
       end
     end
