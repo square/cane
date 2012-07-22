@@ -1,4 +1,5 @@
 require 'cane/abc_check'
+require 'cane/encoding_check'
 require 'cane/style_check'
 require 'cane/doc_check'
 require 'cane/threshold_check'
@@ -16,6 +17,7 @@ module Cane
   class Runner
     CHECKERS = {
       abc:       AbcCheck,
+      encoding:  EncodingCheck,
       style:     StyleCheck,
       doc:       DocCheck,
       threshold: ThresholdCheck

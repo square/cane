@@ -30,6 +30,10 @@ module Cane
     attr_accessor :doc_glob
     # TRUE to disable doc checks
     attr_accessor :no_doc
+    # Glob to run encoding checks over (default: "lib/**/*.rb")
+    attr_accessor :encoding_glob
+    # TRUE to disable encoding checks
+    attr_accessor :no_encoding
     # Max violations to tolerate (default: 0)
     attr_accessor :max_violations
     # File containing list of exclusions in YAML format
@@ -62,6 +66,8 @@ module Cane
         :abc_max,
         :doc_glob,
         :no_doc,
+        :encoding_glob,
+        :no_encoding,
         :max_violations,
         :style_glob,
         :no_style,
