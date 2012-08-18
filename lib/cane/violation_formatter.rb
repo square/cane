@@ -34,15 +34,15 @@ module Cane
 
     def format_violation(violation, column_widths)
       [
-        '  ' + violation.columns.map.with_index { |column, index|
+        '  ' + violation.columns.map.with_index {|column, index|
           "%-#{column_widths[index]}s" % column
         }.join('  ')
       ]
     end
 
     def calculate_columm_widths(violations)
-      violations.map { |violation|
-        violation.columns.map { |x| x.to_s.length }
+      violations.map {|violation|
+        violation.columns.map {|x| x.to_s.length }
       }.transpose.map(&:max)
     end
 

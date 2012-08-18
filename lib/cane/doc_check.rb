@@ -10,7 +10,7 @@ module Cane
     MAGIC_COMMENT_REGEX = %r"coding\s*[=:]\s*([[:alnum:]\-_]+)"
 
     def violations
-      file_names.map { |file_name|
+      file_names.map {|file_name|
         find_violations(file_name)
       }.flatten
     end
