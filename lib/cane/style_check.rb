@@ -42,7 +42,7 @@ module Cane
 
     def map_lines(file_path, &block)
       EncodingAwareIterator
-        .new(File.open(file_path).lines)
+        .new(File.open(file_path, 'r:utf-8').lines)
         .map_with_index(&block)
     end
 
