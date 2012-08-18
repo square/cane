@@ -1,5 +1,7 @@
-require 'cane/style_violation'
 require 'set'
+
+require 'cane/file'
+require 'cane/style_violation'
 
 module Cane
 
@@ -31,7 +33,7 @@ module Cane
     end
 
     def file_list
-      Dir[opts.fetch(:files)].reject { |f| excluded?(f) }
+      Dir[opts.fetch(:files)].reject {|f| excluded?(f) }
     end
 
     def measure
@@ -39,7 +41,7 @@ module Cane
     end
 
     def map_lines(file_path, &block)
-      File.open(file_path).each_line.map.with_index(&block)
+      Cane::File.iterator(file_path).map_with_index(&block)
     end
 
     def exclusions

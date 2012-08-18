@@ -42,8 +42,8 @@ module Cane
       end
 
       def get_default_options
-        if File.exists?('./.cane')
-          File.read('./.cane').gsub("\n", ' ').split(' ')
+        if ::File.exists?('./.cane')
+          ::File.read('./.cane').gsub("\n", ' ').split(' ')
         else
           []
         end
