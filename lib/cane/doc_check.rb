@@ -3,6 +3,10 @@ module Cane
   # Creates violations for class definitions that do not have an explantory
   # comment immediately preceeding.
   class DocCheck < Struct.new(:opts)
+
+    # Stolen from ERB source.
+    MAGIC_COMMENT_REGEX = %r"coding\s*[=:]\s*([[:alnum:]\-_]+)"
+
     def violations
       file_names.map { |file_name|
         find_violations(file_name)
@@ -29,7 +33,7 @@ module Cane
     end
 
     def comment?(line)
-      line =~ /^\s*#/
+      line =~ /^\s*#/ && !(MAGIC_COMMENT_REGEX =~ line)
     end
   end
 
