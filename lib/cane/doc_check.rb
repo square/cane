@@ -1,3 +1,5 @@
+require 'cane/encoding_aware_iterator'
+
 module Cane
 
   # Creates violations for class definitions that do not have an explantory
@@ -15,7 +17,8 @@ module Cane
 
     def find_violations(file_name)
       last_line = ""
-      File.open(file_name, 'r:utf-8').lines.map.with_index do |line, number|
+      i = EncodingAwareIterator.new(File.open(file_name, 'r:utf-8').lines)
+      i.map_with_index do |line, number|
         result = if class_definition?(line) && !comment?(last_line)
           UndocumentedClassViolation.new(file_name, number + 1, line)
         end

@@ -1,5 +1,7 @@
-require 'cane/style_violation'
 require 'set'
+
+require 'cane/style_violation'
+require 'cane/encoding_aware_iterator'
 
 module Cane
 
@@ -39,7 +41,9 @@ module Cane
     end
 
     def map_lines(file_path, &block)
-      File.open(file_path).each_line.map.with_index(&block)
+      EncodingAwareIterator
+        .new(File.open(file_path).lines)
+        .map_with_index(&block)
     end
 
     def exclusions
