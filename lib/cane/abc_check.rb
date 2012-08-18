@@ -1,8 +1,9 @@
 require 'ripper'
+require 'set'
 
+require 'cane/file'
 require 'cane/abc_max_violation'
 require 'cane/syntax_violation'
-require 'set'
 
 module Cane
 
@@ -19,7 +20,7 @@ module Cane
     protected
 
     def find_violations(file_name)
-      ast = Ripper::SexpBuilder.new(File.open(file_name, 'r:utf-8').read).parse
+      ast = Ripper::SexpBuilder.new(Cane::File.contents(file_name)).parse
       case ast
       when nil
         InvalidAst.new(file_name)

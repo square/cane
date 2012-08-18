@@ -1,4 +1,4 @@
-require 'cane/encoding_aware_iterator'
+require 'cane/file'
 
 module Cane
 
@@ -17,8 +17,7 @@ module Cane
 
     def find_violations(file_name)
       last_line = ""
-      i = EncodingAwareIterator.new(File.open(file_name, 'r:utf-8').lines)
-      i.map_with_index do |line, number|
+      Cane::File.iterator(file_name).map_with_index do |line, number|
         result = if class_definition?(line) && !comment?(last_line)
           UndocumentedClassViolation.new(file_name, number + 1, line)
         end
