@@ -38,6 +38,12 @@ module Cane
     # Wrapper object around sexps returned from ripper.
     class RubyAst < Struct.new(:file_name, :max_allowed_complexity,
                                :sexps, :exclusions)
+
+      def initialize(*args)
+        super
+        self.anon_method_add = true
+      end
+
       def violations
         process_ast(sexps).
           select { |nesting, complexity| complexity > max_allowed_complexity }.
@@ -45,6 +51,10 @@ module Cane
       end
 
       protected
+
+      # Stateful flag used to determine whether we are currently parsing an
+      # anonymous class. See #container_label.
+      attr_accessor :anon_method_add
 
       # Recursive function to process an AST. The `complexity` variable mutates,
       # which is a bit confusing. `nesting` does not.
@@ -54,8 +64,7 @@ module Cane
           unless excluded?(node, *nesting)
             complexity[nesting.join(" > ")] = calculate_abc(node)
           end
-        elsif container_nodes.include?(node[0])
-          parent  = node[1][-1][1]
+        elsif parent = container_label(node)
           nesting = nesting + [parent]
         end
 
@@ -71,6 +80,27 @@ module Cane
         c = count_nodes(method_node, condition_nodes)
         abc = Math.sqrt(a**2 + b**2 + c**2).round
         abc
+      end
+
+      def container_label(node)
+        if container_nodes.include?(node[0])
+          # def foo, def self.foo
+          node[1][-1][1]
+        elsif node[0] == :method_add_block
+          if anon_method_add
+            # Class.new do ...
+            "(anon)"
+          else
+            # MyClass = Class.new do ...
+            # parent already added when processing a parent node
+            anon_method_add = true
+            nil
+          end
+        elsif node[0] == :assign && node[2][0] == :method_add_block
+          # MyClass = Class.new do ...
+          self.anon_method_add = false
+          node[1][-1][1]
+        end
       end
 
       def label_for(node)
