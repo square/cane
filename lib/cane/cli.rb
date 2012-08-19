@@ -2,7 +2,6 @@ require 'cane'
 require 'cane/version'
 
 require 'cane/cli/spec'
-require 'cane/cli/translator'
 
 module Cane
   module CLI

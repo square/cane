@@ -39,7 +39,7 @@ module Cane
 
       task name do
         require 'cane/cli'
-        abort unless Cane.run(translated_options, Cane::CLI::Spec::CHECKS)
+        abort unless Cane.run(OPTIONS.merge(options), Cane::CLI::Spec::CHECKS)
       end
     end
 
@@ -49,13 +49,6 @@ module Cane
         opts[setting] = value unless value.nil?
         opts
       end
-    end
-
-    def translated_options
-      Cane::CLI::Translator.new(
-        options,
-        OPTIONS, Cane::CLI::Spec::SIMPLE_CHECKS
-      ).to_hash
     end
   end
 end

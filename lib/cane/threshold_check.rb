@@ -7,7 +7,7 @@ class ThresholdCheck < Struct.new(:checks)
   def self.key; :threshold; end
 
   def violations
-    checks.map do |operator, file, limit|
+    checks.fetch(:threshold).map do |operator, file, limit|
       value = value_from_file(file)
 
       unless value.send(operator, limit.to_f)

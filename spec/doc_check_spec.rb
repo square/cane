@@ -4,7 +4,7 @@ require 'cane/doc_check'
 
 describe Cane::DocCheck do
   def check(file_name, opts = {})
-    described_class.new(opts.merge(glob: file_name))
+    described_class.new(opts.merge(doc_glob: file_name))
   end
 
   it 'creates a DocViolation for each undocumented class' do

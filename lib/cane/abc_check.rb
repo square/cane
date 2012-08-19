@@ -14,12 +14,21 @@ module Cane
     def self.name; "ABC check"; end
     def self.options
       {
-        glob: ['Glob to run ABC metrics over', '{app,lib}/**/*.rb'],
-        max:  ['Ignore methods under this complexity', '15', :to_i]
+        abc_glob: ['Glob to run ABC metrics over',
+                      default: '{app,lib}/**/*.rb',
+                      clobber: :no_abc],
+        abc_max:  ['Ignore methods under this complexity',
+                      default: 15,
+                      cast:    :to_i,
+                      clobber: :no_abc],
+        no_abc:   ['Disable ABC checking',
+                      cast: ->(x) { !x }]
       }
     end
 
     def violations
+      return [] if opts[:no_abc] == false
+
       order file_names.map {|file_name|
         find_violations(file_name)
       }.flatten
@@ -159,7 +168,7 @@ module Cane
     end
 
     def file_names
-      Dir[opts.fetch(:glob)]
+      Dir[opts.fetch(:abc_glob)]
     end
 
     def order(result)
@@ -167,11 +176,11 @@ module Cane
     end
 
     def max_allowed_complexity
-      opts.fetch(:max)
+      opts.fetch(:abc_max)
     end
 
     def exclusions
-      opts.fetch(:exclusions, []).to_set
+      opts.fetch(:abc_exclusions, []).to_set
     end
   end
 end

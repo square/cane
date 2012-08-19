@@ -4,7 +4,7 @@ require 'cane/style_check'
 
 describe Cane::StyleCheck do
   def check(file_name, opts = {})
-    described_class.new(opts.merge(glob: file_name))
+    described_class.new(opts.merge(style_glob: file_name))
   end
 
   let(:ruby_with_style_issue) do
@@ -18,7 +18,7 @@ describe Cane::StyleCheck do
   it 'creates a StyleViolation for each method above the threshold' do
     file_name = make_file(ruby_with_style_issue)
 
-    violations = check(file_name, measure: 80).violations
+    violations = check(file_name, style_measure: 80).violations
     violations.length.should == 2
   end
 
@@ -26,8 +26,8 @@ describe Cane::StyleCheck do
     file_name = make_file(ruby_with_style_issue)
 
     violations = check(file_name,
-      measure:    80,
-      exclusions: [file_name]
+      style_measure:    80,
+      style_exclusions: [file_name]
     ).violations
 
     violations.length.should == 0
