@@ -3,6 +3,9 @@ require 'cane/file'
 # Configurable check that allows the contents of a file to be compared against
 # a given value.
 class ThresholdCheck < Struct.new(:checks)
+
+  def self.key; :threshold; end
+
   def violations
     checks.map do |operator, file, limit|
       value = value_from_file(file)
