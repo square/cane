@@ -89,7 +89,7 @@ describe Cane::AbcCheck do
                      Harness::Nested#i_meth Harness::Nested.c_meth ]
     violations = check(file_name,
       abc_max:        0,
-      abc_exclusions: exclusions
+      abc_exclude: exclusions
     ).violations
     violations.length.should == 1
     violations[0].values_at(:file, :label, :value).should ==

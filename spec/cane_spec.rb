@@ -143,18 +143,12 @@ describe 'Cane' do
       end
     RUBY
 
-    exclusions_file = make_file(<<-YAML)
-abc:
-  - Harness#complex_method
-style:
-  - #{file_name}
-    YAML
-
     options = [
       "--abc-glob", file_name,
+      "--abc-exclude", "Harness#complex_method",
       "--abc-max", 1,
       "--style-glob", file_name,
-      "--exclusions-file", exclusions_file
+      "--style-exclude", file_name
     ].join(' ')
 
     _, exitstatus = run(options)

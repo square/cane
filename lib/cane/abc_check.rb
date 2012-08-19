@@ -21,6 +21,11 @@ module Cane
                       default: 15,
                       cast:    :to_i,
                       clobber: :no_abc],
+        abc_exclude: ['Exclude method from analysis (eg. Foo::Bar#method)',
+                         variable: 'METHOD',
+                         type: Array,
+                         default: [],
+                         clobber: :no_abc],
         no_abc:   ['Disable ABC checking',
                       cast: ->(x) { !x }]
       }
@@ -180,7 +185,7 @@ module Cane
     end
 
     def exclusions
-      opts.fetch(:abc_exclusions, []).to_set
+      opts.fetch(:abc_exclude, []).flatten.to_set
     end
   end
 end

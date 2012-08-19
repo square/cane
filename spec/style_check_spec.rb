@@ -26,8 +26,8 @@ describe Cane::StyleCheck do
     file_name = make_file(ruby_with_style_issue)
 
     violations = check(file_name,
-      style_measure:    80,
-      style_exclusions: [file_name]
+      style_measure: 80,
+      style_exclude: [file_name]
     ).violations
 
     violations.length.should == 0

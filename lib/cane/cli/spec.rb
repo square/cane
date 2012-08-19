@@ -69,20 +69,20 @@ BANNER
 
       def add_check_options(check)
         check.options.each do |key, data|
-          key      = key.to_s.tr('_', '-')
+          cli_key  = key.to_s.tr('_', '-')
           opts     = data[1] || {}
           variable = opts[:variable] || "VALUE"
           defaults = opts[:default] || []
 
           if opts[:type] == Array
-            parser.on("--#{key} #{variable}", Array, data[0]) do |opts|
+            parser.on("--#{cli_key} #{variable}", Array, data[0]) do |opts|
               (options[key.to_sym] ||= []) << opts
             end
           else
             if [*defaults].length > 0
-              add_option ["--#{key}", variable], *data
+              add_option ["--#{cli_key}", variable], *data
             else
-              add_option ["--#{key}"], *data
+              add_option ["--#{cli_key}"], *data
             end
           end
         end
@@ -93,15 +93,6 @@ BANNER
       def add_cane_options
         add_option %w(--max-violations VALUE),
           "Max allowed violations", default: 0, cast: :to_i
-
-        desc = "YAML file containing a list of exclusions"
-
-        # TODO: Combine this with .cane file, use normal options
-        parser.on(%w(--exclusions-file FILE).join(' '), desc) do |file|
-          exclusions = YAML.load_file(file)
-          options[:abc_exclusions]   = exclusions['abc']   || []
-          options[:style_exclusions] = exclusions['style'] || []
-        end
 
         parser.separator ""
       end
