@@ -3,6 +3,10 @@ require 'spec_helper'
 require 'cane/abc_check'
 
 describe Cane::AbcCheck do
+  def check(file_name, opts = {})
+    described_class.new(opts.merge(glob: file_name))
+  end
+
   it 'creates an AbcMaxViolation for each method above the threshold' do
     file_name = make_file(<<-RUBY)
       class Harness
@@ -17,7 +21,7 @@ describe Cane::AbcCheck do
       end
     RUBY
 
-    violations = described_class.new(files: file_name, max: 1).violations
+    violations = check(file_name, max: 1).violations
     violations.length.should == 1
     violations[0].values_at(:file, :label, :value).should ==
       [file_name, "Harness > complex_method", 2]
@@ -37,7 +41,7 @@ describe Cane::AbcCheck do
       end
     RUBY
 
-    violations = described_class.new(files: file_name, max: 0).violations
+    violations = check(file_name, max: 0).violations
     violations.length.should == 2
     complexities = violations.map {|x| x[:value] }
     complexities.should == complexities.sort.reverse
@@ -48,7 +52,7 @@ describe Cane::AbcCheck do
       class Harness
     RUBY
 
-    violations = described_class.new(files: file_name).violations
+    violations = check(file_name).violations
     violations.length.should == 1
     violations[0][:file].should == file_name
     violations[0][:description].should be_instance_of(String)
@@ -83,8 +87,7 @@ describe Cane::AbcCheck do
 
     exclusions = %w[ Harness#instance_meth  Harness.class_meth
                      Harness::Nested#i_meth Harness::Nested.c_meth ]
-    violations = described_class.new(files: file_name, max: 0,
-                                     exclusions: exclusions).violations
+    violations = check(file_name, max: 0, exclusions: exclusions).violations
     violations.length.should == 1
     violations[0].values_at(:file, :label, :value).should ==
       [file_name, "Harness > Nested > other_meth", 1]
@@ -100,7 +103,7 @@ describe Cane::AbcCheck do
       end
     RUBY
 
-    violations = described_class.new(files: file_name, max: 1).violations
+    violations = check(file_name, max: 1).violations
     violations[0][:label] == "MyClass > test_method"
   end
 
@@ -114,7 +117,7 @@ describe Cane::AbcCheck do
       end
     RUBY
 
-    violations = described_class.new(files: file_name, max: 1).violations
+    violations = check(file_name, max: 1).violations
     violations[0][:label].should == "(anon) > test_method"
   end
 
@@ -129,7 +132,7 @@ describe Cane::AbcCheck do
         end
       RUBY
 
-      violations = described_class.new(files: file_name, max: 1).violations
+      violations = check(file_name, max: 1).violations
       violations[0][:label].should == "Harness > #{label}"
     end
   end

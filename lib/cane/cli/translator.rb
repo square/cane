@@ -5,55 +5,55 @@ module Cane
 
     # Translates CLI options with given defaults to a hash suitable to be
     # passed to `Cane.run`.
-    class Translator < Struct.new(:options, :defaults)
+    class Translator < Struct.new(:options, :defaults, :checks)
       def to_hash
         result = {}
-        translate_abc_options(result)
-        translate_doc_options(result)
-        translate_style_options(result)
+        checks.each do |check|
+          translate_options(result, check)
+        end
 
         result[:threshold] = options.fetch(:threshold, [])
-        result[:max_violations] = option_with_default(:max_violations).to_i
+        result[:max_violations] =
+          options.fetch(:max_violations, defaults[:max_violations]).to_i
 
         result
       end
 
-      def translate_abc_options(result)
-        result[:abc] = {
-          files:      option_with_default(:abc_glob),
-          max:        option_with_default(:abc_max).to_i,
-          exclusions: exclusions_for('abc')
-        } unless check_disabled(:no_abc, [:abc_glob, :abc_max])
+      def translate_options(result, check)
+        unless check_disabled(check)
+          result[check.key] = {
+            exclusions: exclusions_for(check.key)
+          }.merge(extract_options(check))
+        end
       end
 
-      def translate_style_options(result)
-        result[:style] = {
-          files:      option_with_default(:style_glob),
-          measure:    option_with_default(:style_measure).to_i,
-          exclusions: exclusions_for('style')
-        } unless check_disabled(:no_style, [:style_glob])
-      end
-
-      def translate_doc_options(result)
-        result[:doc] = {
-          files: option_with_default(:doc_glob),
-        } unless check_disabled(:no_doc, [:doc_glob])
-      end
-
-      def check_disabled(check, params)
-        relevant_options = options.keys & params + [check]
-
-        check == relevant_options[-1]
-      end
-
-      def option_with_default(key)
-        options.fetch(key, defaults.fetch(key))
+      def extract_options(check)
+        check.options.each_with_object({}) do |(k, v), h|
+          h[k] = cast_for(v).call(options.fetch(to_cli_key(check, k), v[1]))
+        end
       end
 
     private
 
+      def check_disabled(check)
+        disable_key = :"no_#{check.key}"
+        params = check.options.keys.map {|x| to_cli_key(check, x) }
+
+        relevant_options = options.keys & params + [disable_key]
+
+        disable_key == relevant_options[-1]
+      end
+
+      def cast_for(v)
+        (v[2] || ->(x){ x }).to_proc
+      end
+
+      def to_cli_key(check, k)
+        :"#{check.key}_#{k}"
+      end
+
       def exclusions_for(tool)
-        Array(exclusions[tool])
+        Array(exclusions[tool.to_s])
       end
 
       def exclusions

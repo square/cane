@@ -3,6 +3,10 @@ require 'spec_helper'
 require 'cane/doc_check'
 
 describe Cane::DocCheck do
+  def check(file_name, opts = {})
+    described_class.new(opts.merge(glob: file_name))
+  end
+
   it 'creates a DocViolation for each undocumented class' do
     file_name = make_file <<-RUBY
 # This class is documented
@@ -16,7 +20,7 @@ class Meta
 end
     RUBY
 
-    violations = described_class.new(files: file_name).violations
+    violations = check(file_name).violations
     violations.length.should == 2
 
     violations[0].values_at(:file, :line, :label).should == [
@@ -36,7 +40,7 @@ class NoDoc; end
 class AlsoNoDoc; end
     RUBY
 
-    violations = described_class.new(files: file_name).violations
+    violations = check(file_name).violations
     violations.length.should == 2
 
     violations[0].values_at(:file, :line, :label).should == [

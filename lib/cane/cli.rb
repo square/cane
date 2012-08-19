@@ -6,11 +6,10 @@ require 'cane/cli/translator'
 
 module Cane
   module CLI
-
     def run(args)
       opts = Spec.new.parse(args)
       if opts
-        Cane.run(opts)
+        Cane.run(opts, Spec::CHECKS)
       else
         true
       end

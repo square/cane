@@ -1,12 +1,8 @@
-require 'cane/abc_check'
-require 'cane/style_check'
-require 'cane/doc_check'
-require 'cane/threshold_check'
 require 'cane/violation_formatter'
 
 module Cane
-  def run(opts)
-    Runner.new(opts).run
+  def run(*args)
+    Runner.new(*args).run
   end
   module_function :run
 
@@ -14,15 +10,9 @@ module Cane
   # hands the result to a formatter for display. This is the core of the
   # application, but for the actual entry point see `Cane::CLI`.
   class Runner
-    CHECKERS = {
-      abc:       AbcCheck,
-      style:     StyleCheck,
-      doc:       DocCheck,
-      threshold: ThresholdCheck
-    }
-
-    def initialize(opts)
+    def initialize(opts, checks)
       @opts = opts
+      @checks = checks
     end
 
     def run
@@ -33,13 +23,16 @@ module Cane
 
     protected
 
-    attr_reader :opts
+    attr_reader :opts, :checks
 
     def violations
-      @violations ||= CHECKERS.
-        select {|key, _| opts.has_key?(key) }.
-        map {|key, check| check.new(opts.fetch(key)).violations }.
+      @violations ||= enabled_checks.
+        map {|check| check.new(opts[check.key]).violations }.
         flatten
+    end
+
+    def enabled_checks
+      checks.select {|check| opts.has_key?(check.key) }
     end
 
     def outputter

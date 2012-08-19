@@ -9,6 +9,16 @@ module Cane
   # It is not the goal of the tool to provide an extensive style report, but
   # only to prevent stupid mistakes.
   class StyleCheck < Struct.new(:opts)
+
+    def self.key; :style; end
+    def self.name; "style checking"; end
+    def self.options
+      {
+        glob:    ['Glob to run style checks over', '{app,lib,spec}/**/*.rb'],
+        measure: ['Max line length', '80', :to_i]
+      }
+    end
+
     def violations
       file_list.map do |file_path|
         map_lines(file_path) do |line, line_number|
@@ -35,7 +45,7 @@ module Cane
     end
 
     def file_list
-      Dir[opts.fetch(:files)].reject {|f| excluded?(f) }
+      Dir[opts.fetch(:glob)].reject {|f| excluded?(f) }
     end
 
     def measure
