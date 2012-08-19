@@ -6,6 +6,14 @@ module Cane
   # comment immediately preceeding.
   class DocCheck < Struct.new(:opts)
 
+    def self.key; :doc; end
+    def self.name; "documentation checking"; end
+    def self.options
+      {
+        glob: ['Glob to run doc checks over', '{app,lib}/**/*.rb']
+      }
+    end
+
     # Stolen from ERB source.
     MAGIC_COMMENT_REGEX = %r"coding\s*[=:]\s*([[:alnum:]\-_]+)"
 

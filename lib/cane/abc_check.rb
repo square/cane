@@ -9,6 +9,16 @@ module Cane
   # algorithm run against the parse tree of a file to count assignments,
   # branches, and conditionals. Borrows heavily from metric_abc.
   class AbcCheck < Struct.new(:opts)
+
+    def self.key; :abc; end
+    def self.name; "ABC check"; end
+    def self.options
+      {
+        glob: ['Glob to run ABC metrics over', '{app,lib}/**/*.rb'],
+        max:  ['Ignore methods under this complexity', '15']
+      }
+    end
+
     def violations
       order file_names.map {|file_name|
         find_violations(file_name)

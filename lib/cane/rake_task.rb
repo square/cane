@@ -1,6 +1,8 @@
 require 'rake'
 require 'rake/tasklib'
 
+require 'cane/cli/spec'
+
 module Cane
   # Creates a rake task to run cane with given configuration.
   #
@@ -52,7 +54,7 @@ module Cane
 
       task name do
         require 'cane/cli'
-        abort unless Cane.run(translated_options)
+        abort unless Cane.run(translated_options, Cane::CLI::Spec::CHECKS)
       end
     end
 
