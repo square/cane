@@ -15,7 +15,7 @@ module Cane
     def self.options
       {
         glob:    ['Glob to run style checks over', '{app,lib,spec}/**/*.rb'],
-        measure: ['Max line length', '80']
+        measure: ['Max line length', '80', :to_i]
       }
     end
 

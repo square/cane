@@ -17,7 +17,7 @@ module Cane
 
       def self.defaults(check)
         x = check.options.each_with_object({}) {|(k, v), h|
-          h[("%s_%s" % [check.key, k]).to_sym] = v[1]
+          h[:"#{check.key}_#{k}"] = v[1]
         }
         x[:"no_#{check.key}"] = nil
         x
@@ -49,7 +49,7 @@ module Cane
       def parse(args)
         parser.parse!(get_default_options + args)
 
-        Translator.new(options, OPTIONS).to_hash
+        Translator.new(options, OPTIONS, SIMPLE_CHECKS).to_hash
       rescue OptionsHandled
         nil
       end

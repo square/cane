@@ -52,7 +52,10 @@ module Cane
     end
 
     def translated_options
-      Cane::CLI::Translator.new(options, OPTIONS).to_hash
+      Cane::CLI::Translator.new(
+        options,
+        OPTIONS, Cane::CLI::Spec::SIMPLE_CHECKS
+      ).to_hash
     end
   end
 end

@@ -15,7 +15,7 @@ module Cane
     def self.options
       {
         glob: ['Glob to run ABC metrics over', '{app,lib}/**/*.rb'],
-        max:  ['Ignore methods under this complexity', '15']
+        max:  ['Ignore methods under this complexity', '15', :to_i]
       }
     end
 
