@@ -16,13 +16,16 @@ module Cane
       SIMPLE_CHECKS = CHECKS - [ThresholdCheck]
 
       def self.defaults(check)
-        check.options.each_with_object({}) {|(k, v), h|
+        x = check.options.each_with_object({}) {|(k, v), h|
           h[("%s_%s" % [check.key, k]).to_sym] = v[1]
         }
+        x[:"no_#{check.key}"] = nil
+        x
       end
 
       DEFAULTS = {
         max_violations: '0',
+        exclusions_file: nil
       }.merge(SIMPLE_CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
 
       # Exception to indicate that no further processing is required and the
@@ -111,7 +114,7 @@ BANNER
       def add_option(option, description)
         option_key = option[0].gsub('--', '').tr('-', '_').to_sym
 
-        if DEFAULTS.has_key?(option_key)
+        if DEFAULTS[option_key]
           description += " (default: %s)" % DEFAULTS[option_key]
         end
 

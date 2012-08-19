@@ -17,25 +17,10 @@ module Cane
   #   end
   class RakeTask < ::Rake::TaskLib
     attr_accessor :name
-
-    # Glob to run ABC metrics over (default: "lib/**/*.rb")
-    attr_accessor :abc_glob
-    # Max complexity of methods to allow (default: 15)
-    attr_accessor :abc_max
-    # Glob to run style checks over (default: "{lib,spec}/**/*.rb")
-    attr_accessor :style_glob
-    # TRUE to disable style checks
-    attr_accessor :no_style
-    # Max line length (default: 80)
-    attr_accessor :style_measure
-    # Glob to run doc checks over (default: "lib/**/*.rb")
-    attr_accessor :doc_glob
-    # TRUE to disable doc checks
-    attr_accessor :no_doc
-    # Max violations to tolerate (default: 0)
-    attr_accessor :max_violations
-    # File containing list of exclusions in YAML format
-    attr_accessor :exclusions_file
+    OPTIONS = Cane::CLI::Spec::DEFAULTS
+    OPTIONS.each do |name, value|
+      attr_accessor name
+    end
 
     # Add a threshold check. If the file exists and it contains a number,
     # compare that number with the given value using the operator.
@@ -59,17 +44,7 @@ module Cane
     end
 
     def options
-      [
-        :abc_glob,
-        :abc_max,
-        :doc_glob,
-        :no_doc,
-        :max_violations,
-        :style_glob,
-        :no_style,
-        :style_measure,
-        :exclusions_file
-      ].inject(threshold: @threshold) do |opts, setting|
+      OPTIONS.keys.inject(threshold: @threshold) do |opts, setting|
         value = self.send(setting)
         opts[setting] = value unless value.nil?
         opts
