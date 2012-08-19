@@ -17,7 +17,7 @@ module Cane
   #   end
   class RakeTask < ::Rake::TaskLib
     attr_accessor :name
-    OPTIONS = Cane::CLI::Spec::DEFAULTS
+    OPTIONS = Cane::CLI::Spec::OPTIONS
     OPTIONS.each do |name, value|
       attr_accessor name
     end
@@ -51,12 +51,8 @@ module Cane
       end
     end
 
-    def default_options
-      Cane::CLI::Spec::DEFAULTS
-    end
-
     def translated_options
-      Cane::CLI::Translator.new(options, default_options).to_hash
+      Cane::CLI::Translator.new(options, OPTIONS).to_hash
     end
   end
 end

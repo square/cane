@@ -23,7 +23,7 @@ module Cane
         x
       end
 
-      DEFAULTS = {
+      OPTIONS = {
         max_violations: '0',
         exclusions_file: nil
       }.merge(SIMPLE_CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
@@ -49,7 +49,7 @@ module Cane
       def parse(args)
         parser.parse!(get_default_options + args)
 
-        Translator.new(options, DEFAULTS).to_hash
+        Translator.new(options, OPTIONS).to_hash
       rescue OptionsHandled
         nil
       end
@@ -114,8 +114,8 @@ BANNER
       def add_option(option, description)
         option_key = option[0].gsub('--', '').tr('-', '_').to_sym
 
-        if DEFAULTS[option_key]
-          description += " (default: %s)" % DEFAULTS[option_key]
+        if OPTIONS[option_key]
+          description += " (default: %s)" % OPTIONS[option_key]
         end
 
         parser.on(option.join(' '), description) do |v|
