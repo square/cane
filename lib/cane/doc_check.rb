@@ -13,7 +13,12 @@ module Cane
       last_line = ""
       File.open(file_name, 'r:utf-8').lines.map.with_index do |line, number|
         result = if class_definition?(line) && !comment?(last_line)
-          UndocumentedClassViolation.new(file_name, number + 1, line)
+          {
+            file:        file_name,
+            line:        number + 1,
+            label:       extract_class_name(line),
+            description: "Classes are not documented"
+          }
         end
         last_line = line
         result
@@ -30,17 +35,6 @@ module Cane
 
     def comment?(line)
       line =~ /^\s*#/
-    end
-  end
-
-  # Value object used by DocCheck.
-  class UndocumentedClassViolation < Struct.new(:file_name, :number, :line)
-    def description
-      "Classes are not documented"
-    end
-
-    def columns
-      ["%s:%i" % [file_name, number], extract_class_name(line)]
     end
 
     def extract_class_name(line)

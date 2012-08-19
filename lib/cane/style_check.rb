@@ -1,4 +1,3 @@
-require 'cane/style_violation'
 require 'set'
 
 module Cane
@@ -11,9 +10,12 @@ module Cane
     def violations
       file_list.map do |file_path|
         map_lines(file_path) do |line, line_number|
-          violations_for_line(line.chomp).map do |message|
-            StyleViolation.new(file_path, line_number + 1, message)
-          end
+          violations_for_line(line.chomp).map {|message| {
+            file:        file_path,
+            line:        line_number + 1,
+            label:       message,
+            description: "Lines violated style requirements"
+          }}
         end
       end.flatten
     end

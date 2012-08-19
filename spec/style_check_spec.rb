@@ -16,14 +16,17 @@ describe Cane::StyleCheck do
 
     violations = Cane::StyleCheck.new(files: file_name, measure: 80).violations
     violations.length.should == 2
-    violations[0].should be_instance_of(StyleViolation)
   end
 
   it 'skips declared exclusions' do
     file_name = make_file(ruby_with_style_issue)
 
-    violations = Cane::StyleCheck.new(files: file_name, measure: 80,
-                                      exclusions: [file_name]).violations
+    violations = Cane::StyleCheck.new(
+      files:      file_name,
+      measure:    80,
+      exclusions: [file_name]
+    ).violations
+
     violations.length.should == 0
   end
 end

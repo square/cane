@@ -19,14 +19,12 @@ end
     violations = described_class.new(files: file_name).violations
     violations.length.should == 2
 
-    violations[0].should be_instance_of(Cane::UndocumentedClassViolation)
-    violations[0].file_name.should == file_name
-    violations[0].number.should == 3
-    violations[0].columns.last.should eq("NoDoc")
+    violations[0].values_at(:file, :line, :label).should == [
+      file_name, 3, "NoDoc"
+    ]
 
-    violations[1].should be_instance_of(Cane::UndocumentedClassViolation)
-    violations[1].file_name.should == file_name
-    violations[1].number.should == 4
-    violations[1].columns.last.should eq("AlsoNoDoc")
+    violations[1].values_at(:file, :line, :label).should == [
+      file_name, 4, "AlsoNoDoc"
+    ]
   end
 end

@@ -1,7 +1,4 @@
 require 'ripper'
-
-require 'cane/abc_max_violation'
-require 'cane/syntax_violation'
 require 'set'
 
 module Cane
@@ -31,7 +28,7 @@ module Cane
     # Null object for when the file cannot be parsed.
     class InvalidAst < Struct.new(:file_name)
       def violations
-        [SyntaxViolation.new(file_name)]
+        [{file: file_name, description: "Files contained invalid syntax"}]
       end
     end
 
@@ -41,7 +38,12 @@ module Cane
       def violations
         process_ast(sexps).
           select { |nesting, complexity| complexity > max_allowed_complexity }.
-          map { |x| AbcMaxViolation.new(file_name, x.first, x.last) }
+          map { |x| {
+            file:        file_name,
+            label:       x.first,
+            value:       x.last,
+            description: "Methods exceeded maximum allowed ABC complexity"
+          }}
       end
 
       protected
@@ -119,7 +121,7 @@ module Cane
     end
 
     def order(result)
-      result.sort_by(&:sort_index).reverse
+      result.sort_by {|x| x[:value].to_i }.reverse
     end
 
     def max_allowed_complexity
