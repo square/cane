@@ -1,3 +1,4 @@
+require 'cane/file'
 require 'cane/threshold_violation'
 
 # Configurable check that allows the contents of a file to be compared against
@@ -15,7 +16,7 @@ class ThresholdCheck < Struct.new(:checks)
 
   def value_from_file(file)
     begin
-      contents = File.read(file).chomp.to_f
+      contents = Cane::File.contents(file).chomp.to_f
     rescue Errno::ENOENT
       UnavailableValue.new
     end

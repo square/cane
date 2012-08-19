@@ -37,8 +37,8 @@ module Cane
 
     def violations
       @violations ||= CHECKERS.
-        select { |key, _| opts.has_key?(key) }.
-        map { |key, check| check.new(opts.fetch(key)).violations }.
+        select {|key, _| opts.has_key?(key) }.
+        map {|key, check| check.new(opts.fetch(key)).violations }.
         flatten
     end
 

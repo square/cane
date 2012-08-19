@@ -160,4 +160,12 @@ style:
     _, exitstatus = run(options)
     exitstatus.should == 0
   end
+
+  it 'handles invalid unicode input' do
+    fn = make_file("\xc3\x28")
+
+    _, exitstatus = run("--style-glob #{fn} --abc-glob #{fn} --doc-glob #{fn}")
+
+    exitstatus.should == 0
+  end
 end

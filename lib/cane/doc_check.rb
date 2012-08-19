@@ -1,17 +1,23 @@
+require 'cane/file'
+
 module Cane
 
   # Creates violations for class definitions that do not have an explantory
   # comment immediately preceeding.
   class DocCheck < Struct.new(:opts)
+
+    # Stolen from ERB source.
+    MAGIC_COMMENT_REGEX = %r"coding\s*[=:]\s*([[:alnum:]\-_]+)"
+
     def violations
-      file_names.map { |file_name|
+      file_names.map {|file_name|
         find_violations(file_name)
       }.flatten
     end
 
     def find_violations(file_name)
       last_line = ""
-      File.open(file_name, 'r:utf-8').lines.map.with_index do |line, number|
+      Cane::File.iterator(file_name).map_with_index do |line, number|
         result = if class_definition?(line) && !comment?(last_line)
           UndocumentedClassViolation.new(file_name, number + 1, line)
         end
@@ -29,7 +35,7 @@ module Cane
     end
 
     def comment?(line)
-      line =~ /^\s*#/
+      line =~ /^\s*#/ && !(MAGIC_COMMENT_REGEX =~ line)
     end
   end
 

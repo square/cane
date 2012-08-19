@@ -1,8 +1,9 @@
 require 'ripper'
+require 'set'
 
+require 'cane/file'
 require 'cane/abc_max_violation'
 require 'cane/syntax_violation'
-require 'set'
 
 module Cane
 
@@ -11,7 +12,7 @@ module Cane
   # branches, and conditionals. Borrows heavily from metric_abc.
   class AbcCheck < Struct.new(:opts)
     def violations
-      order file_names.map { |file_name|
+      order file_names.map {|file_name|
         find_violations(file_name)
       }.flatten
     end
@@ -19,7 +20,7 @@ module Cane
     protected
 
     def find_violations(file_name)
-      ast = Ripper::SexpBuilder.new(File.open(file_name, 'r:utf-8').read).parse
+      ast = Ripper::SexpBuilder.new(Cane::File.contents(file_name)).parse
       case ast
       when nil
         InvalidAst.new(file_name)
@@ -40,8 +41,8 @@ module Cane
                                :sexps, :exclusions)
       def violations
         process_ast(sexps).
-          select { |nesting, complexity| complexity > max_allowed_complexity }.
-          map { |x| AbcMaxViolation.new(file_name, x.first, x.last) }
+          select {|nesting, complexity| complexity > max_allowed_complexity }.
+          map {|x| AbcMaxViolation.new(file_name, x.first, x.last) }
       end
 
       protected
@@ -60,7 +61,7 @@ module Cane
         end
 
         if node.is_a? Array
-          node[1..-1].each { |n| process_ast(n, complexity, nesting) if n }
+          node[1..-1].each {|n| process_ast(n, complexity, nesting) if n }
         end
         complexity
       end
@@ -82,7 +83,7 @@ module Cane
       end
 
       def count_nodes(node, types)
-        node.flatten.select { |n| types.include?(n) }.length
+        node.flatten.select {|n| types.include?(n) }.length
       end
 
       def assignment_nodes
