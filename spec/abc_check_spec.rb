@@ -92,6 +92,34 @@ describe Cane::AbcCheck do
     columns.should == [file_name, "Harness > Nested > other_meth", 1]
   end
 
+  it "creates an AbcMaxViolation for method in assigned anonymous class" do
+    file_name = make_file(<<-RUBY)
+      MyClass = Struct.new(:foo) do
+        def test_method(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = described_class.new(files: file_name, max: 1).violations
+    violations[0].detail.should == "MyClass > test_method"
+  end
+
+  it "creates an AbcMaxViolation for method in anonymous class" do
+    file_name = make_file(<<-RUBY)
+      Class.new do
+        def test_method(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = described_class.new(files: file_name, max: 1).violations
+    violations[0].detail.should == "(anon) > test_method"
+  end
+
   def self.it_should_extract_method_name(method_name, label=method_name)
     it "creates an AbcMaxViolation for #{method_name}" do
       file_name = make_file(<<-RUBY)
