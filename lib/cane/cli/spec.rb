@@ -12,7 +12,6 @@ module Cane
     # documentation, parsing, and default values.
     class Spec
       CHECKS = [AbcCheck, StyleCheck, DocCheck, ThresholdCheck]
-      SIMPLE_CHECKS = CHECKS - [ThresholdCheck]
 
       def self.defaults(check)
         x = check.options.each_with_object({}) {|(k, v), h|
@@ -24,8 +23,7 @@ module Cane
       OPTIONS = {
         max_violations:  0,
         exclusions_file: nil,
-        threshold:       [],
-      }.merge(SIMPLE_CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
+      }.merge(CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
 
       # Exception to indicate that no further processing is required and the
       # program can exit. This is used to handle --help and --version flags.
@@ -34,11 +32,10 @@ module Cane
       def initialize
         add_banner
 
-        SIMPLE_CHECKS.each do |check|
+        CHECKS.each do |check|
           add_check_options(check)
         end
 
-        add_threshold_options
         add_cane_options
 
         add_version
@@ -70,24 +67,23 @@ You can also put these options in a .cane file.
 BANNER
       end
 
-      def add_threshold_options
-        desc = "If FILE contains a number, verify it is >= to THRESHOLD."
-        parser.on("--gte FILE,THRESHOLD", Array, desc) do |opts|
-          (options[:threshold] ||= []) << opts.unshift(:>=)
-        end
-
-        parser.separator ""
-      end
-
       def add_check_options(check)
         check.options.each do |key, data|
           key      = key.to_s.tr('_', '-')
-          defaults = (data[1] || {})[:default] || []
+          opts     = data[1] || {}
+          variable = opts[:variable] || "VALUE"
+          defaults = opts[:default] || []
 
-          if [*defaults].length > 0
-            add_option ["--#{key}", "VALUE"], *data
+          if opts[:type] == Array
+            parser.on("--#{key} #{variable}", Array, data[0]) do |opts|
+              (options[key.to_sym] ||= []) << opts
+            end
           else
-            add_option ["--#{key}"], *data
+            if [*defaults].length > 0
+              add_option ["--#{key}", variable], *data
+            else
+              add_option ["--#{key}"], *data
+            end
           end
         end
 

@@ -25,12 +25,14 @@ module Cane
     # Add a threshold check. If the file exists and it contains a number,
     # compare that number with the given value using the operator.
     def add_threshold(file, operator, value)
-      @threshold << [operator, file, value]
+      if operator == :>=
+        @gte << [file, value]
+      end
     end
 
     def initialize(task_name = nil)
       self.name = task_name || :cane
-      @threshold = []
+      @gte = []
       yield self if block_given?
 
       unless ::Rake.application.last_comment
@@ -44,7 +46,7 @@ module Cane
     end
 
     def options
-      OPTIONS.keys.inject(threshold: @threshold) do |opts, setting|
+      OPTIONS.keys.inject({}) do |opts, setting|
         value = self.send(setting)
         opts[setting] = value unless value.nil?
         opts

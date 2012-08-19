@@ -2,12 +2,19 @@ require 'cane/file'
 
 # Configurable check that allows the contents of a file to be compared against
 # a given value.
-class ThresholdCheck < Struct.new(:checks)
+class ThresholdCheck < Struct.new(:opts)
 
   def self.key; :threshold; end
+  def self.options
+    {
+      gte: ["If FILE contains a number, verify it is >= to THRESHOLD",
+              variable: "FILE,THRESHOLD",
+              type:     Array]
+    }
+  end
 
   def violations
-    checks.fetch(:threshold).map do |operator, file, limit|
+    thresholds.map do |operator, file, limit|
       value = value_from_file(file)
 
       unless value.send(operator, limit.to_f)
@@ -26,6 +33,12 @@ class ThresholdCheck < Struct.new(:checks)
       contents = Cane::File.contents(file).chomp.to_f
     rescue Errno::ENOENT
       UnavailableValue.new
+    end
+  end
+
+  def thresholds
+    (opts[:gte] || []).map do |x|
+      x.unshift(:>=)
     end
   end
 
