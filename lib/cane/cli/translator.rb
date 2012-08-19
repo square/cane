@@ -20,7 +20,7 @@ module Cane
 
       def translate_abc_options(result)
         result[:abc] = {
-          files:      option_with_default(:abc_glob),
+          glob:       option_with_default(:abc_glob),
           max:        option_with_default(:abc_max).to_i,
           exclusions: exclusions_for('abc')
         } unless check_disabled(:no_abc, [:abc_glob, :abc_max])
@@ -28,7 +28,7 @@ module Cane
 
       def translate_style_options(result)
         result[:style] = {
-          files:      option_with_default(:style_glob),
+          glob:       option_with_default(:style_glob),
           measure:    option_with_default(:style_measure).to_i,
           exclusions: exclusions_for('style')
         } unless check_disabled(:no_style, [:style_glob])
@@ -36,7 +36,7 @@ module Cane
 
       def translate_doc_options(result)
         result[:doc] = {
-          files: option_with_default(:doc_glob),
+          glob: option_with_default(:doc_glob),
         } unless check_disabled(:no_doc, [:doc_glob])
       end
 

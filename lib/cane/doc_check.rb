@@ -40,7 +40,7 @@ module Cane
     end
 
     def file_names
-      Dir[opts.fetch(:files)]
+      Dir[opts.fetch(:glob)]
     end
 
     def class_definition?(line)

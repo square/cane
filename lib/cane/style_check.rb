@@ -45,7 +45,7 @@ module Cane
     end
 
     def file_list
-      Dir[opts.fetch(:files)].reject {|f| excluded?(f) }
+      Dir[opts.fetch(:glob)].reject {|f| excluded?(f) }
     end
 
     def measure
