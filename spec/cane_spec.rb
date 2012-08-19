@@ -59,7 +59,7 @@ describe 'Cane' do
 
     output, exitstatus = run("--style-glob #{file_name} --style-measure 80")
     exitstatus.should == 0
-    output.should be_empty
+    output.should == ""
   end
 
   it 'allows upper bound of failed checks' do

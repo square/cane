@@ -1,5 +1,4 @@
 require 'cane/file'
-require 'cane/threshold_violation'
 
 # Configurable check that allows the contents of a file to be compared against
 # a given value.
@@ -9,7 +8,12 @@ class ThresholdCheck < Struct.new(:checks)
       value = value_from_file(file)
 
       unless value.send(operator, limit.to_f)
-        ThresholdViolation.new(file, operator, value, limit)
+        {
+          description: 'Quality threshold crossed',
+          label:       "%s is %s, should be %s %s" % [
+            file, operator, value, limit
+          ]
+        }
       end
     end.compact
   end
