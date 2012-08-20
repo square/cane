@@ -7,6 +7,7 @@ describe Cane::ThresholdCheck do
     check = Cane::ThresholdCheck.new(gte: [['bogus_file', 20]])
     violations = check.violations
     violations.length.should == 1
-    violations[0].to_s.should include("unavailable")
+    violations[0][:label].should ==
+      'bogus_file is unavailable, should be >= 20'
   end
 end

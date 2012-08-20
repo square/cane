@@ -23,7 +23,7 @@ module Cane
           {
             description: 'Quality threshold crossed',
             label:       "%s is %s, should be %s %s" % [
-              file, operator, value, limit
+              file, value, operator, limit
             ]
           }
         end
