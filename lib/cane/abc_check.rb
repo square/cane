@@ -89,8 +89,9 @@ module Cane
       def process_ast(node, complexity = {}, nesting = [])
         if method_nodes.include?(node[0])
           nesting = nesting + [label_for(node)]
-          unless excluded?(node, *nesting)
-            complexity[nesting.join(" > ")] = calculate_abc(node)
+          desc = method_description(node, *nesting)
+          unless excluded?(desc)
+            complexity[desc] = calculate_abc(node)
           end
         elsif parent = container_label(node)
           nesting = nesting + [parent]
@@ -165,10 +166,13 @@ module Cane
 
       METH_CHARS = { def: '#', defs: '.' }
 
-      def excluded?(node, *modules, meth_name)
-        meth_char = METH_CHARS.fetch(node.first)
-        description = [modules.join('::'), meth_name].join(meth_char)
-        exclusions.include?(description)
+      def excluded?(method_description)
+        exclusions.include?(method_description)
+      end
+
+      def method_description(node, *modules, meth_name)
+        separator = METH_CHARS.fetch(node.first)
+        description = [modules.join('::'), meth_name].join(separator)
       end
     end
 

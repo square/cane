@@ -16,8 +16,8 @@ a non-zero exit code if any quality checks fail. Also, a report:
 
     Methods exceeded maximum allowed ABC complexity (2):
 
-      lib/cane.rb  Cane > sample    23
-      lib/cane.rb  Cane > sample_2  17
+      lib/cane.rb  Cane#sample    23
+      lib/cane.rb  Cane#sample_2  17
 
     Lines violated style requirements (2):
 

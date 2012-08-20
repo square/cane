@@ -24,7 +24,7 @@ describe Cane::AbcCheck do
     violations = check(file_name, abc_max: 1).violations
     violations.length.should == 1
     violations[0].values_at(:file, :label, :value).should ==
-      [file_name, "Harness > complex_method", 2]
+      [file_name, "Harness#complex_method", 2]
   end
 
   it 'sorts violations by complexity' do
@@ -93,7 +93,7 @@ describe Cane::AbcCheck do
     ).violations
     violations.length.should == 1
     violations[0].values_at(:file, :label, :value).should ==
-      [file_name, "Harness > Nested > other_meth", 1]
+      [file_name, "Harness::Nested#other_meth", 1]
   end
 
   it "creates an AbcMaxViolation for method in assigned anonymous class" do
@@ -107,7 +107,7 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name, abc_max: 1).violations
-    violations[0][:label] == "MyClass > test_method"
+    violations[0][:label] == "MyClass#test_method"
   end
 
   it "creates an AbcMaxViolation for method in anonymous class" do
@@ -121,14 +121,14 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name, abc_max: 1).violations
-    violations[0][:label].should == "(anon) > test_method"
+    violations[0][:label].should == "(anon)#test_method"
   end
 
-  def self.it_should_extract_method_name(method_name, label=method_name)
-    it "creates an AbcMaxViolation for #{method_name}" do
+  def self.it_should_extract_method_name(name, label=name, sep='#')
+    it "creates an AbcMaxViolation for #{name}" do
       file_name = make_file(<<-RUBY)
         class Harness
-          def #{method_name}(a)
+          def #{name}(a)
             b = a
             return b if b > 3
           end
@@ -136,13 +136,13 @@ describe Cane::AbcCheck do
       RUBY
 
       violations = check(file_name, abc_max: 1).violations
-      violations[0][:label].should == "Harness > #{label}"
+      violations[0][:label].should == "Harness#{sep}#{label}"
     end
   end
 
   # These method names all create different ASTs. Which is weird.
   it_should_extract_method_name 'a'
-  it_should_extract_method_name 'self.a', 'a'
+  it_should_extract_method_name 'self.a', 'a', '.'
   it_should_extract_method_name 'next'
   it_should_extract_method_name 'GET'
   it_should_extract_method_name '`'
