@@ -1,5 +1,17 @@
 # Cane History
 
+## 2.0.0 - 19 August 2012 (35cae086)
+
+* ABC check labels  `MyClass = Struct.new {}` and `Class.new` correctly (#20)
+* Magic comments (`# encoding: utf-8`) are not recognized as appropriate class documentation (#21)
+* Invalid UTF-8 is handled correctly (#22)
+* Gracefully handle unknown options
+* ABC check output uses a standard format (Foo::Bar#method rather than Foo > Bar > method)
+* **BREAKING** Add `--abc-exclude`, `--style-exclude` CLI flags, remove YAML support
+* **BREAKING-INTERNAL** Use hashes rather than explicit violation classes
+* **BREAKING-INTERNAL** Remove translator class, pass CLI args direct to checks
+* **INTERNAL** Wiring in a new check only requires changing one file (#15)
+
 ## 1.4.0 - 2 July 2012 (1afc999d)
 
 * Allow files and methods to be whitelisted (#16)
