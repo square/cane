@@ -42,12 +42,16 @@ module Cane
         add_help
       end
 
-      def parse(args)
+      def parse(args, ret = true)
         parser.parse!(get_default_options + args)
 
         OPTIONS.merge(options)
+      rescue OptionParser::InvalidOption
+        args = %w(--help)
+        ret = false
+        retry
       rescue OptionsHandled
-        nil
+        ret
       end
 
       def get_default_options

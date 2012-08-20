@@ -162,4 +162,11 @@ describe 'Cane' do
 
     exitstatus.should == 0
   end
+
+  it 'handles invalid options by showing help' do
+    out, exitstatus = run("--bogus")
+
+    out.should include("Usage:")
+    exitstatus.should == 1
+  end
 end

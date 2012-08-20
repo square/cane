@@ -7,10 +7,10 @@ module Cane
   module CLI
     def run(args)
       opts = Spec.new.parse(args)
-      if opts
+      if opts.is_a?(Hash)
         Cane.run(opts, Spec::CHECKS)
       else
-        true
+        opts
       end
     end
     module_function :run
