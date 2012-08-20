@@ -15,8 +15,9 @@ module Cane
     def self.options
       {
         style_glob:    ['Glob to run style checks over',
-                           default: '{app,lib,spec}/**/*.rb',
-                           clobber: :no_style],
+                           default:  '{app,lib,spec}/**/*.rb',
+                           variable: 'GLOB',
+                           clobber:  :no_style],
         style_measure: ['Max line length',
                            default: 80,
                            cast:    :to_i,

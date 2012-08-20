@@ -16,6 +16,7 @@ module Cane
       {
         abc_glob: ['Glob to run ABC metrics over',
                       default: '{app,lib}/**/*.rb',
+                      variable: 'GLOB',
                       clobber: :no_abc],
         abc_max:  ['Ignore methods under this complexity',
                       default: 15,

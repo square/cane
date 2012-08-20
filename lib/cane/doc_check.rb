@@ -11,8 +11,9 @@ module Cane
     def self.options
       {
         doc_glob: ['Glob to run doc checks over',
-                      default: '{app,lib}/**/*.rb',
-                      clobber: :no_doc],
+                      default:  '{app,lib}/**/*.rb',
+                      variable: 'GLOB',
+                      clobber:  :no_doc],
         no_doc:   ['Disable documentation checking', cast: ->(x) { !x }]
       }
     end

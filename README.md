@@ -34,17 +34,17 @@ Customize behaviour with a wealth of options:
 
     You can also put these options in a .cane file.
 
-            --abc-glob VALUE             Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
+            --abc-glob GLOB              Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
             --abc-max VALUE              Ignore methods under this complexity (default: 15)
             --abc-exclude METHOD         Exclude method from analysis (eg. Foo::Bar#method)
             --no-abc                     Disable ABC checking
 
-            --style-glob VALUE           Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
+            --style-glob GLOB            Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
             --style-measure VALUE        Max line length (default: 80)
             --style-exclude FILE         Exclude file from style checking
             --no-style                   Disable style checking
 
-            --doc-glob VALUE             Glob to run doc checks over (default: {app,lib}/**/*.rb)
+            --doc-glob GLOB              Glob to run doc checks over (default: {app,lib}/**/*.rb)
             --no-doc                     Disable documentation checking
 
             --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD
