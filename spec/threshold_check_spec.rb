@@ -2,9 +2,9 @@ require 'spec_helper'
 
 require 'cane/threshold_check'
 
-describe ThresholdCheck do
+describe Cane::ThresholdCheck do
   it 'returns a value of unavailable when file cannot be read' do
-    check = ThresholdCheck.new(gte: [['bogus_file', 20]])
+    check = Cane::ThresholdCheck.new(gte: [['bogus_file', 20]])
     violations = check.violations
     violations.length.should == 1
     violations[0].to_s.should include("unavailable")
