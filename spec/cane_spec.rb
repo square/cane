@@ -14,7 +14,7 @@ describe 'Cane' do
   def run(cli_args)
     result = nil
     output = capture_stdout do
-      result = Cane::CLI.run(cli_args.split(' '))
+      result = Cane::CLI.run(['--no-abc'] + cli_args.split(' '))
     end
 
     [output, result ? 0 : 1]
@@ -42,8 +42,8 @@ describe 'Cane' do
     file_name = make_file("whitespace ")
 
     output, exitstatus = run("--style-glob #{file_name}")
-    exitstatus.should == 1
     output.should include("Lines violated style requirements")
+    exitstatus.should == 1
   end
 
   it 'allows measure to be configured' do
@@ -74,8 +74,8 @@ describe 'Cane' do
     file_name = make_file("89")
 
     output, exitstatus = run("--gte #{file_name},90")
-    exitstatus.should == 1
     output.should include("Quality threshold crossed")
+    exitstatus.should == 1
   end
 
   it 'allows checking of class documentation' do
@@ -143,18 +143,12 @@ describe 'Cane' do
       end
     RUBY
 
-    exclusions_file = make_file(<<-YAML)
-abc:
-  - Harness#complex_method
-style:
-  - #{file_name}
-    YAML
-
     options = [
       "--abc-glob", file_name,
+      "--abc-exclude", "Harness#complex_method",
       "--abc-max", 1,
       "--style-glob", file_name,
-      "--exclusions-file", exclusions_file
+      "--style-exclude", file_name
     ].join(' ')
 
     _, exitstatus = run(options)

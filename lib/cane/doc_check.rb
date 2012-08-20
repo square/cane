@@ -10,7 +10,10 @@ module Cane
     def self.name; "documentation checking"; end
     def self.options
       {
-        glob: ['Glob to run doc checks over', '{app,lib}/**/*.rb']
+        doc_glob: ['Glob to run doc checks over',
+                      default: '{app,lib}/**/*.rb',
+                      clobber: :no_doc],
+        no_doc:   ['Disable documentation checking', cast: ->(x) { !x }]
       }
     end
 
@@ -18,6 +21,8 @@ module Cane
     MAGIC_COMMENT_REGEX = %r"coding\s*[=:]\s*([[:alnum:]\-_]+)"
 
     def violations
+      return [] if opts[:no_doc]
+
       file_names.map {|file_name|
         find_violations(file_name)
       }.flatten
@@ -40,7 +45,7 @@ module Cane
     end
 
     def file_names
-      Dir[opts.fetch(:glob)]
+      Dir[opts.fetch(:doc_glob)]
     end
 
     def class_definition?(line)

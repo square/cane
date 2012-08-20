@@ -14,12 +14,26 @@ module Cane
     def self.name; "ABC check"; end
     def self.options
       {
-        glob: ['Glob to run ABC metrics over', '{app,lib}/**/*.rb'],
-        max:  ['Ignore methods under this complexity', '15', :to_i]
+        abc_glob: ['Glob to run ABC metrics over',
+                      default: '{app,lib}/**/*.rb',
+                      clobber: :no_abc],
+        abc_max:  ['Ignore methods under this complexity',
+                      default: 15,
+                      cast:    :to_i,
+                      clobber: :no_abc],
+        abc_exclude: ['Exclude method from analysis (eg. Foo::Bar#method)',
+                         variable: 'METHOD',
+                         type: Array,
+                         default: [],
+                         clobber: :no_abc],
+        no_abc:   ['Disable ABC checking',
+                      cast: ->(x) { !x }]
       }
     end
 
     def violations
+      return [] if opts[:no_abc] == false
+
       order file_names.map {|file_name|
         find_violations(file_name)
       }.flatten
@@ -75,8 +89,9 @@ module Cane
       def process_ast(node, complexity = {}, nesting = [])
         if method_nodes.include?(node[0])
           nesting = nesting + [label_for(node)]
-          unless excluded?(node, *nesting)
-            complexity[nesting.join(" > ")] = calculate_abc(node)
+          desc = method_description(node, *nesting)
+          unless excluded?(desc)
+            complexity[desc] = calculate_abc(node)
           end
         elsif parent = container_label(node)
           nesting = nesting + [parent]
@@ -151,15 +166,18 @@ module Cane
 
       METH_CHARS = { def: '#', defs: '.' }
 
-      def excluded?(node, *modules, meth_name)
-        meth_char = METH_CHARS.fetch(node.first)
-        description = [modules.join('::'), meth_name].join(meth_char)
-        exclusions.include?(description)
+      def excluded?(method_description)
+        exclusions.include?(method_description)
+      end
+
+      def method_description(node, *modules, meth_name)
+        separator = METH_CHARS.fetch(node.first)
+        description = [modules.join('::'), meth_name].join(separator)
       end
     end
 
     def file_names
-      Dir[opts.fetch(:glob)]
+      Dir[opts.fetch(:abc_glob)]
     end
 
     def order(result)
@@ -167,11 +185,11 @@ module Cane
     end
 
     def max_allowed_complexity
-      opts.fetch(:max)
+      opts.fetch(:abc_max)
     end
 
     def exclusions
-      opts.fetch(:exclusions, []).to_set
+      opts.fetch(:abc_exclude, []).flatten.to_set
     end
   end
 end

@@ -16,8 +16,8 @@ a non-zero exit code if any quality checks fail. Also, a report:
 
     Methods exceeded maximum allowed ABC complexity (2):
 
-      lib/cane.rb  Cane > sample    23
-      lib/cane.rb  Cane > sample_2  17
+      lib/cane.rb  Cane#sample    23
+      lib/cane.rb  Cane#sample_2  17
 
     Lines violated style requirements (2):
 
@@ -34,21 +34,22 @@ Customize behaviour with a wealth of options:
 
     You can also put these options in a .cane file.
 
-            --abc-glob GLOB              Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
+            --abc-glob VALUE             Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
             --abc-max VALUE              Ignore methods under this complexity (default: 15)
+            --abc-exclude METHOD         Exclude method from analysis (eg. Foo::Bar#method)
             --no-abc                     Disable ABC checking
 
-            --style-glob GLOB            Glob to run style metrics over (default: {app,lib,spec}/**/*.rb)
+            --style-glob VALUE           Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
             --style-measure VALUE        Max line length (default: 80)
+            --style-exclude FILE         Exclude file from style checking
             --no-style                   Disable style checking
 
-            --doc-glob GLOB              Glob to run documentation checks over (default: {app,lib}/**/*.rb)
+            --doc-glob VALUE             Glob to run doc checks over (default: {app,lib}/**/*.rb)
             --no-doc                     Disable documentation checking
 
-            --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD.
+            --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD
 
             --max-violations VALUE       Max allowed violations (default: 0)
-            --exclusions-file FILE       YAML file containing a list of exclusions
 
         -v, --version                    Show version
         -h, --help                       Show this message
@@ -117,24 +118,6 @@ You can use a `SimpleCov` formatter to create the required file:
     end
 
     SimpleCov.formatter = SimpleCov::Formatter::QualityFormatter
-
-## Defining Exclusions
-
-Occasionally, you may want to permanently ignore specific cane violations.
-Create a YAML file like so:
-
-    abc:
-      - Some::Fully::Qualified::Class.some_class_method
-      - Some::Fully::Qualified::Class#some_instance_method
-    style:
-      - relative/path/to/some/file.rb
-      - relative/path/to/some/other/file.rb
-
-Tell cane about this file using the `--exclusions-file` option:
-
-    > cane --exclusions-file path/to/exclusions.yml
-
-Currently, only the abc and style checks support exclusions.
 
 ## Compatibility
 

@@ -26,13 +26,9 @@ module Cane
     attr_reader :opts, :checks
 
     def violations
-      @violations ||= enabled_checks.
-        map {|check| check.new(opts[check.key]).violations }.
+      @violations ||= checks.
+        map {|check| check.new(opts).violations }.
         flatten
-    end
-
-    def enabled_checks
-      checks.select {|check| opts.has_key?(check.key) }
     end
 
     def outputter

@@ -14,12 +14,25 @@ module Cane
     def self.name; "style checking"; end
     def self.options
       {
-        glob:    ['Glob to run style checks over', '{app,lib,spec}/**/*.rb'],
-        measure: ['Max line length', '80', :to_i]
+        style_glob:    ['Glob to run style checks over',
+                           default: '{app,lib,spec}/**/*.rb',
+                           clobber: :no_style],
+        style_measure: ['Max line length',
+                           default: 80,
+                           cast:    :to_i,
+                           clobber: :no_style],
+        style_exclude: ['Exclude file from style checking',
+                         variable: 'FILE',
+                         type: Array,
+                         default: [],
+                         clobber: :no_style],
+        no_style:      ['Disable style checking']
       }
     end
 
     def violations
+      return [] if opts[:no_style]
+
       file_list.map do |file_path|
         map_lines(file_path) do |line, line_number|
           violations_for_line(line.chomp).map {|message| {
@@ -45,11 +58,11 @@ module Cane
     end
 
     def file_list
-      Dir[opts.fetch(:glob)].reject {|f| excluded?(f) }
+      Dir[opts.fetch(:style_glob)].reject {|f| excluded?(f) }
     end
 
     def measure
-      opts.fetch(:measure)
+      opts.fetch(:style_measure)
     end
 
     def map_lines(file_path, &block)
@@ -57,7 +70,7 @@ module Cane
     end
 
     def exclusions
-      @exclusions ||= opts.fetch(:exclusions, []).to_set
+      @exclusions ||= opts.fetch(:style_exclude, []).flatten.to_set
     end
 
     def excluded?(file)

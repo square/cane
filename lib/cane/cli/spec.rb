@@ -1,5 +1,4 @@
 require 'optparse'
-require 'cane/cli/translator'
 
 require 'cane/abc_check'
 require 'cane/style_check'
@@ -13,20 +12,18 @@ module Cane
     # documentation, parsing, and default values.
     class Spec
       CHECKS = [AbcCheck, StyleCheck, DocCheck, ThresholdCheck]
-      SIMPLE_CHECKS = CHECKS - [ThresholdCheck]
 
       def self.defaults(check)
         x = check.options.each_with_object({}) {|(k, v), h|
-          h[:"#{check.key}_#{k}"] = v[1]
+          h[k] = (v[1] || {})[:default]
         }
-        x[:"no_#{check.key}"] = nil
         x
       end
 
       OPTIONS = {
-        max_violations: '0',
-        exclusions_file: nil
-      }.merge(SIMPLE_CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
+        max_violations:  0,
+        exclusions_file: nil,
+      }.merge(CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
 
       # Exception to indicate that no further processing is required and the
       # program can exit. This is used to handle --help and --version flags.
@@ -35,11 +32,10 @@ module Cane
       def initialize
         add_banner
 
-        SIMPLE_CHECKS.each do |check|
+        CHECKS.each do |check|
           add_check_options(check)
         end
 
-        add_threshold_options
         add_cane_options
 
         add_version
@@ -49,7 +45,7 @@ module Cane
       def parse(args)
         parser.parse!(get_default_options + args)
 
-        Translator.new(options, OPTIONS, SIMPLE_CHECKS).to_hash
+        OPTIONS.merge(options)
       rescue OptionsHandled
         nil
       end
@@ -71,28 +67,32 @@ You can also put these options in a .cane file.
 BANNER
       end
 
-      def add_threshold_options
-        desc = "If FILE contains a number, verify it is >= to THRESHOLD."
-        parser.on("--gte FILE,THRESHOLD", Array, desc) do |opts|
-          (options[:threshold] ||= []) << opts.unshift(:>=)
-        end
-
-        parser.separator ""
-      end
-
       def add_check_options(check)
         check.options.each do |key, data|
-          add_option ["--#{check.key}-#{key}", "VALUE"], data[0]
+          cli_key  = key.to_s.tr('_', '-')
+          opts     = data[1] || {}
+          variable = opts[:variable] || "VALUE"
+          defaults = opts[:default] || []
+
+          if opts[:type] == Array
+            parser.on("--#{cli_key} #{variable}", Array, data[0]) do |opts|
+              (options[key.to_sym] ||= []) << opts
+            end
+          else
+            if [*defaults].length > 0
+              add_option ["--#{cli_key}", variable], *data
+            else
+              add_option ["--#{cli_key}"], *data
+            end
+          end
         end
-        add_option ["--no-#{check.key}"], "Disable #{check.name}"
 
         parser.separator ""
       end
 
       def add_cane_options
-        add_option %w(--max-violations VALUE), "Max allowed violations"
-        add_option %w(--exclusions-file FILE),
-                   "YAML file containing a list of exclusions"
+        add_option %w(--max-violations VALUE),
+          "Max allowed violations", default: 0, cast: :to_i
 
         parser.separator ""
       end
@@ -111,15 +111,18 @@ BANNER
         end
       end
 
-      def add_option(option, description)
+      def add_option(option, description, opts={})
         option_key = option[0].gsub('--', '').tr('-', '_').to_sym
+        default    = opts[:default]
+        cast       = opts[:cast] || ->(x) { x }
 
-        if OPTIONS[option_key]
-          description += " (default: %s)" % OPTIONS[option_key]
+        if default
+          description += " (default: %s)" % default
         end
 
         parser.on(option.join(' '), description) do |v|
-          options[option_key] = v
+          options[option_key] = cast.to_proc.call(v)
+          options.delete(opts[:clobber])
         end
       end
 
