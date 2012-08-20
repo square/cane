@@ -12,6 +12,14 @@
 * **BREAKING-INTERNAL** Remove translator class, pass CLI args direct to checks
 * **INTERNAL** Wiring in a new check only requires changing one file (#15)
 
+This snippet will convert your YAML exclusions file to the new CLI syntax:
+
+    y = YAML.load(File.read('exclusions.yml'))
+    puts (
+      y.fetch('abc',   []).map {|x| %|--abc-exclude "#{x}"| } +
+      y.fetch('style', []).map {|x| %|--style-exclude "#{x}"| }
+    ).join("\n")
+
 ## 1.4.0 - 2 July 2012 (1afc999d)
 
 * Allow files and methods to be whitelisted (#16)
