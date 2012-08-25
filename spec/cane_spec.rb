@@ -204,14 +204,17 @@ describe 'Cane' do
   end
 
   it 'rake works with user-defined check' do
-    fn = make_file("")
-    require 'unhappy'
+    my_check = Class.new(Struct.new(:opts)) do
+      def violations
+        [description: 'test', label: opts.fetch(:some_opt)]
+      end
+    end
 
     task = Cane::RakeTask.new(:quality) do |cane|
       cane.no_abc = true
       cane.no_doc = true
       cane.no_style = true
-      cane.use UnhappyCheck, unhappy_file: "#{fn}"
+      cane.use my_check, some_opt: "theopt"
     end
 
     task.should_receive(:abort)
@@ -219,13 +222,10 @@ describe 'Cane' do
       Rake::Task['quality'].invoke
     end
 
-    out.should include("Files are unhappy")
+    out.should include("theopt")
   end
 
   after do
-    if Object.const_defined?("UnhappyCheck")
-      Object.send(:remove_const, "UnhappyCheck")
-    end
     Rake::Task.clear
   end
 end
