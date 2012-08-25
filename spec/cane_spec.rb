@@ -182,4 +182,24 @@ describe 'Cane' do
     out.should include(fn)
     exitstatus.should == 1
   end
+
+  it 'works with rake' do
+    fn = make_file("90")
+    rakefile = make_file <<-RUBY
+      $LOAD_PATH.unshift("#{File.expand_path('../../lib', __FILE__)}")
+      require 'cane/rake_task'
+
+      desc "Run cane to check quality metrics"
+      Cane::RakeTask.new(:quality) do |cane|
+        cane.no_abc = true
+        cane.no_doc = true
+        cane.no_style = true
+        cane.add_threshold '#{fn}', :>=, 99
+      end
+    RUBY
+
+    out = `rake -f #{rakefile} quality`
+    out.should include("Quality threshold crossed")
+    $?.exitstatus.should == 1
+  end
 end
