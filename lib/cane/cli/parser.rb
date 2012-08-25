@@ -8,7 +8,7 @@ module Cane
 
     # Provides a specification for the command line interface that drives
     # documentation, parsing, and default values.
-    class Spec
+    class Parser
 
       # Exception to indicate that no further processing is required and the
       # program can exit. This is used to handle --help and --version flags.

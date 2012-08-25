@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/tasklib'
 
-require 'cane/cli/spec'
+require 'cane/cli/options'
 
 module Cane
   # Creates a rake task to run cane with given configuration.
