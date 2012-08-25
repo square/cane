@@ -1,6 +1,7 @@
 require 'optparse'
 
 require 'cane/default_checks'
+require 'cane/cli/options'
 
 module Cane
   module CLI
@@ -8,19 +9,6 @@ module Cane
     # Provides a specification for the command line interface that drives
     # documentation, parsing, and default values.
     class Spec
-      def self.defaults(check)
-        x = check.options.each_with_object({}) {|(k, v), h|
-          h[k] = (v[1] || {})[:default]
-        }
-        x
-      end
-
-      OPTIONS = {
-        max_violations:  0,
-        exclusions_file: nil,
-      }.merge(Cane::DEFAULT_CHECKS.inject({}) {|a, check|
-        a.merge(defaults(check))
-      })
 
       # Exception to indicate that no further processing is required and the
       # program can exit. This is used to handle --help and --version flags.

@@ -17,8 +17,7 @@ module Cane
   #   end
   class RakeTask < ::Rake::TaskLib
     attr_accessor :name
-    OPTIONS = Cane::CLI::Spec::OPTIONS
-    OPTIONS.each do |name, value|
+    Cane::CLI::OPTIONS.each do |name, value|
       attr_accessor name
     end
 
@@ -50,7 +49,7 @@ module Cane
       task name do
         require 'cane/cli'
         abort unless Cane.run(
-          OPTIONS.
+          Cane::CLI::OPTIONS.
             merge(options).
             merge(checks: @checks).
             merge(@options)
@@ -59,7 +58,7 @@ module Cane
     end
 
     def options
-      OPTIONS.keys.inject({}) do |opts, setting|
+      Cane::CLI::OPTIONS.keys.inject({}) do |opts, setting|
         value = self.send(setting)
         opts[setting] = value unless value.nil?
         opts
