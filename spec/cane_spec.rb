@@ -172,17 +172,44 @@ describe 'Cane' do
     exitstatus.should == 1
   end
 
-  it 'allows custom checks' do
-    fn = make_file(":(")
+  describe 'user-defined checks' do
+    let(:class_name) { "C#{rand(10 ** 10)}" }
 
-    out, exitstatus = run(%(
-      -r unhappy.rb
-      --check UnhappyCheck
-      --unhappy-file #{fn}
-    ))
-    out.should include("Files are unhappy")
-    out.should include(fn)
-    exitstatus.should == 1
+    it 'allows custom checks' do
+      fn = make_file(":(")
+      check_file = make_file <<-RUBY
+        class #{class_name} < Struct.new(:opts)
+          def self.options
+            {
+              unhappy_file: ["File to check", default: [nil]]
+            }
+          end
+
+          def violations
+            [
+              description: "Files are unhappy",
+              file:        opts.fetch(:unhappy_file),
+              label:       ":("
+            ]
+          end
+        end
+      RUBY
+
+      out, exitstatus = run(%(
+        -r #{check_file}
+        --check #{class_name}
+        --unhappy-file #{fn}
+      ))
+      out.should include("Files are unhappy")
+      out.should include(fn)
+      exitstatus.should == 1
+    end
+
+    after do
+      if Object.const_defined?(class_name)
+        Object.send(:remove_const, class_name)
+      end
+    end
   end
 
   it 'works with rake' do
