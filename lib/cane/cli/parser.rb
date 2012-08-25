@@ -18,7 +18,7 @@ module Cane
         add_banner
         add_custom_checks
 
-        Cane::DEFAULT_CHECKS.each do |check|
+        Cane.default_checks.each do |check|
           add_check_options(check)
         end
 
@@ -133,7 +133,7 @@ BANNER
 
       def options
         @options ||= {
-          checks: Cane::DEFAULT_CHECKS.dup
+          checks: Cane.default_checks
         }
       end
 

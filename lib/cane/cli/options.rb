@@ -18,8 +18,8 @@ module Cane
       {
         max_violations:  0,
         exclusions_file: nil,
-        checks:          Cane::DEFAULT_CHECKS.dup
-      }.merge(Cane::DEFAULT_CHECKS.inject({}) {|a, check|
+        checks:          Cane.default_checks
+      }.merge(Cane.default_checks.inject({}) {|a, check|
         a.merge(defaults(check))
       })
     end

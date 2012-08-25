@@ -4,10 +4,13 @@ require 'cane/doc_check'
 require 'cane/threshold_check'
 
 module Cane
-  DEFAULT_CHECKS = [
-    AbcCheck,
-    StyleCheck,
-    DocCheck,
-    ThresholdCheck
-  ].freeze
+  def default_checks
+    [
+      AbcCheck,
+      StyleCheck,
+      DocCheck,
+      ThresholdCheck
+    ]
+  end
+  module_function :default_checks
 end
