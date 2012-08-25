@@ -38,7 +38,7 @@ module Cane
     def initialize(task_name = nil)
       self.name = task_name || :cane
       @gte = []
-      @checks = Cane::CLI::Spec::CHECKS.dup
+      @checks = Cane::DEFAULT_CHECKS.dup
       @options = {}
 
       yield self if block_given?

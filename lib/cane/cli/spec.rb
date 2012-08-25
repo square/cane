@@ -1,9 +1,6 @@
 require 'optparse'
 
-require 'cane/abc_check'
-require 'cane/style_check'
-require 'cane/doc_check'
-require 'cane/threshold_check'
+require 'cane/default_checks'
 
 module Cane
   module CLI
@@ -11,8 +8,6 @@ module Cane
     # Provides a specification for the command line interface that drives
     # documentation, parsing, and default values.
     class Spec
-      CHECKS = [AbcCheck, StyleCheck, DocCheck, ThresholdCheck].freeze
-
       def self.defaults(check)
         x = check.options.each_with_object({}) {|(k, v), h|
           h[k] = (v[1] || {})[:default]
@@ -23,7 +18,9 @@ module Cane
       OPTIONS = {
         max_violations:  0,
         exclusions_file: nil,
-      }.merge(CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
+      }.merge(Cane::DEFAULT_CHECKS.inject({}) {|a, check|
+        a.merge(defaults(check))
+      })
 
       # Exception to indicate that no further processing is required and the
       # program can exit. This is used to handle --help and --version flags.
@@ -33,7 +30,7 @@ module Cane
         add_banner
         add_custom_checks
 
-        CHECKS.each do |check|
+        Cane::DEFAULT_CHECKS.each do |check|
           add_check_options(check)
         end
 
@@ -148,7 +145,7 @@ BANNER
 
       def options
         @options ||= {
-          checks: CHECKS.dup
+          checks: Cane::DEFAULT_CHECKS.dup
         }
       end
 
