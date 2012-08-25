@@ -106,20 +106,6 @@ describe 'Cane' do
     end
   end
 
-  it 'displays a help message' do
-    output, exitstatus = run("--help")
-
-    exitstatus.should == 0
-    output.should include("Usage:")
-  end
-
-  it 'displays version' do
-    output, exitstatus = run("--version")
-
-    exitstatus.should == 0
-    output.should include(Cane::VERSION)
-  end
-
   describe 'argument ordering' do
     let(:file_name) { make_file("class NoDoc") }
 

@@ -2,6 +2,7 @@ require 'optparse'
 
 require 'cane/default_checks'
 require 'cane/cli/options'
+require 'cane/version'
 
 module Cane
   module CLI
@@ -14,7 +15,9 @@ module Cane
       # program can exit. This is used to handle --help and --version flags.
       class OptionsHandled < RuntimeError; end
 
-      def initialize
+      def initialize(stdout = $stdout)
+        @stdout = stdout
+
         add_banner
         add_custom_checks
 
@@ -104,14 +107,14 @@ BANNER
 
       def add_version
         parser.on_tail("-v", "--version", "Show version") do
-          puts Cane::VERSION
+          stdout.puts Cane::VERSION
           raise OptionsHandled
         end
       end
 
       def add_help
         parser.on_tail("-h", "--help", "Show this message") do
-          puts parser
+          stdout.puts parser
           raise OptionsHandled
         end
       end
@@ -140,6 +143,8 @@ BANNER
       def parser
         @parser ||= OptionParser.new
       end
+
+      attr_reader :stdout
     end
 
   end
