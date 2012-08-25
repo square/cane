@@ -17,28 +17,35 @@ module Cane
   #   end
   class RakeTask < ::Rake::TaskLib
     attr_accessor :name
-    Cane::CLI::OPTIONS.each do |name, value|
-      attr_accessor name
+    attr_reader :options
+
+    Cane::CLI.default_options.keys.each do |name|
+      define_method(name) do
+        options.fetch(name)
+      end
+
+      define_method("#{name}=") do |v|
+        options[name] = v
+      end
     end
 
     # Add a threshold check. If the file exists and it contains a number,
     # compare that number with the given value using the operator.
     def add_threshold(file, operator, value)
       if operator == :>=
-        @gte << [file, value]
+        @options[:gte] << [file, value]
       end
     end
 
     def use(check, options = {})
-      @checks << check
       @options.merge!(options)
+      @options[:checks] = @options[:checks] + [check]
     end
 
     def initialize(task_name = nil)
       self.name = task_name || :cane
       @gte = []
-      @checks = Cane::DEFAULT_CHECKS.dup
-      @options = {}
+      @options = Cane::CLI.default_options
 
       yield self if block_given?
 
@@ -48,20 +55,7 @@ module Cane
 
       task name do
         require 'cane/cli'
-        abort unless Cane.run(
-          Cane::CLI::OPTIONS.
-            merge(options).
-            merge(checks: @checks).
-            merge(@options)
-        )
-      end
-    end
-
-    def options
-      Cane::CLI::OPTIONS.keys.inject({}) do |opts, setting|
-        value = self.send(setting)
-        opts[setting] = value unless value.nil?
-        opts
+        abort unless Cane.run(options)
       end
     end
   end

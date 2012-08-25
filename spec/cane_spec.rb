@@ -226,6 +226,8 @@ describe 'Cane' do
       cane.add_threshold fn, :>=, 99
     end
 
+    task.no_abc.should == true
+
     task.should_receive(:abort)
     out = capture_stdout do
       Rake::Task['quality'].invoke
