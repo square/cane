@@ -202,4 +202,26 @@ describe 'Cane' do
     out.should include("Quality threshold crossed")
     $?.exitstatus.should == 1
   end
+
+  it 'rake works with user-defined check' do
+    fn = make_file("")
+    rakefile = make_file <<-RUBY
+      $LOAD_PATH.unshift("#{File.expand_path('../../lib', __FILE__)}")
+      $LOAD_PATH.unshift("#{File.expand_path('..', __FILE__)}")
+      require 'cane/rake_task'
+      require 'unhappy'
+
+      desc "Run cane to check quality metrics"
+      Cane::RakeTask.new(:quality) do |cane|
+        cane.no_abc = true
+        cane.no_doc = true
+        cane.no_style = true
+        cane.use UnhappyCheck, :unhappy_file => '#{fn}'
+      end
+    RUBY
+
+    out = `rake -f #{rakefile} quality 2>&1`
+    out.should include("Files are unhappy")
+    $?.exitstatus.should == 1
+  end
 end

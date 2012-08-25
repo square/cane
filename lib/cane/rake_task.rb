@@ -30,9 +30,17 @@ module Cane
       end
     end
 
+    def use(check, options = {})
+      @checks << check
+      @options.merge!(options)
+    end
+
     def initialize(task_name = nil)
       self.name = task_name || :cane
       @gte = []
+      @checks = Cane::CLI::Spec::CHECKS
+      @options = {}
+
       yield self if block_given?
 
       unless ::Rake.application.last_comment
@@ -42,7 +50,10 @@ module Cane
       task name do
         require 'cane/cli'
         abort unless Cane.run(
-          OPTIONS.merge(options).merge(checks: Cane::CLI::Spec::CHECKS)
+          OPTIONS.
+            merge(options).
+            merge(checks: Cane::CLI::Spec::CHECKS).
+            merge(@options)
         )
       end
     end
