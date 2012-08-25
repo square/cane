@@ -31,6 +31,7 @@ module Cane
 
       def initialize
         add_banner
+        add_custom_checks
 
         CHECKS.each do |check|
           add_check_options(check)
@@ -45,7 +46,7 @@ module Cane
       def parse(args, ret = true)
         parser.parse!(get_default_options + args)
 
-        OPTIONS.merge(options).merge(checks: CHECKS)
+        OPTIONS.merge(options)
       rescue OptionParser::InvalidOption
         args = %w(--help)
         ret = false
@@ -69,6 +70,21 @@ Usage: cane [options]
 You can also put these options in a .cane file.
 
 BANNER
+      end
+
+      def add_custom_checks
+        description = "Load a Ruby file containing custom checks"
+        parser.on("-r", "--require FILE", description) do |f|
+          load(f)
+        end
+
+        parser.on("-c", "--check CLASS", "Use the given check") do |c|
+          # TODO: Validate check
+          check = Kernel.const_get(c)
+          options[:checks] << check
+          add_check_options(check)
+        end
+        parser.separator ""
       end
 
       def add_check_options(check)
@@ -131,7 +147,9 @@ BANNER
       end
 
       def options
-        @options ||= {}
+        @options ||= {
+          checks: CHECKS.dup
+        }
       end
 
       def parser

@@ -14,7 +14,7 @@ describe 'Cane' do
   def run(cli_args)
     result = nil
     output = capture_stdout do
-      result = Cane::CLI.run(['--no-abc'] + cli_args.split(' '))
+      result = Cane::CLI.run(['--no-abc'] + cli_args.split(/\s+/m))
     end
 
     [output, result ? 0 : 1]
@@ -167,6 +167,19 @@ describe 'Cane' do
     out, exitstatus = run("--bogus")
 
     out.should include("Usage:")
+    exitstatus.should == 1
+  end
+
+  it 'allows custom checks' do
+    fn = make_file(":(")
+
+    out, exitstatus = run(%(
+      -r unhappy.rb
+      --check UnhappyCheck
+      --unhappy-file #{fn}
+    ))
+    out.should include("Files are unhappy")
+    out.should include(fn)
     exitstatus.should == 1
   end
 end
