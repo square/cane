@@ -17,6 +17,10 @@ module Cane
       def open(path)
         ::File.open(path, 'r:utf-8')
       end
+
+      def exists?(path)
+        ::File.exists?(path)
+      end
     end
   end
 end
