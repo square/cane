@@ -38,7 +38,7 @@ module Cane
     def initialize(task_name = nil)
       self.name = task_name || :cane
       @gte = []
-      @checks = Cane::CLI::Spec::CHECKS
+      @checks = Cane::CLI::Spec::CHECKS.dup
       @options = {}
 
       yield self if block_given?
@@ -52,7 +52,7 @@ module Cane
         abort unless Cane.run(
           OPTIONS.
             merge(options).
-            merge(checks: Cane::CLI::Spec::CHECKS).
+            merge(checks: @checks).
             merge(@options)
         )
       end

@@ -2,6 +2,8 @@ require 'spec_helper'
 require "stringio"
 require 'cane/cli'
 
+require 'cane/rake_task'
+
 describe 'Cane' do
   def capture_stdout &block
     real_stdout, $stdout = $stdout, StringIO.new
@@ -185,51 +187,45 @@ describe 'Cane' do
 
   it 'works with rake' do
     fn = make_file("90")
-    rakefile = make_file <<-RUBY
-      require 'simplecov'
-      SimpleCov.command_name "Rake tests"
-      SimpleCov.start
 
-      $LOAD_PATH.unshift("#{File.expand_path('../../lib', __FILE__)}")
-      require 'cane/rake_task'
+    task = Cane::RakeTask.new(:quality) do |cane|
+      cane.no_abc = true
+      cane.no_doc = true
+      cane.no_style = true
+      cane.add_threshold fn, :>=, 99
+    end
 
-      desc "Run cane to check quality metrics"
-      Cane::RakeTask.new(:quality) do |cane|
-        cane.no_abc = true
-        cane.no_doc = true
-        cane.no_style = true
-        cane.add_threshold '#{fn}', :>=, 99
-      end
-    RUBY
+    task.should_receive(:abort)
+    out = capture_stdout do
+      Rake::Task['quality'].invoke
+    end
 
-    out = `bundle exec rake -f #{rakefile} quality`
     out.should include("Quality threshold crossed")
-    $?.exitstatus.should == 1
   end
 
   it 'rake works with user-defined check' do
     fn = make_file("")
-    rakefile = make_file <<-RUBY
-      require 'simplecov'
-      SimpleCov.command_name "Rake tests"
-      SimpleCov.start
+    require 'unhappy'
 
-      $LOAD_PATH.unshift("#{File.expand_path('../../lib', __FILE__)}")
-      $LOAD_PATH.unshift("#{File.expand_path('..', __FILE__)}")
-      require 'cane/rake_task'
-      require 'unhappy'
+    task = Cane::RakeTask.new(:quality) do |cane|
+      cane.no_abc = true
+      cane.no_doc = true
+      cane.no_style = true
+      cane.use UnhappyCheck, unhappy_file: "#{fn}"
+    end
 
-      desc "Run cane to check quality metrics"
-      Cane::RakeTask.new(:quality) do |cane|
-        cane.no_abc = true
-        cane.no_doc = true
-        cane.no_style = true
-        cane.use UnhappyCheck, :unhappy_file => '#{fn}'
-      end
-    RUBY
+    task.should_receive(:abort)
+    out = capture_stdout do
+      Rake::Task['quality'].invoke
+    end
 
-    out = `bundle exec rake -f #{rakefile} quality`
     out.should include("Files are unhappy")
-    $?.exitstatus.should == 1
+  end
+
+  after do
+    if Object.const_defined?("UnhappyCheck")
+      Object.send(:remove_const, "UnhappyCheck")
+    end
+    Rake::Task.clear
   end
 end

@@ -1,5 +1,11 @@
 # Fake check for use in specs
-class UnhappyCheck < Struct.new(:opts)
+class UnhappyCheck
+  attr_reader :opts
+
+  def initialize(opts)
+    @opts = opts
+  end
+
   def self.options
     {
       unhappy_file: ["File to check", default: [nil]]
