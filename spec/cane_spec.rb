@@ -186,6 +186,10 @@ describe 'Cane' do
   it 'works with rake' do
     fn = make_file("90")
     rakefile = make_file <<-RUBY
+      require 'simplecov'
+      SimpleCov.command_name "Rake tests"
+      SimpleCov.start
+
       $LOAD_PATH.unshift("#{File.expand_path('../../lib', __FILE__)}")
       require 'cane/rake_task'
 
@@ -198,7 +202,7 @@ describe 'Cane' do
       end
     RUBY
 
-    out = `rake -f #{rakefile} quality`
+    out = `bundle exec rake -f #{rakefile} quality`
     out.should include("Quality threshold crossed")
     $?.exitstatus.should == 1
   end
@@ -206,6 +210,10 @@ describe 'Cane' do
   it 'rake works with user-defined check' do
     fn = make_file("")
     rakefile = make_file <<-RUBY
+      require 'simplecov'
+      SimpleCov.command_name "Rake tests"
+      SimpleCov.start
+
       $LOAD_PATH.unshift("#{File.expand_path('../../lib', __FILE__)}")
       $LOAD_PATH.unshift("#{File.expand_path('..', __FILE__)}")
       require 'cane/rake_task'
@@ -220,7 +228,7 @@ describe 'Cane' do
       end
     RUBY
 
-    out = `rake -f #{rakefile} quality 2>&1`
+    out = `bundle exec rake -f #{rakefile} quality`
     out.should include("Files are unhappy")
     $?.exitstatus.should == 1
   end
