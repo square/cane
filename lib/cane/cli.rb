@@ -6,11 +6,11 @@ require 'cane/cli/spec'
 module Cane
   module CLI
     def run(args)
-      opts = Spec.new.parse(args)
-      if opts.is_a?(Hash)
-        Cane.run(opts, Spec::CHECKS)
+      spec = Spec.new.parse(args)
+      if spec.is_a?(Hash)
+        Cane.run(spec)
       else
-        opts
+        spec
       end
     end
     module_function :run

@@ -45,7 +45,7 @@ module Cane
       def parse(args, ret = true)
         parser.parse!(get_default_options + args)
 
-        OPTIONS.merge(options)
+        OPTIONS.merge(options).merge(checks: CHECKS)
       rescue OptionParser::InvalidOption
         args = %w(--help)
         ret = false

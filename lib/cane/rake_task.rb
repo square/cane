@@ -41,7 +41,9 @@ module Cane
 
       task name do
         require 'cane/cli'
-        abort unless Cane.run(OPTIONS.merge(options), Cane::CLI::Spec::CHECKS)
+        abort unless Cane.run(
+          OPTIONS.merge(options).merge(checks: Cane::CLI::Spec::CHECKS)
+        )
       end
     end
 
