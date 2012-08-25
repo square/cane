@@ -11,7 +11,7 @@ module Cane
     # Provides a specification for the command line interface that drives
     # documentation, parsing, and default values.
     class Spec
-      CHECKS = [AbcCheck, StyleCheck, DocCheck, ThresholdCheck]
+      CHECKS = [AbcCheck, StyleCheck, DocCheck, ThresholdCheck].freeze
 
       def self.defaults(check)
         x = check.options.each_with_object({}) {|(k, v), h|
