@@ -48,22 +48,6 @@ describe 'Cane' do
     exitstatus.should == 1
   end
 
-  it 'allows measure to be configured' do
-    file_name = make_file("toolong")
-
-    output, exitstatus = run("--style-glob #{file_name} --style-measure 3")
-    exitstatus.should == 1
-    output.should include("Lines violated style requirements")
-  end
-
-  it 'does not include trailing new lines in the character count' do
-    file_name = make_file('#' * 80 + "\n" + '#' * 80)
-
-    output, exitstatus = run("--style-glob #{file_name} --style-measure 80")
-    exitstatus.should == 0
-    output.should == ""
-  end
-
   it 'allows upper bound of failed checks' do
     file_name = make_file("whitespace ")
 
@@ -106,47 +90,6 @@ describe 'Cane' do
     end
   end
 
-  describe 'argument ordering' do
-    let(:file_name) { make_file("class NoDoc") }
-
-    it 'gives precedence to the last argument #1' do
-      run("--doc-glob #{file_name} --no-doc").should ==
-        run("--no-doc")
-    end
-
-    it 'gives precendence to the last argument #2' do
-      run("--no-doc --doc-glob #{file_name}").should ==
-        run("--doc-glob #{file_name}")
-    end
-  end
-
-  it 'supports exclusions' do
-    line_with_whitespace = "whitespace "
-    file_name = make_file(<<-RUBY)
-      # #{line_with_whitespace}
-      class Harness
-        def complex_method(a)
-          if a < 2
-            return "low"
-          else
-            return "high"
-          end
-        end
-      end
-    RUBY
-
-    options = [
-      "--abc-glob", file_name,
-      "--abc-exclude", "Harness#complex_method",
-      "--abc-max", 1,
-      "--style-glob", file_name,
-      "--style-exclude", file_name
-    ].join(' ')
-
-    _, exitstatus = run(options)
-    exitstatus.should == 0
-  end
-
   it 'handles invalid unicode input' do
     fn = make_file("\xc3\x28")
 
@@ -155,17 +98,16 @@ describe 'Cane' do
     exitstatus.should == 0
   end
 
-  it 'handles invalid options by showing help' do
-    out, exitstatus = run("--bogus")
-
-    out.should include("Usage:")
-    exitstatus.should == 1
+  # Push this down into a unit spec
+  it 'handles option that does not result in a run' do
+    _, exitstatus = run("--help")
+    exitstatus.should == 0
   end
 
   describe 'user-defined checks' do
     let(:class_name) { "C#{rand(10 ** 10)}" }
 
-    it 'allows custom checks' do
+    it 'allows user-defined checks' do
       fn = make_file(":(")
       check_file = make_file <<-RUBY
         class #{class_name} < Struct.new(:opts)
