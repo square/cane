@@ -120,14 +120,18 @@ describe 'Cane' do
     output.should include(Cane::VERSION)
   end
 
-  it 'uses the last of conflicting arguments' do
-    file_name = make_file("class NoDoc")
+  describe 'argument ordering' do
+    let(:file_name) { make_file("class NoDoc") }
 
-    run("--doc-glob #{file_name} --no-doc").should ==
-      run("--no-doc")
+    it 'gives precedence to the last argument #1' do
+      run("--doc-glob #{file_name} --no-doc").should ==
+        run("--no-doc")
+    end
 
-    run("--no-doc --doc-glob #{file_name}").should ==
-      run("--doc-glob #{file_name}")
+    it 'gives precendence to the last argument #2' do
+      run("--no-doc --doc-glob #{file_name}").should ==
+        run("--doc-glob #{file_name}")
+    end
   end
 
   it 'supports exclusions' do
