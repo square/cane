@@ -71,7 +71,6 @@ BANNER
         end
 
         parser.on("-c", "--check CLASS", "Use the given check") do |c|
-          # TODO: Validate check
           check = Kernel.const_get(c)
           options[:checks] << check
           add_check_options(check)
