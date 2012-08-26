@@ -3,6 +3,14 @@ require 'tempfile'
 
 RSpec.configure do |config|
   config.include(RSpec::Fire)
+
+  def capture_stdout &block
+    real_stdout, $stdout = $stdout, StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = real_stdout
+  end
 end
 
 # Keep a reference to all tempfiles so they are not garbage collected until the
