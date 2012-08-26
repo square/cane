@@ -95,25 +95,6 @@ describe 'Cane' do
 
   it 'works with rake' do
     fn = make_file("90")
-
-    task = Cane::RakeTask.new(:quality) do |cane|
-      cane.no_abc = true
-      cane.no_doc = true
-      cane.no_style = true
-      cane.add_threshold fn, :>=, 99
-    end
-
-    task.no_abc.should == true
-
-    task.should_receive(:abort)
-    out = capture_stdout do
-      Rake::Task['quality'].invoke
-    end
-
-    out.should include("Quality threshold crossed")
-  end
-
-  it 'rake works with user-defined check' do
     my_check = Class.new(Struct.new(:opts)) do
       def violations
         [description: 'test', label: opts.fetch(:some_opt)]
@@ -124,14 +105,18 @@ describe 'Cane' do
       cane.no_abc = true
       cane.no_doc = true
       cane.no_style = true
+      cane.add_threshold fn, :>=, 99
       cane.use my_check, some_opt: "theopt"
     end
+
+    task.no_abc.should == true
 
     task.should_receive(:abort)
     out = capture_stdout do
       Rake::Task['quality'].invoke
     end
 
+    out.should include("Quality threshold crossed")
     out.should include("theopt")
   end
 
