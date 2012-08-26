@@ -1,5 +1,9 @@
 # Cane History
 
+## 2.1.0 - 26 August 2012 (2962d8fb)
+
+* Support for user-defined checks (#30)
+
 ## 2.0.0 - 19 August 2012 (35cae086)
 
 * ABC check labels  `MyClass = Struct.new {}` and `Class.new` correctly (#20)
