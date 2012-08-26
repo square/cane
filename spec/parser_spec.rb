@@ -75,7 +75,7 @@ describe Cane::CLI::Parser do
       --abc-glob myfile
       --style-glob myfile
     EOS
-    file = double("Cane::File")
+    file = fire_replaced_class_double("Cane::File")
     stub_const("Cane::File", file)
     file.should_receive(:exists?).with('./.cane').and_return(true)
     file.should_receive(:contents).with('./.cane').and_return(defaults)
