@@ -5,7 +5,9 @@ $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 begin
   require 'rspec/core/rake_task'
 
-  RSpec::Core::RakeTask.new(:spec)
+  RSpec::Core::RakeTask.new(:spec) do |c|
+    c.rspec_opts = "--profile"
+  end
 
   task :default => :spec
 rescue LoadError
