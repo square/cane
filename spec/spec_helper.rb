@@ -1,5 +1,8 @@
 require 'rspec/fire'
 require 'tempfile'
+require 'stringio'
+require 'rake'
+require 'rake/tasklib'
 
 RSpec.configure do |config|
   config.include(RSpec::Fire)
