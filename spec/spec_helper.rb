@@ -1,4 +1,9 @@
+require 'rspec/fire'
 require 'tempfile'
+
+RSpec.configure do |config|
+  config.include(RSpec::Fire)
+end
 
 # Keep a reference to all tempfiles so they are not garbage collected until the
 # process exits.
