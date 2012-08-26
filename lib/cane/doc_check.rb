@@ -31,7 +31,7 @@ module Cane
 
     def find_violations(file_name)
       last_line = ""
-      Cane::File.iterator(file_name).map_with_index do |line, number|
+      Cane::File.iterator(file_name).map.with_index do |line, number|
         result = if class_definition?(line) && !comment?(last_line)
           {
             file:        file_name,
