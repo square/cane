@@ -67,7 +67,7 @@ module Cane
     end
 
     def map_lines(file_path, &block)
-      Cane::File.iterator(file_path).map_with_index(&block)
+      Cane::File.iterator(file_path).map.with_index(&block)
     end
 
     def exclusions

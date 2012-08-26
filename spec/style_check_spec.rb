@@ -18,8 +18,8 @@ describe Cane::StyleCheck do
   it 'creates a StyleViolation for each method above the threshold' do
     file_name = make_file(ruby_with_style_issue)
 
-    violations = check(file_name, style_measure: 80).violations
-    violations.length.should == 2
+    violations = check(file_name, style_measure: 8).violations
+    violations.length.should == 3
   end
 
   it 'skips declared exclusions' do
@@ -32,4 +32,16 @@ describe Cane::StyleCheck do
 
     violations.length.should == 0
   end
+
+  it 'does not include trailing new lines in the character count' do
+    file_name = make_file('#' * 80 + "\n" + '#' * 80)
+
+    violations = check(file_name,
+      style_measure: 80,
+      style_exclude: [file_name]
+    ).violations
+
+    violations.length.should == 0
+  end
+
 end
