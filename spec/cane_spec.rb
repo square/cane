@@ -16,7 +16,9 @@ describe 'Cane' do
   def run(cli_args)
     result = nil
     output = capture_stdout do
-      result = Cane::CLI.run(['--no-abc'] + cli_args.split(/\s+/m))
+      result = Cane::CLI.run(
+        %w(--no-abc --no-style --no-doc) + cli_args.split(/\s+/m)
+      )
     end
 
     [output, result ? 0 : 1]
