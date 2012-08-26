@@ -25,16 +25,6 @@ def make_file(content)
   tempfile.path
 end
 
-def make_dot_cane(content)
-  File.open('./.cane', 'w') do |f|
-    f.puts content
-  end
-end
-
-def unmake_dot_cane
-  FileUtils.rm('./.cane')
-end
-
 require 'simplecov'
 
 class SimpleCov::Formatter::QualityFormatter
