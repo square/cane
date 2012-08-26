@@ -32,7 +32,10 @@ Customize behaviour with a wealth of options:
     > cane --help
     Usage: cane [options]
 
-    You can also put these options in a .cane file.
+    Default options are loaded from a .cane file in the current directory.
+
+        -r, --require FILE               Load a Ruby file containing user-defined checks
+        -c, --check CLASS                Use the given user-defined check
 
             --abc-glob GLOB              Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
             --abc-max VALUE              Ignore methods under this complexity (default: 15)
@@ -54,16 +57,15 @@ Customize behaviour with a wealth of options:
         -v, --version                    Show version
         -h, --help                       Show this message
 
-Set default options into a `.cane` file:
+Set default options using a `.cane` file:
 
     > cat .cane
     --no-doc
     --abc-glob **/*.rb
     > cane
 
-It works just like this:
-
-    > cane --no-doc --abc-glob '**/*.rb'
+It works exactly the same as specifying the options on the command-line.
+Command-line arguments will override arguments specified in the `.cane` file.
 
 ## Integrating with Rake
 
@@ -94,7 +96,9 @@ on to an existing application that may already have many violations. By setting
 the maximum to the current number, no immediate changes will be required to
 your existing code base, but you will be protected from things getting worse.
 
-You can also consider defining exclusions for each violation (see below).
+You may also consider beginning with high thresholds and ratcheting them down
+over time, or defining exclusions for specific troublesome violations (not
+recommended).
 
 ## Integrating with SimpleCov
 
@@ -120,12 +124,54 @@ You can use a `SimpleCov` formatter to create the required file:
 
     SimpleCov.formatter = SimpleCov::Formatter::QualityFormatter
 
+## Implementing your own checks
+
+Checks must implement:
+
+* A class level `options` method that returns a hash of available options. This
+  will be included in help output if the check is added before `--help`. If
+  your check does not require any configuration, return an empty hash.
+* A one argument constructor, into which will be passed the options specified
+  for your check.
+* A `violations` method that returns an array of violations.
+
+See existing checks for guidance. Create your check in a new file:
+
+    # unhappy.rb
+    class UnhappyCheck < Struct.new(:opts)
+      def self.options
+        {
+          unhappy_file: ["File to check", default: [nil]]
+        }
+      end
+
+      def violations
+        [
+          description: "Files are unhappy",
+          file:        opts.fetch(:unhappy_file),
+          label:       ":("
+        ]
+      end
+    end
+
+Include your check either using command-line options:
+
+    cane -r unhappy.rb --check UnhappyCheck --unhappy-file myfile
+
+Or in your rake task:
+
+    require 'unhappy'
+
+    Cane::RakeTask.new(:quality) do |c|
+      c.use UnhappyCheck, unhappy_file: 'myfile'
+    end
+
 ## Compatibility
 
 Requires MRI 1.9, since it depends on the `ripper` library to calculate
 complexity metrics. This only applies to the Ruby used to run Cane, not the
 project it is being run against. In other words, you can run Cane against your
-1.8 project.
+1.8 or JRuby project.
 
 ## Support
 

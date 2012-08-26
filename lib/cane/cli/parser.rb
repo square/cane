@@ -23,7 +23,7 @@ module Cane
         @stdout = stdout
 
         add_banner
-        add_custom_checks
+        add_user_defined_checks
 
         Cane.default_checks.each do |check|
           add_check_options(check)
@@ -59,18 +59,19 @@ module Cane
         parser.banner = <<-BANNER
 Usage: cane [options]
 
-You can also put these options in a .cane file.
+Default options are loaded from a .cane file in the current directory.
 
 BANNER
       end
 
-      def add_custom_checks
-        description = "Load a Ruby file containing custom checks"
+      def add_user_defined_checks
+        description = "Load a Ruby file containing user-defined checks"
         parser.on("-r", "--require FILE", description) do |f|
           load(f)
         end
 
-        parser.on("-c", "--check CLASS", "Use the given check") do |c|
+        description = "Use the given user-defined check"
+        parser.on("-c", "--check CLASS", description) do |c|
           check = Kernel.const_get(c)
           options[:checks] << check
           add_check_options(check)
