@@ -53,12 +53,6 @@ describe 'Cane' do
     exitstatus.should == 0
   end
 
-  # Push this down into a unit spec
-  it 'handles option that does not result in a run' do
-    _, exitstatus = run("--help")
-    exitstatus.should == 0
-  end
-
   describe 'user-defined checks' do
     let(:class_name) { "C#{rand(10 ** 10)}" }
 

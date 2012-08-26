@@ -6,7 +6,7 @@ require 'cane/cli/parser'
 module Cane
   module CLI
     def run(args)
-      spec = Parser.new.parse(args)
+      spec = Parser.parse(args)
       if spec.is_a?(Hash)
         Cane.run(spec)
       else

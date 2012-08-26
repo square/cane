@@ -15,6 +15,10 @@ module Cane
       # program can exit. This is used to handle --help and --version flags.
       class OptionsHandled < RuntimeError; end
 
+      def self.parse(*args)
+        new.parse(*args)
+      end
+
       def initialize(stdout = $stdout)
         @stdout = stdout
 
