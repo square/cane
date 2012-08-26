@@ -17,6 +17,16 @@ describe Cane::CLI::Parser do
     result[:style_measure].should == 3
   end
 
+  it 'allows checking of a value in a file' do
+    output, result = run("--gte myfile,90")
+    result[:gte].should == [['myfile', '90']]
+  end
+
+  it 'allows upper bound of failed checks' do
+    output, result = run("--max-violations 1")
+    result[:max_violations].should == 1
+  end
+
   it 'displays a help message' do
     output, result = run("--help")
 
@@ -57,5 +67,23 @@ describe Cane::CLI::Parser do
       _, result = run("--no-doc --doc-glob myfile")
       result[:no_doc].should_not be
     end
+  end
+
+  it 'loads default options from .cane file' do
+    defaults = <<-EOS
+      --no-doc
+      --abc-glob myfile
+      --style-glob myfile
+    EOS
+    file = double("Cane::File")
+    stub_const("Cane::File", file)
+    file.should_receive(:exists?).with('./.cane').and_return(true)
+    file.should_receive(:contents).with('./.cane').and_return(defaults)
+
+    _, result = run("--style-glob myotherfile")
+
+    result[:no_doc].should be
+    result[:abc_glob].should == 'myfile'
+    result[:style_glob].should == 'myotherfile'
   end
 end
