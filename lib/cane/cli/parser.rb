@@ -1,38 +1,31 @@
 require 'optparse'
 
-require 'cane/abc_check'
-require 'cane/style_check'
-require 'cane/doc_check'
-require 'cane/threshold_check'
+require 'cane/default_checks'
+require 'cane/cli/options'
+require 'cane/version'
 
 module Cane
   module CLI
 
     # Provides a specification for the command line interface that drives
     # documentation, parsing, and default values.
-    class Spec
-      CHECKS = [AbcCheck, StyleCheck, DocCheck, ThresholdCheck]
-
-      def self.defaults(check)
-        x = check.options.each_with_object({}) {|(k, v), h|
-          h[k] = (v[1] || {})[:default]
-        }
-        x
-      end
-
-      OPTIONS = {
-        max_violations:  0,
-        exclusions_file: nil,
-      }.merge(CHECKS.inject({}) {|a, check| a.merge(defaults(check)) })
+    class Parser
 
       # Exception to indicate that no further processing is required and the
       # program can exit. This is used to handle --help and --version flags.
       class OptionsHandled < RuntimeError; end
 
-      def initialize
-        add_banner
+      def self.parse(*args)
+        new.parse(*args)
+      end
 
-        CHECKS.each do |check|
+      def initialize(stdout = $stdout)
+        @stdout = stdout
+
+        add_banner
+        add_user_defined_checks
+
+        Cane.default_checks.each do |check|
           add_check_options(check)
         end
 
@@ -45,7 +38,7 @@ module Cane
       def parse(args, ret = true)
         parser.parse!(get_default_options + args)
 
-        OPTIONS.merge(options)
+        Cane::CLI.default_options.merge(options)
       rescue OptionParser::InvalidOption
         args = %w(--help)
         ret = false
@@ -55,8 +48,8 @@ module Cane
       end
 
       def get_default_options
-        if ::File.exists?('./.cane')
-          ::File.read('./.cane').gsub("\n", ' ').split(' ')
+        if Cane::File.exists?('./.cane')
+          Cane::File.contents('./.cane').split(/\s+/m)
         else
           []
         end
@@ -66,9 +59,24 @@ module Cane
         parser.banner = <<-BANNER
 Usage: cane [options]
 
-You can also put these options in a .cane file.
+Default options are loaded from a .cane file in the current directory.
 
 BANNER
+      end
+
+      def add_user_defined_checks
+        description = "Load a Ruby file containing user-defined checks"
+        parser.on("-r", "--require FILE", description) do |f|
+          load(f)
+        end
+
+        description = "Use the given user-defined check"
+        parser.on("-c", "--check CLASS", description) do |c|
+          check = Kernel.const_get(c)
+          options[:checks] << check
+          add_check_options(check)
+        end
+        parser.separator ""
       end
 
       def add_check_options(check)
@@ -103,14 +111,14 @@ BANNER
 
       def add_version
         parser.on_tail("-v", "--version", "Show version") do
-          puts Cane::VERSION
+          stdout.puts Cane::VERSION
           raise OptionsHandled
         end
       end
 
       def add_help
         parser.on_tail("-h", "--help", "Show this message") do
-          puts parser
+          stdout.puts parser
           raise OptionsHandled
         end
       end
@@ -131,12 +139,16 @@ BANNER
       end
 
       def options
-        @options ||= {}
+        @options ||= {
+          checks: Cane.default_checks
+        }
       end
 
       def parser
         @parser ||= OptionParser.new
       end
+
+      attr_reader :stdout
     end
 
   end

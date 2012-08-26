@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/tasklib'
 
-require 'cane/cli/spec'
+require 'cane/cli/options'
 
 module Cane
   # Creates a rake task to run cane with given configuration.
@@ -17,22 +17,36 @@ module Cane
   #   end
   class RakeTask < ::Rake::TaskLib
     attr_accessor :name
-    OPTIONS = Cane::CLI::Spec::OPTIONS
-    OPTIONS.each do |name, value|
-      attr_accessor name
+    attr_reader :options
+
+    Cane::CLI.default_options.keys.each do |name|
+      define_method(name) do
+        options.fetch(name)
+      end
+
+      define_method("#{name}=") do |v|
+        options[name] = v
+      end
     end
 
     # Add a threshold check. If the file exists and it contains a number,
     # compare that number with the given value using the operator.
     def add_threshold(file, operator, value)
       if operator == :>=
-        @gte << [file, value]
+        @options[:gte] << [file, value]
       end
+    end
+
+    def use(check, options = {})
+      @options.merge!(options)
+      @options[:checks] = @options[:checks] + [check]
     end
 
     def initialize(task_name = nil)
       self.name = task_name || :cane
       @gte = []
+      @options = Cane::CLI.default_options
+
       yield self if block_given?
 
       unless ::Rake.application.last_comment
@@ -41,15 +55,7 @@ module Cane
 
       task name do
         require 'cane/cli'
-        abort unless Cane.run(OPTIONS.merge(options), Cane::CLI::Spec::CHECKS)
-      end
-    end
-
-    def options
-      OPTIONS.keys.inject({}) do |opts, setting|
-        value = self.send(setting)
-        opts[setting] = value unless value.nil?
-        opts
+        abort unless Cane.run(options)
       end
     end
   end

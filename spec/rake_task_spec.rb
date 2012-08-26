@@ -3,11 +3,34 @@ require 'spec_helper'
 require 'cane/rake_task'
 
 describe Cane::RakeTask do
-  it 'adds a new threshold' do
-    task = described_class.new do |t|
-      t.add_threshold 'coverage', :>=, 99
+  it 'enables cane to be configured an run via rake' do
+    fn = make_file("90")
+    my_check = Class.new(Struct.new(:opts)) do
+      def violations
+        [description: 'test', label: opts.fetch(:some_opt)]
+      end
     end
 
-    task.options[:gte].should == [["coverage", 99]]
+    task = Cane::RakeTask.new(:quality) do |cane|
+      cane.no_abc = true
+      cane.no_doc = true
+      cane.no_style = true
+      cane.add_threshold fn, :>=, 99
+      cane.use my_check, some_opt: "theopt"
+    end
+
+    task.no_abc.should == true
+
+    task.should_receive(:abort)
+    out = capture_stdout do
+      Rake::Task['quality'].invoke
+    end
+
+    out.should include("Quality threshold crossed")
+    out.should include("theopt")
+  end
+
+  after do
+    Rake::Task.clear
   end
 end

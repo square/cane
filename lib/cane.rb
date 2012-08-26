@@ -10,9 +10,9 @@ module Cane
   # hands the result to a formatter for display. This is the core of the
   # application, but for the actual entry point see `Cane::CLI`.
   class Runner
-    def initialize(opts, checks)
-      @opts = opts
-      @checks = checks
+    def initialize(spec)
+      @opts = spec
+      @checks = spec[:checks]
     end
 
     def run

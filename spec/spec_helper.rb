@@ -1,4 +1,20 @@
+require 'rspec/fire'
 require 'tempfile'
+require 'stringio'
+require 'rake'
+require 'rake/tasklib'
+
+RSpec.configure do |config|
+  config.include(RSpec::Fire)
+
+  def capture_stdout &block
+    real_stdout, $stdout = $stdout, StringIO.new
+    yield
+    $stdout.string
+  ensure
+    $stdout = real_stdout
+  end
+end
 
 # Keep a reference to all tempfiles so they are not garbage collected until the
 # process exits.
@@ -10,16 +26,6 @@ def make_file(content)
   tempfile.print(content)
   tempfile.flush
   tempfile.path
-end
-
-def make_dot_cane(content)
-  File.open('./.cane', 'w') do |f|
-    f.puts content
-  end
-end
-
-def unmake_dot_cane
-  FileUtils.rm('./.cane')
 end
 
 require 'simplecov'

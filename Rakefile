@@ -5,7 +5,9 @@ $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 begin
   require 'rspec/core/rake_task'
 
-  RSpec::Core::RakeTask.new(:spec)
+  RSpec::Core::RakeTask.new(:spec) do |c|
+    c.rspec_opts = "--profile"
+  end
 
   task :default => :spec
 rescue LoadError
@@ -18,7 +20,7 @@ begin
   desc "Run cane to check quality metrics"
   Cane::RakeTask.new(:quality) do |cane|
     cane.abc_max = 12
-    cane.add_threshold 'coverage/covered_percent', :>=, 99
+    cane.add_threshold 'coverage/covered_percent', :>=, 100
   end
 
   task :default => :quality
