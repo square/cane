@@ -17,6 +17,7 @@ module Cane
     def default_options
       {
         max_violations:  0,
+        parallel:        false,
         exclusions_file: nil,
         checks:          Cane.default_checks
       }.merge(Cane.default_checks.inject({}) {|a, check|

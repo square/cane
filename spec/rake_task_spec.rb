@@ -17,6 +17,8 @@ describe Cane::RakeTask do
       cane.no_style = true
       cane.add_threshold fn, :>=, 99
       cane.use my_check, some_opt: "theopt"
+      cane.max_violations = 0
+      cane.parallel = false
     end
 
     task.no_abc.should == true
