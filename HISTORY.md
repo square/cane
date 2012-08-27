@@ -1,5 +1,9 @@
 # Cane History
 
+## 2.2.1 - 26 August 2012 (b5e5a362)
+
+* Bugfix: parallel option can be set in rake tasks
+
 ## 2.2.0 - 26 August 2012 (f4198619)
 
 * Gracefully handle ambiguous options like `-abc-max` (#27)
