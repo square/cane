@@ -62,6 +62,12 @@ describe 'The cane application' do
     exitstatus.should == 0
   end
 
+  it 'can run tasks in parallel' do
+    # This spec isn't great, but there is no good way to actually observe that
+    # tasks run in parallel and we want to verify the conditional is correct.
+    Cane.task_runner(parallel: true).should == Parallel
+  end
+
   after do
     if Object.const_defined?(class_name)
       Object.send(:remove_const, class_name)

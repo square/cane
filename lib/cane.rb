@@ -1,3 +1,5 @@
+require 'parallel'
+
 require 'cane/violation_formatter'
 
 module Cane
@@ -5,6 +7,24 @@ module Cane
     Runner.new(*args).run
   end
   module_function :run
+
+  def task_runner(opts)
+    if opts[:parallel]
+      Parallel
+    else
+      SimpleTaskRunner
+    end
+  end
+  module_function :task_runner
+
+  # Mirrors the Parallel gem's interface but does not provide any parralleism.
+  # This is faster for smaller tasks since it doesn't incur any overhead for
+  # creating new processes and communicating between them.
+  class SimpleTaskRunner
+    def self.map(enumerable, &block)
+      enumerable.map(&block)
+    end
+  end
 
   # Orchestrates the running of checks per the provided configuration, and
   # hands the result to a formatter for display. This is the core of the

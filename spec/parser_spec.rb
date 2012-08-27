@@ -86,4 +86,9 @@ describe Cane::CLI::Parser do
     result[:abc_glob].should == 'myfile'
     result[:style_glob].should == 'myotherfile'
   end
+
+  it 'allows parallel option' do
+    _, result = run("--parallel")
+    result[:parallel].should be
+  end
 end

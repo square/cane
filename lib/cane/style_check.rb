@@ -34,7 +34,7 @@ module Cane
     def violations
       return [] if opts[:no_style]
 
-      file_list.map do |file_path|
+      worker.map(file_list) do |file_path|
         map_lines(file_path) do |line, line_number|
           violations_for_line(line.chomp).map {|message| {
             file:        file_path,
@@ -76,6 +76,10 @@ module Cane
 
     def excluded?(file)
       exclusions.include?(file)
+    end
+
+    def worker
+      Cane.task_runner(opts)
     end
   end
 

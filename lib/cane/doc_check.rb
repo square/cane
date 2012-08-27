@@ -24,7 +24,7 @@ module Cane
     def violations
       return [] if opts[:no_doc]
 
-      file_names.map {|file_name|
+      worker.map(file_names) {|file_name|
         find_violations(file_name)
       }.flatten
     end
@@ -59,6 +59,10 @@ module Cane
 
     def extract_class_name(line)
       line.match(/class ([^\s;]+)/)[1]
+    end
+
+    def worker
+      Cane.task_runner(opts)
     end
   end
 

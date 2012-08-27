@@ -35,7 +35,7 @@ module Cane
     def violations
       return [] if opts[:no_abc] == false
 
-      order file_names.map {|file_name|
+      order worker.map(file_names) {|file_name|
         find_violations(file_name)
       }.flatten
     end
@@ -191,6 +191,10 @@ module Cane
 
     def exclusions
       opts.fetch(:abc_exclude, []).flatten.to_set
+    end
+
+    def worker
+      Cane.task_runner(opts)
     end
   end
 end
