@@ -39,7 +39,7 @@ module Cane
         parser.parse!(get_default_options + args)
 
         Cane::CLI.default_options.merge(options)
-      rescue OptionParser::InvalidOption
+      rescue OptionParser::InvalidOption, OptionParser::AmbiguousOption
         args = %w(--help)
         ret = false
         retry

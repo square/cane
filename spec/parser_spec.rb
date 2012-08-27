@@ -91,4 +91,10 @@ describe Cane::CLI::Parser do
     _, result = run("--parallel")
     result[:parallel].should be
   end
+
+  it 'handles ambiguous options' do
+    output, result = run("-abc-max")
+    output.should include("Usage:")
+    result.should_not be
+  end
 end
