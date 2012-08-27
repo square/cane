@@ -1,5 +1,11 @@
 # Cane History
 
+## 2.2.0 - 26 August 2012 (f4198619)
+
+* Gracefully handle ambiguous options like `-abc-max` (#27)
+* Provide the `--parallel` option to use all processors. This will be faster on
+  larger projects, but slower on smaller ones (#28)
+
 ## 2.1.0 - 26 August 2012 (2962d8fb)
 
 * Support for user-defined checks (#30)

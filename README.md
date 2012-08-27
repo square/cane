@@ -53,6 +53,7 @@ Customize behaviour with a wealth of options:
             --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD
 
             --max-violations VALUE       Max allowed violations (default: 0)
+            --parallel                   Use all processors. Slower on small projects, faster on large.
 
         -v, --version                    Show version
         -h, --help                       Show this message
