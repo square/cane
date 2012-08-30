@@ -60,7 +60,7 @@ module Cane
     end
 
     def extract_class_name(line)
-      line.match(/class ([^\s;]+)/)[1]
+      line.match(/class *?([^\s;]+)/)[1]
     end
 
     def worker

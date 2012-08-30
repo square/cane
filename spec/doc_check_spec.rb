@@ -35,7 +35,7 @@ end
   it 'ignores magic encoding comments' do
     file_name = make_file <<-RUBY
 # coding = utf-8
-class NoDoc; end
+class   NoDoc; end
 # -*-  encoding :  utf-8  -*-
 class AlsoNoDoc; end
 # Parse a Transfer-Encoding: Chunked response
