@@ -38,6 +38,8 @@ end
 class NoDoc; end
 # -*-  encoding :  utf-8  -*-
 class AlsoNoDoc; end
+# Parse a Transfer-Encoding: Chunked response
+class Doc; end
     RUBY
 
     violations = check(file_name).violations

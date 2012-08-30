@@ -18,8 +18,10 @@ module Cane
       }
     end
 
-    # Stolen from ERB source.
-    MAGIC_COMMENT_REGEX = %r"coding\s*[=:]\s*([[:alnum:]\-_]+)"
+    # Stolen from ERB source, amended to be slightly stricter to work around
+    # some known false positives.
+    MAGIC_COMMENT_REGEX =
+      %r"#(\s+-\*-)?\s+(en)?coding\s*[=:]\s*([[:alnum:]\-_]+)"
 
     def violations
       return [] if opts[:no_doc]
