@@ -1,5 +1,9 @@
 # Cane History
 
+## 2.2.2 - 29 August 2012 (3a9be454)
+
+* Bugfix: Stricter magic comment regex to avoid false positives (#31)
+
 ## 2.2.1 - 26 August 2012 (b5e5a362)
 
 * Bugfix: parallel option can be set in rake tasks
