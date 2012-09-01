@@ -167,6 +167,31 @@ Or in your rake task:
       c.use UnhappyCheck, unhappy_file: 'myfile'
     end
 
+## Protips
+
+### Writing class level documentation
+
+Classes are commonly the first entry point into a code base, often for an
+oncall engineer responding to an exception, so provide enough information to
+orient first-time readers.
+
+A good class level comment should answer the following:
+
+* Why does this class exist?
+* How does it fit in to the larger system?
+* Explanation of any domain-specific terms.
+
+If you have specific documentation elsewhere (say, in the README or a wiki), a
+link to that suffices.
+
+If the class is a known entry point, such as a regular background job that can
+potentially fail, then also provide enough context that it can be efficently
+dealt with. In the background job case:
+
+* Should it be retried?
+* What if it failed 5 days ago and we're only looking at it now?
+* Who cares that this job failed?
+
 ## Compatibility
 
 Requires MRI 1.9, since it depends on the `ripper` library to calculate

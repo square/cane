@@ -49,7 +49,7 @@ describe 'The cane application' do
       --unhappy-file #{fn}
     )
     output.should include("Lines violated style requirements")
-    output.should include("Classes are not documented")
+    output.should include("Class definitions require explanatory comments")
     output.should include("Methods exceeded maximum allowed ABC complexity")
     exitstatus.should == 1
   end

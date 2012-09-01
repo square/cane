@@ -6,6 +6,9 @@ module Cane
   # comment immediately preceeding.
   class DocCheck < Struct.new(:opts)
 
+    DESCRIPTION =
+      "Class definitions require explanatory comments on preceeding line."
+
     def self.key; :doc; end
     def self.name; "documentation checking"; end
     def self.options
@@ -39,7 +42,7 @@ module Cane
             file:        file_name,
             line:        number + 1,
             label:       extract_class_name(line),
-            description: "Classes are not documented"
+            description: DESCRIPTION
           }
         end
         last_line = line
