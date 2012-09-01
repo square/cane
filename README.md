@@ -201,9 +201,7 @@ project it is being run against. In other words, you can run Cane against your
 
 ## Support
 
-[Ask questions on Stack
-Overflow](http://stackoverflow.com/questions/ask?tags=ruby+cane). We keep an
-eye on new cane questions.
+Make a [new github issue](https://github.com/square/cane/issues/new).
 
 ## Contributing
 
