@@ -7,7 +7,7 @@ module Cane
   class DocCheck < Struct.new(:opts)
 
     DESCRIPTION =
-      "Class definitions require explanatory comments on preceeding line."
+      "Class definitions require explanatory comments on preceeding line"
 
     def self.key; :doc; end
     def self.name; "documentation checking"; end
