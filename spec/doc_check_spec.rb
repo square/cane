@@ -11,8 +11,9 @@ describe Cane::DocCheck do
     file_name = make_file <<-RUBY
 # This class is documented
 class Doc; end
-class NoDoc; end # No doc
+class  NoDoc; end # No doc
   class AlsoNoDoc; end
+classIgnore = nil
 [:class]
 # class Ignore
 class Meta
