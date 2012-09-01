@@ -33,7 +33,7 @@ module Cane
     end
 
     def violations
-      return [] if opts[:no_abc] == false
+      return [] if opts[:no_abc]
 
       order worker.map(file_names) {|file_name|
         find_violations(file_name)

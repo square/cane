@@ -7,6 +7,20 @@ describe Cane::AbcCheck do
     described_class.new(opts.merge(abc_glob: file_name))
   end
 
+  it 'does not create violations when no_abc flag is set' do
+    file_name = make_file(<<-RUBY)
+      class Harness
+        def complex_method(a)
+          b = a
+          return b if b > 3
+        end
+      end
+    RUBY
+
+    violations = check(file_name, abc_max: 1, no_abc: true).violations
+    violations.should be_empty
+  end
+
   it 'creates an AbcMaxViolation for each method above the threshold' do
     file_name = make_file(<<-RUBY)
       class Harness
@@ -21,7 +35,7 @@ describe Cane::AbcCheck do
       end
     RUBY
 
-    violations = check(file_name, abc_max: 1).violations
+    violations = check(file_name, abc_max: 1, no_abc: false).violations
     violations.length.should == 1
     violations[0].values_at(:file, :label, :value).should ==
       [file_name, "Harness#complex_method", 2]
