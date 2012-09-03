@@ -1,5 +1,11 @@
 # Cane History
 
+## 2.2.3 - 3 September 2012 (e4fe90ee)
+
+* Bugfix: Allow multiple spaces before class name. (#34)
+* Bugfix: Remove wacky broken conditional in AbcCheck. (#33)
+* Doc: Better guidance on class level comments. (#35)
+
 ## 2.2.2 - 29 August 2012 (3a9be454)
 
 * Bugfix: Stricter magic comment regex to avoid false positives (#31)
