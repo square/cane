@@ -27,7 +27,7 @@ module Cane
                          type: Array,
                          default: [],
                          clobber: :no_style],
-        no_style:      ['Disable style checking']
+        no_style:      ['Disable style checking', cast: ->(x) { !x }]
       }
     end
 
