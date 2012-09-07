@@ -78,7 +78,7 @@ Command-line arguments will override arguments specified in the `.cane` file.
         cane.abc_max = 10
         cane.add_threshold 'coverage/covered_percent', :>=, 99
         cane.no_style = true
-        cane.abc_exclude = %w(Foo::Bar.some_method)
+        cane.abc_exclude = %w(Foo::Bar#some_method)
       end
 
       task :default => :quality
