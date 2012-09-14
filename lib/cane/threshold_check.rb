@@ -19,6 +19,14 @@ module Cane
       thresholds.map do |operator, file, limit|
         value = value_from_file(file)
 
+        if limit.to_f != limit
+          if Cane::File.exists?(limit)
+            limit = value_from_file(limit)
+          else
+            limit = UnavailableValue.new
+          end
+        end
+
         unless value.send(operator, limit.to_f)
           {
             description: 'Quality threshold crossed',
