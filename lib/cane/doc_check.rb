@@ -1,4 +1,5 @@
 require 'cane/file'
+require 'cane'
 
 module Cane
 
@@ -13,11 +14,12 @@ module Cane
     def self.name; "documentation checking"; end
     def self.options
       {
-        doc_glob: ['Glob to run doc checks over',
-                      default:  '{app,lib}/**/*.rb',
-                      variable: 'GLOB',
-                      clobber:  :no_doc],
-        no_doc:   ['Disable documentation checking', cast: ->(x) { !x }]
+        doc_glob:  ['Glob to run doc checks over',
+                       default:  '{app,lib}/**/*.rb',
+                       variable: 'GLOB',
+                       clobber:  :no_doc],
+        no_readme: ['Disable readme checking', cast: ->(x) { !x }],
+        no_doc:    ['Disable documentation checking', cast: ->(x) { !x }]
       }
     end
 
@@ -29,7 +31,7 @@ module Cane
     def violations
       return [] if opts[:no_doc]
 
-      worker.map(file_names) {|file_name|
+      missing_file_violations + worker.map(file_names) {|file_name|
         find_violations(file_name)
       }.flatten
     end
@@ -48,6 +50,19 @@ module Cane
         last_line = line
         result
       end.compact
+    end
+
+    def missing_file_violations
+      result = []
+      unless opts[:no_readme]
+        unless ['', '.txt', '.md'].any? {|x| Cane::File.exists?("README#{x}") }
+          result << {
+            description: 'Missing documentation',
+            label:       'No README found'
+          }
+        end
+      end
+      result
     end
 
     def file_names

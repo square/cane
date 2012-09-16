@@ -53,4 +53,19 @@ class Doc; end
       file_name, 4, "AlsoNoDoc"
     ]
   end
+
+  it 'creates a violation for missing README' do
+    file = fire_replaced_class_double("Cane::File")
+    stub_const("Cane::File", file)
+    file.should_receive(:exists?).with("README").and_return(false)
+    file.should_receive(:exists?).with("README.md").and_return(false)
+    file.should_receive(:exists?).with("README.txt").and_return(false)
+
+    violations = check("").violations
+    violations.length.should == 1
+
+    violations[0].values_at(:description, :label).should == [
+      "Missing documentation", "No README found"
+    ]
+  end
 end
