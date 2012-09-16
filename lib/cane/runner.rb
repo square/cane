@@ -1,6 +1,7 @@
 require 'parallel'
 
 require 'cane/violation_formatter'
+require 'cane/json_formatter'
 
 module Cane
   def run(*args)
@@ -38,7 +39,11 @@ module Cane
     end
 
     def formatter
-      ViolationFormatter
+      if opts[:json]
+        JsonFormatter
+      else
+        ViolationFormatter
+      end
     end
   end
 end
