@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'cane'
+require 'cane/runner'
 
 describe Cane::Runner do
   describe '#run' do
