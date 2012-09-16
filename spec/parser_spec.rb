@@ -102,4 +102,9 @@ describe Cane::CLI::Parser do
     _, result = run("--no-readme")
     result[:no_readme].should be
   end
+
+  it 'handles json option' do
+    _, result = run("--json")
+    result[:json].should be
+  end
 end

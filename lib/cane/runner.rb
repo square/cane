@@ -1,6 +1,7 @@
 require 'parallel'
 
 require 'cane/violation_formatter'
+require 'cane/json_formatter'
 
 module Cane
   def run(*args)
@@ -18,7 +19,7 @@ module Cane
     end
 
     def run
-      outputter.print ViolationFormatter.new(violations)
+      outputter.print formatter.new(violations)
 
       violations.length <= opts.fetch(:max_violations)
     end
@@ -35,6 +36,14 @@ module Cane
 
     def outputter
       opts.fetch(:out, $stdout)
+    end
+
+    def formatter
+      if opts[:json]
+        JsonFormatter
+      else
+        ViolationFormatter
+      end
     end
   end
 end
