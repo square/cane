@@ -1,6 +1,7 @@
 require 'set'
 
 require 'cane/file'
+require 'cane/task_runner'
 
 module Cane
 

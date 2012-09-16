@@ -1,5 +1,5 @@
 require 'cane/file'
-require 'cane'
+require 'cane/task_runner'
 
 module Cane
 
