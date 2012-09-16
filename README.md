@@ -192,6 +192,18 @@ dealt with. In the background job case:
 * What if it failed 5 days ago and we're only looking at it now?
 * Who cares that this job failed?
 
+### Writing a readme
+
+A good README should include at a minimum:
+
+* Why the project exists.
+* How to get started with development.
+* How to deploy the project (if applicable).
+* Status of the project (spike, active development, stable in production).
+* Compatibility notes (1.8, 1.9, JRuby).
+* Any interesting technical or architectural decisions made on the project
+  (this could be as simple as a to an external design document).
+
 ## Compatibility
 
 Requires MRI 1.9, since it depends on the `ripper` library to calculate
