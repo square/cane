@@ -1,5 +1,11 @@
 # Cane History
 
+## 2.3.0 - 16 September 2012 (229252ff)
+
+* Feature: `--json` option for machine-readable output.
+* Feature: absence of a README will cause a failure.
+* Bugfix: `--no-style` option actually works now.
+
 ## 2.2.3 - 3 September 2012 (e4fe90ee)
 
 * Bugfix: Allow multiple spaces before class name. (#34)
