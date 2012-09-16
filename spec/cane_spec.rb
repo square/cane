@@ -3,6 +3,7 @@ require "stringio"
 require 'cane/cli'
 
 require 'cane/rake_task'
+require 'cane/task_runner'
 
 # Acceptance tests
 describe 'The cane application' do

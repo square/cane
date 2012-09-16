@@ -97,4 +97,9 @@ describe Cane::CLI::Parser do
     output.should include("Usage:")
     result.should_not be
   end
+
+  it 'handles no_readme option' do
+    _, result = run("--no-readme")
+    result[:no_readme].should be
+  end
 end

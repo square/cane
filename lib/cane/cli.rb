@@ -1,4 +1,4 @@
-require 'cane'
+require 'cane/runner'
 require 'cane/version'
 
 require 'cane/cli/parser'
