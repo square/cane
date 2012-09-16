@@ -18,7 +18,7 @@ module Cane
     end
 
     def run
-      outputter.print ViolationFormatter.new(violations)
+      outputter.print formatter.new(violations)
 
       violations.length <= opts.fetch(:max_violations)
     end
@@ -35,6 +35,10 @@ module Cane
 
     def outputter
       opts.fetch(:out, $stdout)
+    end
+
+    def formatter
+      ViolationFormatter
     end
   end
 end
