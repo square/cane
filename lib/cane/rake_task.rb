@@ -45,7 +45,7 @@ module Cane
 
     def canefile=(file)
       canefile = Cane::CLI::Parser.new
-      canefile.parser.parse!(canefile.get_default_options)
+      canefile.parser.parse!(canefile.read_options_from_file(file))
       options.merge! canefile.options
     end
 
