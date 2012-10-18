@@ -27,6 +27,18 @@ describe Cane::CLI::Parser do
     result[:max_violations].should == 1
   end
 
+  it 'uses positional arguments as shortcut for individual files' do
+    output, result = run("--all mysinglefile")
+    result[:abc_glob].should == 'mysinglefile'
+    result[:style_glob].should == 'mysinglefile'
+    result[:doc_glob].should == 'mysinglefile'
+
+    output, result = run("--all mysinglefile --abc-glob myotherfile")
+    result[:abc_glob].should == 'myotherfile'
+    result[:style_glob].should == 'mysinglefile'
+    result[:doc_glob].should == 'mysinglefile'
+  end
+
   it 'displays a help message' do
     output, result = run("--help")
 
