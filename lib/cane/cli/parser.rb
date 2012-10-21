@@ -120,7 +120,8 @@ BANNER
       def add_checks_shortcut
         description = "Apply all checks to given file"
         parser.on("-f", "--all FILE", description) do |f|
-          # XXX: hard-coded
+          # This is a bit of a hack, but provides a really useful UI for
+          # dealing with single files. Let's see how it evolves.
           options[:abc_glob] = f
           options[:style_glob] = f
           options[:doc_glob] = f
