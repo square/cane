@@ -49,8 +49,12 @@ module Cane
       end
 
       def get_default_options
-        if Cane::File.exists?('./.cane')
-          Cane::File.contents('./.cane').split(/\s+/m)
+        read_options_from_file './.cane'
+      end
+
+      def read_options_from_file(file)
+        if Cane::File.exists?(file)
+          Cane::File.contents(file).split(/\s+/m)
         else
           []
         end

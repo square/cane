@@ -2,6 +2,7 @@ require 'rake'
 require 'rake/tasklib'
 
 require 'cane/cli/options'
+require 'cane/cli/parser'
 
 module Cane
   # Creates a rake task to run cane with given configuration.
@@ -40,6 +41,12 @@ module Cane
     def use(check, options = {})
       @options.merge!(options)
       @options[:checks] = @options[:checks] + [check]
+    end
+
+    def canefile=(file)
+      canefile = Cane::CLI::Parser.new
+      canefile.parser.parse!(canefile.read_options_from_file(file))
+      options.merge! canefile.options
     end
 
     def initialize(task_name = nil)
