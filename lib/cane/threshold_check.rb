@@ -9,7 +9,8 @@ module Cane
     def self.key; :threshold; end
     def self.options
       {
-        gte: ["If FILE contains a number, verify it is >= to THRESHOLD",
+        gte: ["Check the number in FILE is >= to THRESHOLD " +
+              "(a number or another file name)",
                 variable: "FILE,THRESHOLD",
                 type:     Array]
       }

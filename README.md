@@ -87,6 +87,9 @@ Command-line arguments will override arguments specified in the `.cane` file.
       warn "cane not available, quality task not provided."
     end
 
+Loading options from a `.cane` file is supported by setting `canefile=` to the
+file name.
+
 Rescuing `LoadError` is a good idea, since `rake -T` failing is totally
 frustrating.
 
