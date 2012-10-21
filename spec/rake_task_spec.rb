@@ -32,6 +32,21 @@ describe Cane::RakeTask do
     out.should include("theopt")
   end
 
+  it 'can be configured using a .cane file' do
+    conf = "--gte 90,99"
+
+    task = Cane::RakeTask.new(:canefile_quality) do |cane|
+      cane.canefile = make_file(conf)
+    end
+
+    task.should_receive(:abort)
+    out = capture_stdout do
+      Rake::Task['canefile_quality'].invoke
+    end
+
+    out.should include("Quality threshold crossed")
+  end
+
   after do
     Rake::Task.clear
   end
