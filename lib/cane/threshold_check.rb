@@ -16,10 +16,18 @@ module Cane
     end
 
     def violations
-      thresholds.map do |operator, file, limit|
-        value = value_from_file(file)
+      thresholds.map do |operator, file, threshold|
+        value = normalized_limit(file)
+        limit = normalized_limit(threshold)
 
-        unless value.send(operator, limit.to_f)
+        if !limit.real?
+          {
+            description: 'Quality threshold could not be read',
+            label:       "%s is not a number or a file" % [
+              threshold
+            ]
+          }
+        elsif !value.send(operator, limit)
           {
             description: 'Quality threshold crossed',
             label:       "%s is %s, should be %s %s" % [
@@ -28,6 +36,12 @@ module Cane
           }
         end
       end.compact
+    end
+
+    def normalized_limit(limit)
+      Float(limit)
+    rescue ArgumentError
+      value_from_file(limit)
     end
 
     def value_from_file(file)
@@ -49,6 +63,7 @@ module Cane
     class UnavailableValue
       def >=(_); false end
       def to_s; 'unavailable' end
+      def real?; false; end
     end
   end
 
