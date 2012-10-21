@@ -4,11 +4,11 @@ require 'cane/task_runner'
 module Cane
 
   # Creates violations for class definitions that do not have an explantory
-  # comment immediately preceeding.
+  # comment immediately preceding.
   class DocCheck < Struct.new(:opts)
 
     DESCRIPTION =
-      "Class definitions require explanatory comments on preceeding line"
+      "Class definitions require explanatory comments on preceding line"
 
     def self.key; :doc; end
     def self.name; "documentation checking"; end
