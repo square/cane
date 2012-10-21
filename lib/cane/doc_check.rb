@@ -54,13 +54,15 @@ module Cane
 
     def missing_file_violations
       result = []
-      unless opts[:no_readme]
-        unless ['', '.txt', '.md'].any? {|x| Cane::File.exists?("README#{x}") }
-          result << {
-            description: 'Missing documentation',
-            label:       'No README found'
-          }
-        end
+      return result if opts[:no_readme]
+
+      filenames = ['README', 'readme']
+      extensions = ['', '.txt', '.md']
+      combinations = filenames.product(extensions)
+
+      if combinations.none? {|n, x| Cane::File.exists?(n + x) }
+        result << { description: 'Missing documentation',
+                    label: 'No README found' }
       end
       result
     end
