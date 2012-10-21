@@ -28,6 +28,7 @@ module Cane
         Cane.default_checks.each do |check|
           add_check_options(check)
         end
+        add_checks_shortcut
 
         add_cane_options
 
@@ -114,6 +115,17 @@ BANNER
             cast: ->(x) { x }
 
         parser.separator ""
+      end
+
+      def add_checks_shortcut
+        description = "Apply all checks to given file"
+        parser.on("-f", "--all FILE", description) do |f|
+          # This is a bit of a hack, but provides a really useful UI for
+          # dealing with single files. Let's see how it evolves.
+          options[:abc_glob] = f
+          options[:style_glob] = f
+          options[:doc_glob] = f
+        end
       end
 
       def add_version

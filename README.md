@@ -52,6 +52,7 @@ Customize behaviour with a wealth of options:
 
             --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD
 
+        -f, --all FILE                   Apply all checks to given file
             --max-violations VALUE       Max allowed violations (default: 0)
             --parallel                   Use all processors. Slower on small projects, faster on large.
 
