@@ -27,7 +27,7 @@ module Cane
               threshold
             ]
           }
-        elsif !value.send(operator, limit.to_f)
+        elsif !value.send(operator, limit)
           {
             description: 'Quality threshold crossed',
             label:       "%s is %s, should be %s %s" % [
@@ -39,10 +39,9 @@ module Cane
     end
 
     def normalized_limit(limit)
-      if limit.to_f != limit
-        limit = value_from_file(limit)
-      end
-      limit
+      Float(limit)
+    rescue ArgumentError
+      value_from_file(limit)
     end
 
     def value_from_file(file)

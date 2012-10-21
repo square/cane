@@ -8,17 +8,17 @@ describe Cane::ThresholdCheck do
 
     context "when the current coverage cannot be read" do
       it 'reports a violation' do
-        check = Cane::ThresholdCheck.new(gte: [['bogus_file', 20]])
+        check = Cane::ThresholdCheck.new(gte: [['bogus_file', '20']])
         violations = check.violations
         violations.length.should == 1
         violations[0][:label].should ==
-          'bogus_file is unavailable, should be >= 20'
+          'bogus_file is unavailable, should be >= 20.0'
       end
     end
 
     context "when the coverage threshold is incorrectly specified" do
       it 'reports a violation' do
-        check = Cane::ThresholdCheck.new(gte: [[20, 'bogus_file']])
+        check = Cane::ThresholdCheck.new(gte: [['20', 'bogus_file']])
         violations = check.violations
         violations.length.should == 1
         violations[0][:label].should ==
