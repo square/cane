@@ -20,7 +20,7 @@ module Cane
         value = normalized_limit(file)
         limit = normalized_limit(threshold)
 
-        if limit.is_a? UnavailableValue
+        if !limit.real?
           {
             description: 'Quality threshold could not be read',
             label:       "%s is not a number or a file" % [
@@ -63,6 +63,7 @@ module Cane
     class UnavailableValue
       def >=(_); false end
       def to_s; 'unavailable' end
+      def real?; false; end
     end
   end
 
