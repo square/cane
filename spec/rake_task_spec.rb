@@ -40,7 +40,6 @@ describe Cane::RakeTask do
       cane.canefile = make_file(conf)
     end
 
-
     task.should_receive(:abort)
     out = capture_stdout do
       Rake::Task['canefile_quality'].invoke
