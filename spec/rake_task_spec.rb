@@ -33,10 +33,9 @@ describe Cane::RakeTask do
   end
 
   it 'can be configured using a .cane file' do
-    fn = make_file("90").strip
+    conf = "--gte 90,99"
 
     task = Cane::RakeTask.new(:canefile_quality) do |cane|
-      conf = "--gte #{fn},99"
       cane.canefile = make_file(conf)
     end
 
