@@ -1,5 +1,12 @@
 # Cane History
 
+## 2.4.0 - 21 October 2012 (46949e77)
+
+* Feature: Rake task can load configuration from a `.cane` file.
+* Feature: Coverage threshold can be specifed in a file.
+* Feature: Provide `--all` option for working with single files.
+* Bugfix: Allow README file to be lowercase.
+
 ## 2.3.0 - 16 September 2012 (229252ff)
 
 * Feature: `--json` option for machine-readable output.
