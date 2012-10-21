@@ -24,7 +24,7 @@ a non-zero exit code if any quality checks fail. Also, a report:
       lib/cane.rb:20   Line length >80
       lib/cane.rb:42   Trailing whitespace
 
-    Class definitions require explanatory comments on preceeding line (1):
+    Class definitions require explanatory comments on preceding line (1):
       lib/cane:3  SomeClass
 
 Customize behaviour with a wealth of options:
