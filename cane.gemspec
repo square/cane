@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "http://github.com/square/cane"
 
   gem.executables   = []
+  gem.required_ruby_version = '>= 1.9.0'
   gem.files         = Dir.glob("{spec,lib}/**/*.rb") + %w(
                         README.md
                         HISTORY.md
