@@ -71,4 +71,17 @@ class Doc; end
       "Missing documentation", "No README found"
     ]
   end
+
+  it 'skips declared exclusions' do
+    file_name = make_file <<-FILE.gsub /^\s{6}/, ''
+      class NeedsDocumentation
+      end
+    FILE
+
+    violations = check(file_name,
+      doc_exclude: [file_name]
+    ).violations
+
+    violations.length.should == 0
+  end
 end
