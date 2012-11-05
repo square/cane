@@ -14,12 +14,17 @@ module Cane
     def self.name; "documentation checking"; end
     def self.options
       {
-        doc_glob:  ['Glob to run doc checks over',
-                       default:  '{app,lib}/**/*.rb',
-                       variable: 'GLOB',
-                       clobber:  :no_doc],
-        no_readme: ['Disable readme checking', cast: ->(x) { !x }],
-        no_doc:    ['Disable documentation checking', cast: ->(x) { !x }]
+        doc_glob:    ['Glob to run doc checks over',
+                        default:  '{app,lib}/**/*.rb',
+                        variable: 'GLOB',
+                        clobber:  :no_doc],
+        doc_exclude: ['Exclude file from documentation checking',
+                        variable: 'FILE',
+                        type: Array,
+                        default: [],
+                        clobber: :no_doc],
+        no_readme:   ['Disable readme checking', cast: ->(x) { !x }],
+        no_doc:      ['Disable documentation checking', cast: ->(x) { !x }]
       }
     end
 
@@ -68,7 +73,7 @@ module Cane
     end
 
     def file_names
-      Dir[opts.fetch(:doc_glob)]
+      Dir[opts.fetch(:doc_glob)].reject { |file| excluded?(file) }
     end
 
     def class_definition?(line)
@@ -81,6 +86,14 @@ module Cane
 
     def extract_class_name(line)
       line.match(/class\s+([^\s;]+)/)[1]
+    end
+
+    def exclusions
+      @exclusions ||= opts.fetch(:doc_exclude, []).flatten.to_set
+    end
+
+    def excluded?(file)
+      exclusions.include?(file)
     end
 
     def worker
