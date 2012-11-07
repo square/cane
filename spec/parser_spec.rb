@@ -63,11 +63,13 @@ describe Cane::CLI::Parser do
   it 'supports exclusions' do
     options = [
       "--abc-exclude", "Harness#complex_method",
+      "--doc-exclude", 'myfile',
       "--style-exclude", 'myfile'
     ].join(' ')
 
     _, result = run(options)
     result[:abc_exclude].should == [['Harness#complex_method']]
+    result[:doc_exclude].should == [['myfile']]
     result[:style_exclude].should == [['myfile']]
   end
 
