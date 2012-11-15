@@ -33,6 +33,17 @@ describe Cane::StyleCheck do
     violations.length.should == 0
   end
 
+  it 'skips declared glob-based exclusions' do
+    file_name = make_file(ruby_with_style_issue)
+
+    violations = check(file_name,
+      style_measure: 80,
+      style_exclude: ["#{File.dirname(file_name)}/*"]
+    ).violations
+
+    violations.length.should == 0
+  end
+
   it 'does not include trailing new lines in the character count' do
     file_name = make_file('#' * 80 + "\n" + '#' * 80)
 
