@@ -44,7 +44,7 @@ Customize behaviour with a wealth of options:
 
             --style-glob GLOB            Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
             --style-measure VALUE        Max line length (default: 80)
-            --style-exclude FILE         Exclude file from style checking
+            --style-exclude FILE         Exclude file or glob from style checking
             --no-style                   Disable style checking
 
             --doc-glob GLOB              Glob to run doc checks over (default: {app,lib}/**/*.rb)
