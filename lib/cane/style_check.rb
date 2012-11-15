@@ -72,7 +72,9 @@ module Cane
     end
 
     def exclusions
-      @exclusions ||= opts.fetch(:style_exclude, []).flatten.to_set
+      @exclusions ||= opts.fetch(:style_exclude, []).flatten.map do |i|
+        Dir[i]
+      end.flatten.to_set
     end
 
     def excluded?(file)
