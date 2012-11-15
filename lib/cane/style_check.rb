@@ -23,7 +23,7 @@ module Cane
                            default: 80,
                            cast:    :to_i,
                            clobber: :no_style],
-        style_exclude: ['Exclude file from style checking',
+        style_exclude: ['Exclude file or glob from style checking',
                          variable: 'FILE',
                          type: Array,
                          default: [],
