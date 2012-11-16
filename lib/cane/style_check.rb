@@ -23,7 +23,7 @@ module Cane
                            default: 80,
                            cast:    :to_i,
                            clobber: :no_style],
-        style_exclude: ['Exclude file from style checking',
+        style_exclude: ['Exclude file or glob from style checking',
                          variable: 'FILE',
                          type: Array,
                          default: [],
@@ -72,7 +72,9 @@ module Cane
     end
 
     def exclusions
-      @exclusions ||= opts.fetch(:style_exclude, []).flatten.to_set
+      @exclusions ||= opts.fetch(:style_exclude, []).flatten.map do |i|
+        Dir[i]
+      end.flatten.to_set
     end
 
     def excluded?(file)
