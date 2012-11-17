@@ -1,5 +1,10 @@
 # Cane History
 
+## 2.5.0 - 17 November 2012 (628cc1e9)
+
+* Feature: `--doc-exclude` option to exclude globs from documentation checks.
+* Feature: `--style-exclude` supports globbing.
+
 ## 2.4.0 - 21 October 2012 (46949e77)
 
 * Feature: Rake task can load configuration from a `.cane` file.
