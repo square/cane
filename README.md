@@ -44,16 +44,19 @@ Customize behaviour with a wealth of options:
 
             --style-glob GLOB            Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
             --style-measure VALUE        Max line length (default: 80)
-            --style-exclude FILE         Exclude file or glob from style checking
+            --style-exclude GLOB         Exclude file or glob from style checking
             --no-style                   Disable style checking
 
             --doc-glob GLOB              Glob to run doc checks over (default: {app,lib}/**/*.rb)
+            --doc-exclude GLOB           Exclude file or glob from documentation checking
+            --no-readme                  Disable readme checking
             --no-doc                     Disable documentation checking
 
-            --gte FILE,THRESHOLD         If FILE contains a number, verify it is >= to THRESHOLD
+            --gte FILE,THRESHOLD         Check the number in FILE is >= to THRESHOLD (a number or another file name)
 
         -f, --all FILE                   Apply all checks to given file
             --max-violations VALUE       Max allowed violations (default: 0)
+            --json                       Output as JSON
             --parallel                   Use all processors. Slower on small projects, faster on large.
 
         -v, --version                    Show version
