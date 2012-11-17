@@ -18,8 +18,8 @@ module Cane
                         default:  '{app,lib}/**/*.rb',
                         variable: 'GLOB',
                         clobber:  :no_doc],
-        doc_exclude: ['Exclude file from documentation checking',
-                        variable: 'FILE',
+        doc_exclude: ['Exclude file or glob from documentation checking',
+                        variable: 'GLOB',
                         type: Array,
                         default: [],
                         clobber: :no_doc],
@@ -89,7 +89,9 @@ module Cane
     end
 
     def exclusions
-      @exclusions ||= opts.fetch(:doc_exclude, []).flatten.to_set
+      @exclusions ||= opts.fetch(:doc_exclude, []).flatten.map do |i|
+        Dir[i]
+      end.flatten.to_set
     end
 
     def excluded?(file)

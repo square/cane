@@ -84,4 +84,17 @@ class Doc; end
 
     violations.length.should == 0
   end
+
+  it 'skips declared glob-based exclusions' do
+    file_name = make_file <<-FILE.gsub /^\s{6}/, ''
+      class NeedsDocumentation
+      end
+    FILE
+
+    violations = check(file_name,
+      doc_exclude: ["#{File.dirname(file_name)}/*"]
+    ).violations
+
+    violations.length.should == 0
+  end
 end

@@ -24,7 +24,7 @@ module Cane
                            cast:    :to_i,
                            clobber: :no_style],
         style_exclude: ['Exclude file or glob from style checking',
-                         variable: 'FILE',
+                         variable: 'GLOB',
                          type: Array,
                          default: [],
                          clobber: :no_style],
