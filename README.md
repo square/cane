@@ -209,7 +209,7 @@ A good README should include at a minimum:
 * Status of the project (spike, active development, stable in production).
 * Compatibility notes (1.8, 1.9, JRuby).
 * Any interesting technical or architectural decisions made on the project
-  (this could be as simple as a to an external design document).
+  (this could be as simple as a link to an external design document).
 
 ## Compatibility
 
