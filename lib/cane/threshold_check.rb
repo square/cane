@@ -12,6 +12,10 @@ module Cane
         gte: ["Check the number in FILE is >= to THRESHOLD " +
               "(a number or another file name)",
                 variable: "FILE,THRESHOLD",
+                type:     Array],
+        eq:  ["Check the number in FILE is == to THRESHOLD " +
+              "(a number or another file name)",
+                variable: "FILE,THRESHOLD",
                 type:     Array]
       }
     end
@@ -56,6 +60,9 @@ module Cane
     def thresholds
       (opts[:gte] || []).map do |x|
         x.unshift(:>=)
+      end +
+      (opts[:eq] || []).map do |x|
+        x.unshift(:==)
       end
     end
 
