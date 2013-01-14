@@ -5,19 +5,22 @@ module Cane
   # Configurable check that allows the contents of a file to be compared against
   # a given value.
   class ThresholdCheck < Struct.new(:opts)
+    THRESHOLDS = {
+      lt:  :<,
+      lte: :<=,
+      eq:  :==,
+      gte: :>=,
+      gt:  :>
+    }
 
     def self.key; :threshold; end
     def self.options
-      {
-        gte: ["Check the number in FILE is >= to THRESHOLD " +
-              "(a number or another file name)",
-                variable: "FILE,THRESHOLD",
-                type:     Array],
-        eq:  ["Check the number in FILE is == to THRESHOLD " +
-              "(a number or another file name)",
-                variable: "FILE,THRESHOLD",
-                type:     Array]
-      }
+      THRESHOLDS.each_with_object({}) do |(key, value), h|
+        h[key] = ["Check the number in FILE is #{value} to THRESHOLD " +
+                  "(a number or another file name)",
+                    variable: "FILE,THRESHOLD",
+                    type:     Array]
+      end
     end
 
     def violations
@@ -58,12 +61,11 @@ module Cane
     end
 
     def thresholds
-      (opts[:gte] || []).map do |x|
-        x.unshift(:>=)
-      end +
-      (opts[:eq] || []).map do |x|
-        x.unshift(:==)
-      end
+      THRESHOLDS.map do |k, v|
+        opts.fetch(k, []).map do |x|
+          x.unshift(v)
+        end
+      end.reduce(:+)
     end
 
     # Null object for all cases when the value to be compared against cannot be

@@ -27,6 +27,20 @@ describe Cane::CLI::Parser do
     result[:eq].should == [['myfile', '90']]
   end
 
+  it 'allows checking lte of a value in a file' do
+    output, result = run("--lte myfile,90")
+    result[:lte].should == [['myfile', '90']]
+  end
+
+  it 'allows checking lt of a value in a file' do
+    output, result = run("--lt myfile,90")
+    result[:lt].should == [['myfile', '90']]
+  end
+
+  it 'allows checking gt of a value in a file' do
+    output, resugt = run("--gt myfile,90")
+    resugt[:gt].should == [['myfile', '90']]
+  end
 
   it 'allows upper bound of failed checks' do
     output, result = run("--max-violations 1")
