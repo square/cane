@@ -6,20 +6,20 @@ describe Cane::ThresholdCheck do
 
   context "checking violations" do
 
-    def check(opts = {})
-      Cane::ThresholdCheck.new(opts)
+    def run(threshold, value)
+      described_class.new(threshold => [['x', value]])
     end
 
     context "when the current coverage cannot be read" do
       it do
-        check(gte: [['bogus_file', '20']]).should \
-          have_violation('bogus_file is unavailable, should be >= 20.0')
+        run(:gte, 20).should \
+          have_violation('x is unavailable, should be >= 20.0')
       end
     end
 
     context "when the coverage threshold is incorrectly specified" do
       it do
-        check(gte: [['20', 'bogus_file']]).should \
+        described_class.new(gte: [['20', 'bogus_file']]).should \
           have_violation('bogus_file is not a number or a file')
       end
     end
@@ -29,10 +29,6 @@ describe Cane::ThresholdCheck do
         file = fire_replaced_class_double("Cane::File")
         stub_const("Cane::File", file)
         file.should_receive(:contents).with('x').and_return("8\n")
-      end
-
-      def run(threshold, value)
-        check(threshold => [['x', value]])
       end
 
       context '>' do
