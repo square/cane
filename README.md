@@ -34,33 +34,37 @@ Customize behaviour with a wealth of options:
 
     Default options are loaded from a .cane file in the current directory.
 
-        -r, --require FILE               Load a Ruby file containing user-defined checks
-        -c, --check CLASS                Use the given user-defined check
+    -r, --require FILE               Load a Ruby file containing user-defined checks
+    -c, --check CLASS                Use the given user-defined check
 
-            --abc-glob GLOB              Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
-            --abc-max VALUE              Ignore methods under this complexity (default: 15)
-            --abc-exclude METHOD         Exclude method from analysis (eg. Foo::Bar#method)
-            --no-abc                     Disable ABC checking
+        --abc-glob GLOB              Glob to run ABC metrics over (default: {app,lib}/**/*.rb)
+        --abc-max VALUE              Ignore methods under this complexity (default: 15)
+        --abc-exclude METHOD         Exclude method from analysis (eg. Foo::Bar#method)
+        --no-abc                     Disable ABC checking
 
-            --style-glob GLOB            Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
-            --style-measure VALUE        Max line length (default: 80)
-            --style-exclude GLOB         Exclude file or glob from style checking
-            --no-style                   Disable style checking
+        --style-glob GLOB            Glob to run style checks over (default: {app,lib,spec}/**/*.rb)
+        --style-measure VALUE        Max line length (default: 80)
+        --style-exclude GLOB         Exclude file or glob from style checking
+        --no-style                   Disable style checking
 
-            --doc-glob GLOB              Glob to run doc checks over (default: {app,lib}/**/*.rb)
-            --doc-exclude GLOB           Exclude file or glob from documentation checking
-            --no-readme                  Disable readme checking
-            --no-doc                     Disable documentation checking
+        --doc-glob GLOB              Glob to run doc checks over (default: {app,lib}/**/*.rb)
+        --doc-exclude GLOB           Exclude file or glob from documentation checking
+        --no-readme                  Disable readme checking
+        --no-doc                     Disable documentation checking
 
-            --gte FILE,THRESHOLD         Check the number in FILE is >= to THRESHOLD (a number or another file name)
+        --lt FILE,THRESHOLD          Check the number in FILE is < to THRESHOLD (a number or another file name)
+        --lte FILE,THRESHOLD         Check the number in FILE is <= to THRESHOLD (a number or another file name)
+        --eq FILE,THRESHOLD          Check the number in FILE is == to THRESHOLD (a number or another file name)
+        --gte FILE,THRESHOLD         Check the number in FILE is >= to THRESHOLD (a number or another file name)
+        --gt FILE,THRESHOLD          Check the number in FILE is > to THRESHOLD (a number or another file name)
 
-        -f, --all FILE                   Apply all checks to given file
-            --max-violations VALUE       Max allowed violations (default: 0)
-            --json                       Output as JSON
-            --parallel                   Use all processors. Slower on small projects, faster on large.
+    -f, --all FILE                   Apply all checks to given file
+        --max-violations VALUE       Max allowed violations (default: 0)
+        --json                       Output as JSON
+        --parallel                   Use all processors. Slower on small projects, faster on large.
 
-        -v, --version                    Show version
-        -h, --help                       Show this message
+    -v, --version                    Show version
+    -h, --help                       Show this message
 
 Set default options using a `.cane` file:
 
