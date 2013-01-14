@@ -26,6 +26,27 @@ describe Cane::ThresholdCheck do
       end
     end
 
+    context '>= threshold' do
+      before do
+        file = fire_replaced_class_double("Cane::File")
+        stub_const("Cane::File", file)
+        file.should_receive(:contents).with('myfile').and_return("98\n")
+      end
+
+      it 'reports a violation on less value' do
+        check = Cane::ThresholdCheck.new(gte: [['myfile', '99']])
+        violations = check.violations
+        violations.length.should == 1
+        violations[0][:label].should ==
+          'myfile is 98.0, should be >= 99.0'
+      end
+
+      it 'allows equal value' do
+        check = Cane::ThresholdCheck.new(gte: [['myfile', '98']])
+        check.violations.length.should == 0
+      end
+    end
+
   end
 
   context "normalizing a user supplied value to a threshold" do
