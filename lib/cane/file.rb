@@ -7,7 +7,7 @@ module Cane
   class File
     class << self
       def iterator(path)
-        EncodingAwareIterator.new(open(path).lines)
+        EncodingAwareIterator.new(open(path).each_line)
       end
 
       def contents(path)
