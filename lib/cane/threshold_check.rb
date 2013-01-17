@@ -47,7 +47,7 @@ module Cane
 
     def value_from_file(file)
       begin
-        contents = Cane::File.contents(file).chomp.to_f
+        contents = Cane::File.contents(file).scan(/\d+\.?\d*/).first.to_f
       rescue Errno::ENOENT
         UnavailableValue.new
       end
