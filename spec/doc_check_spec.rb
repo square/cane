@@ -59,10 +59,14 @@ class Doc; end
     stub_const("Cane::File", file)
     file.should_receive(:exists?).with("README").and_return(false)
     file.should_receive(:exists?).with("README.md").and_return(false)
+    file.should_receive(:exists?).with("README.mdown").and_return(false)
     file.should_receive(:exists?).with("README.txt").and_return(false)
+    file.should_receive(:exists?).with("README.rdoc").and_return(false)
     file.should_receive(:exists?).with("readme").and_return(false)
     file.should_receive(:exists?).with("readme.md").and_return(false)
+    file.should_receive(:exists?).with("readme.mdown").and_return(false)
     file.should_receive(:exists?).with("readme.txt").and_return(false)
+    file.should_receive(:exists?).with("readme.rdoc").and_return(false)
 
     violations = check("").violations
     violations.length.should == 1
