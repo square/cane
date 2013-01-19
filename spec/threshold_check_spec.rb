@@ -4,6 +4,16 @@ require 'cane/threshold_check'
 
 describe Cane::ThresholdCheck do
 
+  let(:simplecov_last_run) do
+    <<-ENDL
+    {
+      "result": {
+        "covered_percent": 93.88
+      }
+    }
+    ENDL
+  end
+
   context "checking violations" do
 
     context "when the current coverage cannot be read" do
@@ -45,6 +55,12 @@ describe Cane::ThresholdCheck do
       limit = subject.normalized_limit("/File.does.not.exist")
       limit.should be_a Cane::ThresholdCheck::UnavailableValue
     end
+
+
+    it 'normalizes a json file to a float' do
+      subject.normalized_limit(make_file(simplecov_last_run)).should == 93.88
+    end
+
   end
 
 end
