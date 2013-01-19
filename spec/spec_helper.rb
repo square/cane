@@ -28,6 +28,21 @@ def make_file(content)
   tempfile.path
 end
 
+RSpec::Matchers.define :have_violation do |label|
+  match do |check|
+    violations = check.violations
+    violations.length.should == 1
+    violations[0][:label].should == label
+  end
+end
+
+RSpec::Matchers.define :have_no_violations do |label|
+  match do |check|
+    violations = check.violations
+    violations.length.should == 0
+  end
+end
+
 require 'simplecov'
 
 class SimpleCov::Formatter::QualityFormatter

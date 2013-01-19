@@ -16,23 +16,59 @@ describe Cane::ThresholdCheck do
 
   context "checking violations" do
 
+    def run(threshold, value)
+      described_class.new(threshold => [['x', value]])
+    end
+
     context "when the current coverage cannot be read" do
-      it 'reports a violation' do
-        check = Cane::ThresholdCheck.new(gte: [['bogus_file', '20']])
-        violations = check.violations
-        violations.length.should == 1
-        violations[0][:label].should ==
-          'bogus_file is unavailable, should be >= 20.0'
+      it do
+        run(:gte, 20).should \
+          have_violation('x is unavailable, should be >= 20.0')
       end
     end
 
     context "when the coverage threshold is incorrectly specified" do
-      it 'reports a violation' do
-        check = Cane::ThresholdCheck.new(gte: [['20', 'bogus_file']])
-        violations = check.violations
-        violations.length.should == 1
-        violations[0][:label].should ==
-          'bogus_file is not a number or a file'
+      it do
+        described_class.new(gte: [['20', 'bogus_file']]).should \
+          have_violation('bogus_file is not a number or a file')
+      end
+    end
+
+    context 'when coverage threshold is valid' do
+      before do
+        file = fire_replaced_class_double("Cane::File")
+        stub_const("Cane::File", file)
+        file.should_receive(:contents).with('x').and_return("8\n")
+      end
+
+      context '>' do
+        it { run(:gt, 7).should have_no_violations }
+        it { run(:gt, 8).should have_violation('x is 8.0, should be > 8.0') }
+        it { run(:gt, 9).should have_violation('x is 8.0, should be > 9.0') }
+      end
+
+      context '>=' do
+        it { run(:gte, 7).should have_no_violations }
+        it { run(:gte, 8).should have_no_violations }
+        it { run(:gte, 9).should have_violation('x is 8.0, should be >= 9.0') }
+      end
+
+      context '==' do
+        it { run(:eq, 7).should have_violation('x is 8.0, should be == 7.0') }
+        it { run(:eq, 8).should have_no_violations }
+        it { run(:eq, 9).should have_violation('x is 8.0, should be == 9.0') }
+      end
+
+      context '<=' do
+        it { run(:lte, 7).should have_violation('x is 8.0, should be <= 7.0') }
+        it { run(:lte, 8).should have_no_violations }
+        it { run(:lte, 9).should have_no_violations }
+      end
+
+      context '<' do
+        it { run(:lt, 7).should have_violation('x is 8.0, should be < 7.0') }
+        it { run(:lt, 8).should have_violation('x is 8.0, should be < 8.0') }
+        it { run(:lt, 9).should have_no_violations }
       end
     end
 
