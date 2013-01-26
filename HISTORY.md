@@ -1,5 +1,16 @@
 # Cane History
 
+## 2.5.2 - 26 January 2013 (a0cf38ba)
+
+* Feature: support operators beside `>=` in threshold check.
+
+## 2.5.1 - 26 January 2013 (93819f19)
+
+* Feature: documentation check supports `.mdown` and `.rdoc` extensions.
+* Feature: expanded threshold regex to support `coverage/.last_run.json` from
+  `SimpleCov`.
+* Compat: Ruby 2.0 compatibility.
+
 ## 2.5.0 - 17 November 2012 (628cc1e9)
 
 * Feature: `--doc-exclude` option to exclude globs from documentation checks.
