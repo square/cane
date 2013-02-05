@@ -54,7 +54,11 @@ module Cane
       @gte = []
       @options = Cane::CLI.default_options
 
-      yield self if block_given?
+      if block_given?
+        yield self
+      else
+        self.canefile = './.cane'
+      end
 
       unless ::Rake.application.last_comment
         desc %(Check code quality metrics with cane)
