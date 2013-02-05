@@ -6,24 +6,28 @@ module Cane
   # Computes a string to be displayed as output from an array of violations
   # computed by the checks.
   class ViolationFormatter
-    attr_reader :violations
+    attr_reader :violations, :options
 
-    def initialize(violations)
+    def initialize(violations, options = {})
       @violations = violations.map do |v|
         v.merge(file_and_line: v[:line] ?
           "%s:%i" % v.values_at(:file, :line) :
           v[:file]
         )
       end
+
+      @options = options
     end
 
     def to_s
       return "" if violations.empty?
 
-      violations.group_by {|x| x[:description] }.map do |d, vs|
+      string = violations.group_by {|x| x[:description] }.map do |d, vs|
         format_group_header(d, vs) +
           format_violations(vs)
       end.join("\n") + "\n\n" + totals + "\n\n"
+
+      colorize(string)
     end
 
     protected
@@ -52,6 +56,12 @@ module Cane
       '  ' + column_widths.keys.map {|column|
         v[column].to_s.ljust(column_widths[column])
       }.join('  ').strip
+    end
+
+    def colorize(string)
+      return string unless options[:color]
+
+      "\e[31m#{string}\e[0m"
     end
 
     def totals

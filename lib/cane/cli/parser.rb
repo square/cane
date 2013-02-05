@@ -118,6 +118,9 @@ BANNER
           "Use all processors. Slower on small projects, faster on large.",
             cast: ->(x) { x }
 
+        add_option %w(--color),
+          "Colorize output", default: false
+
         parser.separator ""
       end
 

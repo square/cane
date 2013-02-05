@@ -18,4 +18,15 @@ describe Cane::ViolationFormatter do
     result = described_class.new(violations).to_s
     result.should include("Total Violations: 2")
   end
+
+  it 'does not colorize output by default' do
+    result = described_class.new([violation("FAIL")]).to_s
+    result.should_not include("\e[31m")
+  end
+
+  it 'colorizes output when passed color: true' do
+    result = described_class.new([violation("FAIL")], color: true).to_s
+    result.should include("\e[31m")
+    result.should include("\e[0m")
+  end
 end
