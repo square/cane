@@ -28,6 +28,12 @@ def make_file(content)
   tempfile.path
 end
 
+def in_tmp_dir(&block)
+  Dir.mktmpdir do |dir|
+    Dir.chdir(dir, &block)
+  end
+end
+
 RSpec::Matchers.define :have_violation do |label|
   match do |check|
     violations = check.violations
