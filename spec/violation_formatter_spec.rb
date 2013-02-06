@@ -29,4 +29,11 @@ describe Cane::ViolationFormatter do
     result.should include("\e[31m")
     result.should include("\e[0m")
   end
+
+  it 'does not colorize output if max_violations is not crossed' do
+    options = { color: true, max_violations: 1 }
+    result = described_class.new([violation("FAIL")], options).to_s
+
+    result.should_not include("\e[31m")
+  end
 end

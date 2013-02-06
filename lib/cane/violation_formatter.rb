@@ -27,7 +27,11 @@ module Cane
           format_violations(vs)
       end.join("\n") + "\n\n" + totals + "\n\n"
 
-      colorize(string)
+      if violations.count > options.fetch(:max_violations, 0)
+        string = colorize(string)
+      end
+
+      string
     end
 
     protected
