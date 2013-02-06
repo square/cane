@@ -69,6 +69,12 @@ describe 'The cane application' do
     Cane.task_runner(parallel: true).should == Parallel
   end
 
+  it 'colorizes output' do
+    output, exitstatus = run("--color --abc-max 0")
+
+    output.should include("\e[31m")
+  end
+
   after do
     if Object.const_defined?(class_name)
       Object.send(:remove_const, class_name)
