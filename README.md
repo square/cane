@@ -62,6 +62,7 @@ Customize behaviour with a wealth of options:
         --max-violations VALUE       Max allowed violations (default: 0)
         --json                       Output as JSON
         --parallel                   Use all processors. Slower on small projects, faster on large.
+        --color                      Colorize output
 
     -v, --version                    Show version
     -h, --help                       Show this message
