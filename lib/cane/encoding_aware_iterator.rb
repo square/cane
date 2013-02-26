@@ -9,7 +9,7 @@ module Cane
     end
 
     def each(&block)
-      return Enumerator.new(self, :each) unless block
+      return self.to_enum unless block
 
       lines.each do |line|
         begin
