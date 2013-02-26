@@ -15,7 +15,7 @@ module Cane
         begin
           line =~ /\s/
         rescue ArgumentError
-          line.encode!('UTF-8', 'UTF-8', invalid: :replace)
+          line.encode!('UTF-8', 'binary', invalid: :replace, undef: :replace)
         end
 
         block.call(line)
