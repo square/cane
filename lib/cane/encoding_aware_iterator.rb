@@ -9,13 +9,13 @@ module Cane
     end
 
     def each(&block)
-      return Enumerator.new(self, :each) unless block
+      return self.to_enum unless block
 
       lines.each do |line|
         begin
           line =~ /\s/
         rescue ArgumentError
-          line.encode!('UTF-8', 'UTF-8', invalid: :replace)
+          line.encode!('UTF-8', 'binary', invalid: :replace, undef: :replace)
         end
 
         block.call(line)
