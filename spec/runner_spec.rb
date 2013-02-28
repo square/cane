@@ -20,5 +20,17 @@ describe Cane::Runner do
 
       buffer.string.should == "JSON"
     end
+
+    it 'returns HTML output' do
+      formatter = fire_replaced_class_double("Cane::HtmlFormatter")
+      formatter.should_receive(:new).and_return("HTML")
+      buffer = StringIO.new("")
+
+      described_class.new(
+        out: buffer, checks: [], max_violations: 0, html: true
+      ).run
+
+      buffer.string.should == "HTML"
+    end
   end
 end

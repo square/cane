@@ -141,4 +141,9 @@ describe Cane::CLI::Parser do
     _, result = run("--json")
     result[:json].should be
   end
+
+  it 'handles html option' do
+    _, result = run("--html")
+    result[:html].should be
+  end
 end
