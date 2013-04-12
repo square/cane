@@ -60,11 +60,13 @@ class Doc; end
     file.should_receive(:exists?).with("README").and_return(false)
     file.should_receive(:exists?).with("README.md").and_return(false)
     file.should_receive(:exists?).with("README.mdown").and_return(false)
+    file.should_receive(:exists?).with("README.markdown").and_return(false)
     file.should_receive(:exists?).with("README.txt").and_return(false)
     file.should_receive(:exists?).with("README.rdoc").and_return(false)
     file.should_receive(:exists?).with("readme").and_return(false)
     file.should_receive(:exists?).with("readme.md").and_return(false)
     file.should_receive(:exists?).with("readme.mdown").and_return(false)
+    file.should_receive(:exists?).with("readme.markdown").and_return(false)
     file.should_receive(:exists?).with("readme.txt").and_return(false)
     file.should_receive(:exists?).with("readme.rdoc").and_return(false)
 
