@@ -62,7 +62,8 @@ module Cane
       return result if opts[:no_readme]
 
       filenames = ['README', 'readme']
-      extensions = ['', '.txt', '.md', '.mdown', '.rdoc', '.markdown', '.textile']
+      extensions = ['', '.txt', '.md', '.mdown',
+                    '.rdoc', '.markdown', '.textile']
       combinations = filenames.product(extensions)
 
       if combinations.none? {|n, x| Cane::File.exists?(n + x) }
