@@ -21,6 +21,10 @@ module Cane
       def exists?(path)
         ::File.exists?(path)
       end
+
+      def case_insensitive_glob(glob)
+        Dir.glob(glob, ::File::FNM_CASEFOLD)
+      end
     end
   end
 end
