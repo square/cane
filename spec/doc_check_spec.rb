@@ -103,4 +103,16 @@ class Doc; end
 
     violations.length.should == 0
   end
+
+  it 'skips class inside an array' do
+    file_name = make_file <<-RUBY
+    %w(
+      class
+      method
+    )
+    RUBY
+
+    violations = check(file_name).violations
+    violations.length.should == 0
+  end
 end

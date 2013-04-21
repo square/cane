@@ -33,6 +33,8 @@ module Cane
     MAGIC_COMMENT_REGEX =
       %r"#(\s+-\*-)?\s+(en)?coding\s*[=:]\s*([[:alnum:]\-_]+)"
 
+    CLASS_REGEX = /^\s*class\s+([^\s;]+)/
+
     def violations
       return [] if opts[:no_doc]
 
@@ -77,7 +79,7 @@ module Cane
     end
 
     def class_definition?(line)
-      line =~ /^\s*class\s+/ and $'.index('<<') != 0
+      line =~ CLASS_REGEX && $1.index('<<') != 0
     end
 
     def comment?(line)
@@ -85,7 +87,7 @@ module Cane
     end
 
     def extract_class_name(line)
-      line.match(/class\s+([^\s;]+)/)[1]
+      line.match(CLASS_REGEX)[1]
     end
 
     def exclusions
