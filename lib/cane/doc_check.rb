@@ -63,11 +63,7 @@ module Cane
       result = []
       return result if opts[:no_readme]
 
-      filenames = ['README', 'readme']
-      extensions = ['', '.txt', '.md', '.mdown', '.rdoc', '.markdown']
-      combinations = filenames.product(extensions)
-
-      if combinations.none? {|n, x| Cane::File.exists?(n + x) }
+      if Cane::File.case_insensitive_glob("README*").none?
         result << { description: 'Missing documentation',
                     label: 'No README found' }
       end

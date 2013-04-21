@@ -57,18 +57,7 @@ class Doc; end
   it 'creates a violation for missing README' do
     file = fire_replaced_class_double("Cane::File")
     stub_const("Cane::File", file)
-    file.should_receive(:exists?).with("README").and_return(false)
-    file.should_receive(:exists?).with("README.md").and_return(false)
-    file.should_receive(:exists?).with("README.mdown").and_return(false)
-    file.should_receive(:exists?).with("README.markdown").and_return(false)
-    file.should_receive(:exists?).with("README.txt").and_return(false)
-    file.should_receive(:exists?).with("README.rdoc").and_return(false)
-    file.should_receive(:exists?).with("readme").and_return(false)
-    file.should_receive(:exists?).with("readme.md").and_return(false)
-    file.should_receive(:exists?).with("readme.mdown").and_return(false)
-    file.should_receive(:exists?).with("readme.markdown").and_return(false)
-    file.should_receive(:exists?).with("readme.txt").and_return(false)
-    file.should_receive(:exists?).with("readme.rdoc").and_return(false)
+    file.should_receive(:case_insensitive_glob).with("README*").and_return([])
 
     violations = check("").violations
     violations.length.should == 1
@@ -76,6 +65,18 @@ class Doc; end
     violations[0].values_at(:description, :label).should == [
       "Missing documentation", "No README found"
     ]
+  end
+
+  it 'does not create a violation when readme exists' do
+    file = fire_replaced_class_double("Cane::File")
+    stub_const("Cane::File", file)
+    file
+      .should_receive(:case_insensitive_glob)
+      .with("README*")
+      .and_return(%w(readme.md))
+
+    violations = check("").violations
+    violations.length.should == 0
   end
 
   it 'skips declared exclusions' do
