@@ -1,6 +1,7 @@
 require 'cane/default_checks'
 
 module Cane
+  # Default options for command line interface
   module CLI
     def defaults(check)
       check.options.each_with_object({}) {|(k, v), h|

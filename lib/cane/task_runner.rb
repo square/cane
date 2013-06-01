@@ -1,3 +1,4 @@
+# Provides a SimpleTaskRunner or Parallel task runner based on configuration
 module Cane
   def task_runner(opts)
     if opts[:parallel]
