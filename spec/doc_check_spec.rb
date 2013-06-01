@@ -7,38 +7,60 @@ describe Cane::DocCheck do
     described_class.new(opts.merge(doc_glob: file_name))
   end
 
-  it 'creates a DocViolation for each undocumented class' do
+  it 'creates a DocViolation for each undocumented class with a method' do
     file_name = make_file <<-RUBY
 # This class is documented
 class Doc; end
-class  NoDoc; end # No doc
-  class AlsoNoDoc; end
+class  Empty; end # No doc is fine
+  class NoDoc; def with_method; end; end
 classIgnore = nil
 [:class]
 # class Ignore
 class Meta
   class << self; end
 end
+module DontNeedDoc; end
+# This module is documented
+module HasDoc
+  def mixin; end
+end
+module AlsoNeedsDoc; def mixin; end; end
+module NoDocIsFine
+  module ButThisNeedsDoc
+    def self.global
+    end
+  end
+  module AlsoNoDocIsFine; end
+  # We've got docs
+  module CauseWeNeedThem
+    def mixin
+    end
+  end
+end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 2
+    violations.length.should == 3
 
     violations[0].values_at(:file, :line, :label).should == [
-      file_name, 3, "NoDoc"
+      file_name, 4, "NoDoc"
     ]
 
     violations[1].values_at(:file, :line, :label).should == [
-      file_name, 4, "AlsoNoDoc"
+      file_name, 16, "AlsoNeedsDoc"
+    ]
+
+    violations[2].values_at(:file, :line, :label).should == [
+      file_name, 18, "ButThisNeedsDoc"
     ]
   end
 
   it 'ignores magic encoding comments' do
     file_name = make_file <<-RUBY
 # coding = utf-8
-class NoDoc; end
+class NoDoc; def do_stuff; end; end
 # -*-  encoding :  utf-8  -*-
-class AlsoNoDoc; end
+class AlsoNoDoc; def do_more_stuff; end; end
 # Parse a Transfer-Encoding: Chunked response
 class Doc; end
     RUBY
