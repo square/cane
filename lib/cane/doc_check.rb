@@ -8,7 +8,15 @@ module Cane
   class DocCheck < Struct.new(:opts)
 
     DESCRIPTION =
-      "Class definitions require explanatory comments on preceding line"
+    "Class and Module definitions require explanatory comments on previous line"
+
+    ClassDefinition = Struct.new(:values) do
+      def line; values.fetch(:line); end
+      def label; values.fetch(:label); end
+      def missing_doc?; !values.fetch(:has_doc); end
+      def requires_doc?; values.fetch(:requires_doc, false); end
+      def requires_doc=(value); values[:requires_doc] = value; end
+    end
 
     def self.key; :doc; end
     def self.name; "documentation checking"; end
@@ -33,7 +41,9 @@ module Cane
     MAGIC_COMMENT_REGEX =
       %r"#(\s+-\*-)?\s+(en)?coding\s*[=:]\s*([[:alnum:]\-_]+)"
 
-    CLASS_REGEX = /^\s*class\s+([^\s;]+)/
+    CLASS_REGEX = /^\s*(?:class|module)\s+([^\s;]+)/
+
+    METHOD_REGEX = /(?:^|\s)def\s+/
 
     def violations
       return [] if opts[:no_doc]
@@ -44,19 +54,39 @@ module Cane
     end
 
     def find_violations(file_name)
-      last_line = ""
-      Cane::File.iterator(file_name).map.with_index do |line, number|
-        result = if class_definition?(line) && !comment?(last_line)
+      class_definitions_in(file_name).map do |class_definition|
+        if class_definition.requires_doc? && class_definition.missing_doc?
           {
             file:        file_name,
-            line:        number + 1,
-            label:       extract_class_name(line),
+            line:        class_definition.line,
+            label:       class_definition.label,
             description: DESCRIPTION
           }
         end
-        last_line = line
-        result
       end.compact
+    end
+
+    def class_definitions_in(file_name)
+      class_definitions = []
+      last_line = ""
+
+      Cane::File.iterator(file_name).each_with_index do |line, number|
+        if class_definition? line
+          class_definitions << ClassDefinition.new({
+            line: (number + 1),
+            label: extract_class_name(line),
+            has_doc: comment?(last_line)
+          })
+        end
+
+        if method_definition?(line) && !class_definitions.empty?
+          class_definitions.last.requires_doc = true
+        end
+
+        last_line = line
+      end
+
+      class_definitions
     end
 
     def missing_file_violations
@@ -72,6 +102,10 @@ module Cane
 
     def file_names
       Dir[opts.fetch(:doc_glob)].reject { |file| excluded?(file) }
+    end
+
+    def method_definition?(line)
+      line =~ METHOD_REGEX
     end
 
     def class_definition?(line)
@@ -100,5 +134,4 @@ module Cane
       Cane.task_runner(opts)
     end
   end
-
 end
