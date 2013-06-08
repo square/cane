@@ -1,5 +1,15 @@
 # Cane History
 
+## 2.6.0 - 7 June 2013 (616bb8a5)
+
+* Feature: classes with no methods do not require documentation.
+* Feature: modules with methods require documentation.
+* Feature: support all README extensions.
+* Feature: --color option.
+* Bugfix: fix false positive on class matching for doc check.
+* Bugfix: better handling of invalid strings.
+* Compat: fix Ruby 2.0 deprecations.
+
 ## 2.5.2 - 26 January 2013 (a0cf38ba)
 
 * Feature: support operators beside `>=` in threshold check.

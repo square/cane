@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cane (2.5.2)
+    cane (2.6.0)
       parallel
 
 GEM
