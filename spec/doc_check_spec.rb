@@ -54,6 +54,30 @@ end
     ]
   end
 
+  it 'does not create violations for single line classes without methods' do
+    file_name = make_file <<-RUBY
+class NeedsDoc
+  class AlsoNeedsDoc < StandardError; def foo; end; end
+  class NoDocIsOk < StandardError; end
+  class NoDocIsAlsoOk < StandardError; end # No doc is fine on this too
+
+  def my_method
+  end
+end
+RUBY
+
+    violations = check(file_name).violations
+    violations.length.should == 2
+
+    violations[0].values_at(:file, :line, :label).should == [
+      file_name, 1, "NeedsDoc"
+    ]
+
+    violations[1].values_at(:file, :line, :label).should == [
+      file_name, 2, "AlsoNeedsDoc"
+    ]
+  end
+
   it 'ignores magic encoding comments' do
     file_name = make_file <<-RUBY
 # coding = utf-8
