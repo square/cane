@@ -43,6 +43,10 @@ module Cane
 
     CLASS_REGEX = /^\s*(?:class|module)\s+([^\s;]+)/
 
+    # http://rubular.com/r/53BapkefdD
+    SINGLE_LINE_CLASS_REGEX =
+      /^\s*(?:class|module).*;\s*end\s*(#.*)?\s*$/
+
     METHOD_REGEX = /(?:^|\s)def\s+/
 
     def violations
@@ -67,26 +71,35 @@ module Cane
     end
 
     def class_definitions_in(file_name)
-      class_definitions = []
+      closed_classes = []
+      open_classes = []
       last_line = ""
 
       Cane::File.iterator(file_name).each_with_index do |line, number|
         if class_definition? line
-          class_definitions << ClassDefinition.new({
-            line: (number + 1),
-            label: extract_class_name(line),
-            has_doc: comment?(last_line)
-          })
-        end
+          if single_line_class_definition? line
+            closed_classes
+          else
+            open_classes
+          end.push class_definition(number, line, last_line)
 
-        if method_definition?(line) && !class_definitions.empty?
-          class_definitions.last.requires_doc = true
+        elsif method_definition?(line) && !open_classes.empty?
+          open_classes.last.requires_doc = true
         end
 
         last_line = line
       end
 
-      class_definitions
+      (closed_classes + open_classes).sort_by(&:line)
+    end
+
+    def class_definition(number, line, last_line)
+      ClassDefinition.new({
+        line: (number + 1),
+        label: extract_class_name(line),
+        has_doc: comment?(last_line),
+        requires_doc: method_definition?(line)
+      })
     end
 
     def missing_file_violations
@@ -110,6 +123,10 @@ module Cane
 
     def class_definition?(line)
       line =~ CLASS_REGEX && $1.index('<<') != 0
+    end
+
+    def single_line_class_definition?(line)
+      line =~ SINGLE_LINE_CLASS_REGEX
     end
 
     def comment?(line)

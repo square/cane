@@ -9,7 +9,6 @@ describe Cane::DocCheck do
 
   it 'creates a DocViolation for each undocumented class with a method' do
     file_name = make_file <<-RUBY
-# This class is documented
 class Doc; end
 class  Empty; end # No doc is fine
   class NoDoc; def with_method; end; end
@@ -43,15 +42,39 @@ end
     violations.length.should == 3
 
     violations[0].values_at(:file, :line, :label).should == [
-      file_name, 4, "NoDoc"
+      file_name, 3, "NoDoc"
     ]
 
     violations[1].values_at(:file, :line, :label).should == [
-      file_name, 16, "AlsoNeedsDoc"
+      file_name, 15, "AlsoNeedsDoc"
     ]
 
     violations[2].values_at(:file, :line, :label).should == [
-      file_name, 18, "ButThisNeedsDoc"
+      file_name, 17, "ButThisNeedsDoc"
+    ]
+  end
+
+  it 'does not create violations for single line classes without methods' do
+    file_name = make_file <<-RUBY
+class NeedsDoc
+  class AlsoNeedsDoc < StandardError; def foo; end; end
+  class NoDocIsOk < StandardError; end
+  class NoDocIsAlsoOk < StandardError; end # No doc is fine on this too
+
+  def my_method
+  end
+end
+RUBY
+
+    violations = check(file_name).violations
+    violations.length.should == 2
+
+    violations[0].values_at(:file, :line, :label).should == [
+      file_name, 1, "NeedsDoc"
+    ]
+
+    violations[1].values_at(:file, :line, :label).should == [
+      file_name, 2, "AlsoNeedsDoc"
     ]
   end
 
