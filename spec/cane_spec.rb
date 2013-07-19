@@ -57,6 +57,13 @@ describe 'The cane application' do
     exitstatus.should == 1
   end
 
+  it 'outputs results to the specified file' do
+    output_file = SecureRandom.hex
+    exit_status = run_with_output_file("--out #{output_file}  --abc-max 0")
+    File.read(output_file).should include ("Total Violations")
+    File.delete(output_file)
+  end
+
   it 'handles invalid unicode input' do
     fn = make_file("\xc3\x28")
 
@@ -81,6 +88,12 @@ describe 'The cane application' do
     if Object.const_defined?(class_name)
       Object.send(:remove_const, class_name)
     end
+  end
+
+  def run_with_output_file(cli_args)
+    Cane::CLI.run(
+           %w(--no-abc --no-style --no-doc) + cli_args.split(/\s+/m)
+         ) ? 0 : 1
   end
 
   def run(cli_args)

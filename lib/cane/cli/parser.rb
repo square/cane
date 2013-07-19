@@ -121,6 +121,9 @@ BANNER
         add_option %w(--color),
           "Colorize output", default: false
 
+        add_option %w(--out VALUE),
+          "Output File", default: $stdout, cast: Proc.new {|value| ::File.open(value, 'w')}
+
         parser.separator ""
       end
 
