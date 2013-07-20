@@ -5,7 +5,7 @@ module Cane
   # Computes a machine-readable JSON representation from an array of violations
   # computed by the checks.
   class JsonFormatter
-    def initialize(violations)
+    def initialize(violations, options = {})
       @violations = violations
     end
 
