@@ -61,4 +61,6 @@ class SimpleCov::Formatter::QualityFormatter
 end
 
 SimpleCov.formatter = SimpleCov::Formatter::QualityFormatter
-SimpleCov.start
+SimpleCov.start do
+  add_filter "vendor/bundle/"
+end
