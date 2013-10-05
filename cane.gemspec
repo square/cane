@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.bindir        = "bin"
   gem.executables  << "cane"
+  gem.license       = "Apache 2.0"
   gem.version       = Cane::VERSION
   gem.has_rdoc      = false
   gem.add_dependency 'parallel'
