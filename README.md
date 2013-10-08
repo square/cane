@@ -79,21 +79,23 @@ Command-line arguments will override arguments specified in the `.cane` file.
 
 ## Integrating with Rake
 
-    begin
-      require 'cane/rake_task'
+```ruby
+begin
+  require 'cane/rake_task'
 
-      desc "Run cane to check quality metrics"
-      Cane::RakeTask.new(:quality) do |cane|
-        cane.abc_max = 10
-        cane.add_threshold 'coverage/covered_percent', :>=, 99
-        cane.no_style = true
-        cane.abc_exclude = %w(Foo::Bar#some_method)
-      end
+  desc "Run cane to check quality metrics"
+  Cane::RakeTask.new(:quality) do |cane|
+    cane.abc_max = 10
+    cane.add_threshold 'coverage/covered_percent', :>=, 99
+    cane.no_style = true
+    cane.abc_exclude = %w(Foo::Bar#some_method)
+  end
 
-      task :default => :quality
-    rescue LoadError
-      warn "cane not available, quality task not provided."
-    end
+  task :default => :quality
+rescue LoadError
+  warn "cane not available, quality task not provided."
+end
+```
 
 Loading options from a `.cane` file is supported by setting `canefile=` to the
 file name.
@@ -137,22 +139,24 @@ Checks must implement:
 
 See existing checks for guidance. Create your check in a new file:
 
-    # unhappy.rb
-    class UnhappyCheck < Struct.new(:opts)
-      def self.options
-        {
-          unhappy_file: ["File to check", default: [nil]]
-        }
-      end
+```ruby
+# unhappy.rb
+class UnhappyCheck < Struct.new(:opts)
+  def self.options
+    {
+      unhappy_file: ["File to check", default: [nil]]
+    }
+  end
 
-      def violations
-        [
-          description: "Files are unhappy",
-          file:        opts.fetch(:unhappy_file),
-          label:       ":("
-        ]
-      end
-    end
+  def violations
+    [
+      description: "Files are unhappy",
+      file:        opts.fetch(:unhappy_file),
+      label:       ":("
+    ]
+  end
+end
+```
 
 Include your check either using command-line options:
 
@@ -160,11 +164,13 @@ Include your check either using command-line options:
 
 Or in your rake task:
 
-    require 'unhappy'
+```ruby
+require 'unhappy'
 
-    Cane::RakeTask.new(:quality) do |c|
-      c.use UnhappyCheck, unhappy_file: 'myfile'
-    end
+Cane::RakeTask.new(:quality) do |c|
+  c.use UnhappyCheck, unhappy_file: 'myfile'
+end
+```
 
 ## Protips
 
