@@ -1,5 +1,11 @@
 # Cane History
 
+## 2.6.1 - 30 October 2013 (2ea008)
+
+* Feature: Don't require doc for one-line class w/out method.
+* Bugfix: JsonFormatter initializer needs to take an options hash.
+* Doc: Add license definition to gemspec.
+
 ## 2.6.0 - 7 June 2013 (616bb8a5)
 
 * Feature: classes with no methods do not require documentation.
