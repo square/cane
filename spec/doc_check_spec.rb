@@ -36,6 +36,10 @@ module NoDocIsFine
     end
   end
 end
+module NoViolationCozComment
+  # def method should ignore this comment
+  # end
+end
     RUBY
 
     violations = check(file_name).violations
