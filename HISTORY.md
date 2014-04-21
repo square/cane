@@ -1,5 +1,11 @@
 # Cane History
 
+## 2.6.2 - 20 April 2014 (8f54b4)
+
+* Bugfix: Commented methods no longer trigger a documentation violation for
+  empty modules.
+* Feature: Ruby 2.1 supported.
+
 ## 2.6.1 - 30 October 2013 (2ea008)
 
 * Feature: Don't require doc for one-line class w/out method.
