@@ -36,6 +36,10 @@ module NoDocIsFine
     end
   end
 end
+module NoViolationCozComment
+  # def method should ignore this comment
+  # end
+end
     RUBY
 
     violations = check(file_name).violations
@@ -100,7 +104,7 @@ class Doc; end
   end
 
   it 'creates a violation for missing README' do
-    file = fire_replaced_class_double("Cane::File")
+    file = class_double("Cane::File").as_stubbed_const
     stub_const("Cane::File", file)
     file.should_receive(:case_insensitive_glob).with("README*").and_return([])
 
@@ -113,7 +117,7 @@ class Doc; end
   end
 
   it 'does not create a violation when readme exists' do
-    file = fire_replaced_class_double("Cane::File")
+    file = class_double("Cane::File").as_stubbed_const
     stub_const("Cane::File", file)
     file
       .should_receive(:case_insensitive_glob)

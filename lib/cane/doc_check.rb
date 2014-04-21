@@ -118,7 +118,7 @@ module Cane
     end
 
     def method_definition?(line)
-      line =~ METHOD_REGEX
+      !comment?(line) && line =~ METHOD_REGEX
     end
 
     def class_definition?(line)

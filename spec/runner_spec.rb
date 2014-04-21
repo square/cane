@@ -10,7 +10,7 @@ describe Cane::Runner do
     end
 
     it 'returns JSON output' do
-      formatter = fire_replaced_class_double("Cane::JsonFormatter")
+      formatter = class_double("Cane::JsonFormatter").as_stubbed_const
       formatter.should_receive(:new).and_return("JSON")
       buffer = StringIO.new("")
 

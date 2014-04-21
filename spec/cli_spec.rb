@@ -5,8 +5,8 @@ require 'cane/cli'
 describe Cane::CLI do
   describe '.run' do
 
-    let!(:parser) { fire_replaced_class_double("Cane::CLI::Parser") }
-    let!(:cane)   { fire_replaced_class_double("Cane") }
+    let!(:parser) { class_double("Cane::CLI::Parser").as_stubbed_const }
+    let!(:cane)   { class_double("Cane").as_stubbed_const }
 
     it 'runs Cane with the given arguments' do
       parser.should_receive(:parse).with("--args").and_return(args: true)
