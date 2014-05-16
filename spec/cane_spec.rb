@@ -49,12 +49,12 @@ describe 'The cane application' do
       --check #{class_name}
       --unhappy-file #{fn}
     )
-    output.should include("Lines violated style requirements")
-    output.should include("Methods exceeded maximum allowed ABC complexity")
-    output.should include(
+    expect(output).to include("Lines violated style requirements")
+    expect(output).to include("Methods exceeded maximum allowed ABC complexity")
+    expect(output).to include(
       "Class and Module definitions require explanatory comments"
     )
-    exitstatus.should == 1
+    expect(exitstatus).to eq(1)
   end
 
   it 'handles invalid unicode input' do
@@ -62,19 +62,19 @@ describe 'The cane application' do
 
     _, exitstatus = run("--style-glob #{fn} --abc-glob #{fn} --doc-glob #{fn}")
 
-    exitstatus.should == 0
+    expect(exitstatus).to eq(0)
   end
 
   it 'can run tasks in parallel' do
     # This spec isn't great, but there is no good way to actually observe that
     # tasks run in parallel and we want to verify the conditional is correct.
-    Cane.task_runner(parallel: true).should == Parallel
+    expect(Cane.task_runner(parallel: true)).to eq(Parallel)
   end
 
   it 'colorizes output' do
     output, exitstatus = run("--color --abc-max 0")
 
-    output.should include("\e[31m")
+    expect(output).to include("\e[31m")
   end
 
   after do

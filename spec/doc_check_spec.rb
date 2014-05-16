@@ -43,19 +43,19 @@ end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 3
+    expect(violations.length).to eq(3)
 
-    violations[0].values_at(:file, :line, :label).should == [
+    expect(violations[0].values_at(:file, :line, :label)).to eq([
       file_name, 3, "NoDoc"
-    ]
+    ])
 
-    violations[1].values_at(:file, :line, :label).should == [
+    expect(violations[1].values_at(:file, :line, :label)).to eq([
       file_name, 15, "AlsoNeedsDoc"
-    ]
+    ])
 
-    violations[2].values_at(:file, :line, :label).should == [
+    expect(violations[2].values_at(:file, :line, :label)).to eq([
       file_name, 17, "ButThisNeedsDoc"
-    ]
+    ])
   end
 
   it 'does not create violations for single line classes without methods' do
@@ -71,15 +71,15 @@ end
 RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 2
+    expect(violations.length).to eq(2)
 
-    violations[0].values_at(:file, :line, :label).should == [
+    expect(violations[0].values_at(:file, :line, :label)).to eq([
       file_name, 1, "NeedsDoc"
-    ]
+    ])
 
-    violations[1].values_at(:file, :line, :label).should == [
+    expect(violations[1].values_at(:file, :line, :label)).to eq([
       file_name, 2, "AlsoNeedsDoc"
-    ]
+    ])
   end
 
   it 'ignores magic encoding comments' do
@@ -93,39 +93,39 @@ class Doc; end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 2
+    expect(violations.length).to eq(2)
 
-    violations[0].values_at(:file, :line, :label).should == [
+    expect(violations[0].values_at(:file, :line, :label)).to eq([
       file_name, 2, "NoDoc"
-    ]
-    violations[1].values_at(:file, :line, :label).should == [
+    ])
+    expect(violations[1].values_at(:file, :line, :label)).to eq([
       file_name, 4, "AlsoNoDoc"
-    ]
+    ])
   end
 
   it 'creates a violation for missing README' do
     file = class_double("Cane::File").as_stubbed_const
     stub_const("Cane::File", file)
-    file.should_receive(:case_insensitive_glob).with("README*").and_return([])
+    expect(file).to receive(:case_insensitive_glob).with("README*").and_return([])
 
     violations = check("").violations
-    violations.length.should == 1
+    expect(violations.length).to eq(1)
 
-    violations[0].values_at(:description, :label).should == [
+    expect(violations[0].values_at(:description, :label)).to eq([
       "Missing documentation", "No README found"
-    ]
+    ])
   end
 
   it 'does not create a violation when readme exists' do
     file = class_double("Cane::File").as_stubbed_const
     stub_const("Cane::File", file)
-    file
-      .should_receive(:case_insensitive_glob)
+    expect(file)
+      .to receive(:case_insensitive_glob)
       .with("README*")
       .and_return(%w(readme.md))
 
     violations = check("").violations
-    violations.length.should == 0
+    expect(violations.length).to eq(0)
   end
 
   it 'skips declared exclusions' do
@@ -138,7 +138,7 @@ class Doc; end
       doc_exclude: [file_name]
     ).violations
 
-    violations.length.should == 0
+    expect(violations.length).to eq(0)
   end
 
   it 'skips declared glob-based exclusions' do
@@ -151,7 +151,7 @@ class Doc; end
       doc_exclude: ["#{File.dirname(file_name)}/*"]
     ).violations
 
-    violations.length.should == 0
+    expect(violations.length).to eq(0)
   end
 
   it 'skips class inside an array' do
@@ -163,6 +163,6 @@ class Doc; end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 0
+    expect(violations.length).to eq(0)
   end
 end
