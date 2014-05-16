@@ -17,7 +17,9 @@ describe Cane::File do
           expected.each do |x|
             FileUtils.touch(x)
           end
-          Cane::File.case_insensitive_glob("README*").should =~ expected
+          expect(Cane::File.case_insensitive_glob("README*")).to match_array(
+            expected
+          )
         end
       end
     end

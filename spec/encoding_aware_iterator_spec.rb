@@ -9,18 +9,18 @@ describe Cane::EncodingAwareIterator do
   it 'handles non-UTF8 input' do
     lines = ["\xc3\x28"]
     result = described_class.new(lines).map.with_index do |line, number|
-      line.should be_kind_of(String)
+      expect(line).to be_kind_of(String)
       [line =~ /\s/, number]
     end
-    result.should == [[nil, 0]]
+    expect(result).to eq([[nil, 0]])
   end
 
   it 'does not enter an infinite loop on persistently bad input' do
-    ->{
+    expect{
       described_class.new([""]).map.with_index do |line, number|
         "\xc3\x28" =~ /\s/
       end
-    }.should raise_error(ArgumentError)
+    }.to raise_error(ArgumentError)
   end
 
   it 'allows each with no block' do
@@ -28,6 +28,6 @@ describe Cane::EncodingAwareIterator do
     described_class.new([""]).each.with_index do |line, number|
       called_with_line = line
     end
-    called_with_line.should == ""
+    expect(called_with_line).to eq("")
   end
 end

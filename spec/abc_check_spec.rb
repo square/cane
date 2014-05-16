@@ -18,7 +18,7 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name, abc_max: 1, no_abc: true).violations
-    violations.should be_empty
+    expect(violations).to be_empty
   end
 
   it 'creates an AbcMaxViolation for each method above the threshold' do
@@ -36,9 +36,10 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name, abc_max: 1, no_abc: false).violations
-    violations.length.should == 1
-    violations[0].values_at(:file, :label, :value).should ==
+    expect(violations.length).to eq(1)
+    expect(violations[0].values_at(:file, :label, :value)).to eq(
       [file_name, "Harness#complex_method", 2]
+    )
   end
 
   it 'sorts violations by complexity' do
@@ -56,9 +57,9 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name, abc_max: 0).violations
-    violations.length.should == 2
+    expect(violations.length).to eq(2)
     complexities = violations.map {|x| x[:value] }
-    complexities.should == complexities.sort.reverse
+    expect(complexities).to eq(complexities.sort.reverse)
   end
 
   it 'creates a violation when code cannot be parsed' do
@@ -67,9 +68,9 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 1
-    violations[0][:file].should == file_name
-    violations[0][:description].should be_instance_of(String)
+    expect(violations.length).to eq(1)
+    expect(violations[0][:file]).to eq(file_name)
+    expect(violations[0][:description]).to be_instance_of(String)
   end
 
   it 'skips declared exclusions' do
@@ -105,9 +106,10 @@ describe Cane::AbcCheck do
       abc_max:        0,
       abc_exclude: exclusions
     ).violations
-    violations.length.should == 1
-    violations[0].values_at(:file, :label, :value).should ==
+    expect(violations.length).to eq(1)
+    expect(violations[0].values_at(:file, :label, :value)).to eq(
       [file_name, "Harness::Nested#other_meth", 1]
+    )
   end
 
   it "creates an AbcMaxViolation for method in assigned anonymous class" do
@@ -135,7 +137,7 @@ describe Cane::AbcCheck do
     RUBY
 
     violations = check(file_name, abc_max: 1).violations
-    violations[0][:label].should == "(anon)#test_method"
+    expect(violations[0][:label]).to eq("(anon)#test_method")
   end
 
   def self.it_should_extract_method_name(name, label=name, sep='#')
@@ -150,7 +152,7 @@ describe Cane::AbcCheck do
       RUBY
 
       violations = check(file_name, abc_max: 1).violations
-      violations[0][:label].should == "Harness#{sep}#{label}"
+      expect(violations[0][:label]).to eq("Harness#{sep}#{label}")
     end
   end
 

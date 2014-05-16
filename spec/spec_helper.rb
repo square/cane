@@ -37,15 +37,15 @@ end
 RSpec::Matchers.define :have_violation do |label|
   match do |check|
     violations = check.violations
-    violations.length.should == 1
-    violations[0][:label].should == label
+    expect(violations.length).to eq(1)
+    expect(violations[0][:label]).to eq(label)
   end
 end
 
 RSpec::Matchers.define :have_no_violations do |label|
   match do |check|
     violations = check.violations
-    violations.length.should == 0
+    expect(violations.length).to eq(0)
   end
 end
 
