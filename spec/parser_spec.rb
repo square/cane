@@ -13,71 +13,71 @@ describe Cane::CLI::Parser do
 
   it 'allows style options to be configured' do
     output, result = run("--style-glob myfile --style-measure 3")
-    result[:style_glob].should == 'myfile'
-    result[:style_measure].should == 3
+    expect(result[:style_glob]).to eq('myfile')
+    expect(result[:style_measure]).to eq(3)
   end
 
   it 'allows checking gte of a value in a file' do
     output, result = run("--gte myfile,90")
-    result[:gte].should == [['myfile', '90']]
+    expect(result[:gte]).to eq([['myfile', '90']])
   end
 
   it 'allows checking eq of a value in a file' do
     output, result = run("--eq myfile,90")
-    result[:eq].should == [['myfile', '90']]
+    expect(result[:eq]).to eq([['myfile', '90']])
   end
 
   it 'allows checking lte of a value in a file' do
     output, result = run("--lte myfile,90")
-    result[:lte].should == [['myfile', '90']]
+    expect(result[:lte]).to eq([['myfile', '90']])
   end
 
   it 'allows checking lt of a value in a file' do
     output, result = run("--lt myfile,90")
-    result[:lt].should == [['myfile', '90']]
+    expect(result[:lt]).to eq([['myfile', '90']])
   end
 
   it 'allows checking gt of a value in a file' do
     output, resugt = run("--gt myfile,90")
-    resugt[:gt].should == [['myfile', '90']]
+    expect(resugt[:gt]).to eq([['myfile', '90']])
   end
 
   it 'allows upper bound of failed checks' do
     output, result = run("--max-violations 1")
-    result[:max_violations].should == 1
+    expect(result[:max_violations]).to eq(1)
   end
 
   it 'uses positional arguments as shortcut for individual files' do
     output, result = run("--all mysinglefile")
-    result[:abc_glob].should == 'mysinglefile'
-    result[:style_glob].should == 'mysinglefile'
-    result[:doc_glob].should == 'mysinglefile'
+    expect(result[:abc_glob]).to eq('mysinglefile')
+    expect(result[:style_glob]).to eq('mysinglefile')
+    expect(result[:doc_glob]).to eq('mysinglefile')
 
     output, result = run("--all mysinglefile --abc-glob myotherfile")
-    result[:abc_glob].should == 'myotherfile'
-    result[:style_glob].should == 'mysinglefile'
-    result[:doc_glob].should == 'mysinglefile'
+    expect(result[:abc_glob]).to eq('myotherfile')
+    expect(result[:style_glob]).to eq('mysinglefile')
+    expect(result[:doc_glob]).to eq('mysinglefile')
   end
 
   it 'displays a help message' do
     output, result = run("--help")
 
-    result.should be
-    output.should include("Usage:")
+    expect(result).to be
+    expect(output).to include("Usage:")
   end
 
   it 'handles invalid options by showing help' do
     output, result = run("--bogus")
 
-    output.should include("Usage:")
-    result.should_not be
+    expect(output).to include("Usage:")
+    expect(result).not_to be
   end
 
   it 'displays version' do
     output, result = run("--version")
 
-    result.should be
-    output.should include(Cane::VERSION)
+    expect(result).to be
+    expect(output).to include(Cane::VERSION)
   end
 
   it 'supports exclusions' do
@@ -88,18 +88,18 @@ describe Cane::CLI::Parser do
     ].join(' ')
 
     _, result = run(options)
-    result[:abc_exclude].should == [['Harness#complex_method']]
-    result[:doc_exclude].should == [['myfile']]
-    result[:style_exclude].should == [['myfile']]
+    expect(result[:abc_exclude]).to eq([['Harness#complex_method']])
+    expect(result[:doc_exclude]).to eq([['myfile']])
+    expect(result[:style_exclude]).to eq([['myfile']])
   end
 
   describe 'argument ordering' do
     it 'gives precedence to the last argument #1' do
       _, result = run("--doc-glob myfile --no-doc")
-      result[:no_doc].should be
+      expect(result[:no_doc]).to be
 
       _, result = run("--no-doc --doc-glob myfile")
-      result[:no_doc].should_not be
+      expect(result[:no_doc]).not_to be
     end
   end
 
@@ -111,34 +111,34 @@ describe Cane::CLI::Parser do
     EOS
     file = class_double("Cane::File").as_stubbed_const
     stub_const("Cane::File", file)
-    file.should_receive(:exists?).with('./.cane').and_return(true)
-    file.should_receive(:contents).with('./.cane').and_return(defaults)
+    expect(file).to receive(:exists?).with('./.cane').and_return(true)
+    expect(file).to receive(:contents).with('./.cane').and_return(defaults)
 
     _, result = run("--style-glob myotherfile")
 
-    result[:no_doc].should be
-    result[:abc_glob].should == 'myfile'
-    result[:style_glob].should == 'myotherfile'
+    expect(result[:no_doc]).to be
+    expect(result[:abc_glob]).to eq('myfile')
+    expect(result[:style_glob]).to eq('myotherfile')
   end
 
   it 'allows parallel option' do
     _, result = run("--parallel")
-    result[:parallel].should be
+    expect(result[:parallel]).to be
   end
 
   it 'handles ambiguous options' do
     output, result = run("-abc-max")
-    output.should include("Usage:")
-    result.should_not be
+    expect(output).to include("Usage:")
+    expect(result).not_to be
   end
 
   it 'handles no_readme option' do
     _, result = run("--no-readme")
-    result[:no_readme].should be
+    expect(result[:no_readme]).to be
   end
 
   it 'handles json option' do
     _, result = run("--json")
-    result[:json].should be
+    expect(result[:json]).to be
   end
 end

@@ -21,15 +21,15 @@ describe Cane::RakeTask do
       cane.parallel = false
     end
 
-    task.no_abc.should == true
+    expect(task.no_abc).to eq(true)
 
-    task.should_receive(:abort)
+    expect(task).to receive(:abort)
     out = capture_stdout do
       Rake::Task['quality'].invoke
     end
 
-    out.should include("Quality threshold crossed")
-    out.should include("theopt")
+    expect(out).to include("Quality threshold crossed")
+    expect(out).to include("theopt")
   end
 
   it 'can be configured using a .cane file' do
@@ -39,12 +39,12 @@ describe Cane::RakeTask do
       cane.canefile = make_file(conf)
     end
 
-    task.should_receive(:abort)
+    expect(task).to receive(:abort)
     out = capture_stdout do
       Rake::Task['canefile_quality'].invoke
     end
 
-    out.should include("Quality threshold crossed")
+    expect(out).to include("Quality threshold crossed")
   end
 
   it 'defaults to using a canefile without a block' do
@@ -54,12 +54,12 @@ describe Cane::RakeTask do
 
       task = Cane::RakeTask.new(:canefile_quality)
 
-      task.should_receive(:abort)
+      expect(task).to receive(:abort)
       out = capture_stdout do
         Rake::Task['canefile_quality'].invoke
       end
 
-      out.should include("Quality threshold crossed")
+      expect(out).to include("Quality threshold crossed")
     end
   end
 
