@@ -4,6 +4,11 @@ PATH
     cane (2.6.2)
       parallel
 
+PATH
+  remote: ../xspec
+  specs:
+    xspec (0.0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -35,3 +40,4 @@ DEPENDENCIES
   rspec (~> 2.0)
   rspec-fire
   simplecov
+  xspec!
