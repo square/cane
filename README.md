@@ -226,3 +226,7 @@ Fork and patch! Before any changes are merged to master, we need you to sign an
 [Individual Contributor
 Agreement](https://spreadsheets.google.com/a/squareup.com/spreadsheet/viewform?formkey=dDViT2xzUHAwRkI3X3k5Z0lQM091OGc6MQ&ndplr=1)
 (Google Form).
+
+    gem install bundler
+    bundle install # Install development dependencies
+    bin/test       # Run unit tests and quality checks

@@ -54,7 +54,7 @@ module Cane
 
     def value_from_file(file)
       begin
-        contents = Cane::File.contents(file).scan(/\d+\.?\d*/).first.to_f
+        contents = reader.contents(file).scan(/\d+\.?\d*/).first.to_f
       rescue Errno::ENOENT
         UnavailableValue.new
       end
@@ -66,6 +66,10 @@ module Cane
           x.unshift(v)
         end
       end.reduce(:+)
+    end
+
+    def reader
+      opts.fetch(:reader, Cane::File)
     end
 
     # Null object for all cases when the value to be compared against cannot be

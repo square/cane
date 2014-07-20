@@ -30,8 +30,4 @@ Gem::Specification.new do |gem|
   gem.version       = Cane::VERSION
   gem.has_rdoc      = false
   gem.add_dependency 'parallel'
-  gem.add_development_dependency 'rspec', '~> 2.0'
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'simplecov'
-  gem.add_development_dependency 'rspec-fire'
 end

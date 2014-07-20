@@ -1,8 +1,9 @@
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/threshold_check'
 
 describe Cane::ThresholdCheck do
+  let(:reader) { class_double("Cane::File") }
 
   let(:simplecov_last_run) do
     <<-ENDL
@@ -14,87 +15,87 @@ describe Cane::ThresholdCheck do
     ENDL
   end
 
-  context "checking violations" do
-
+  describe "checking violations" do
     def run(threshold, value)
-      described_class.new(threshold => [['x', value]])
+      Cane::ThresholdCheck.new(reader: reader, threshold => [['x', value]])
     end
 
-    context "when the current coverage cannot be read" do
+    describe "when the current coverage cannot be read" do
       it do
-        run(:gte, 20).should \
-          have_violation('x is unavailable, should be >= 20.0')
+        expect(reader).contents('x') { raise Errno::ENOENT }
+        assert_violation 'x is unavailable, should be >= 20.0', run(:gte, 20)
       end
     end
 
-    context "when the coverage threshold is incorrectly specified" do
+    describe "when the coverage threshold is incorrectly specified" do
       it do
-        described_class.new(gte: [['20', 'bogus_file']]).should \
-          have_violation('bogus_file is not a number or a file')
+        assert_violation 'bogus_file is not a number or a file',
+          Cane::ThresholdCheck.new(gte: [['20', 'bogus_file']])
       end
     end
 
-    context 'when coverage threshold is valid' do
-      before do
-        file = class_double("Cane::File").as_stubbed_const
-        stub_const("Cane::File", file)
-        file.should_receive(:contents).with('x').and_return("8\n")
+    describe 'when coverage threshold is valid' do
+      def run(threshold, value)
+        expect(reader).contents('x') { "8\n" }
+        super
       end
 
-      context '>' do
-        it { run(:gt, 7).should have_no_violations }
-        it { run(:gt, 8).should have_violation('x is 8.0, should be > 8.0') }
-        it { run(:gt, 9).should have_violation('x is 8.0, should be > 9.0') }
+      describe '>' do
+        it { assert_no_violations run(:gt, 7) }
+        it { assert_violation 'x is 8.0, should be > 8.0', run(:gt, 8) }
+        it { assert_violation 'x is 8.0, should be > 9.0', run(:gt, 9) }
       end
 
-      context '>=' do
-        it { run(:gte, 7).should have_no_violations }
-        it { run(:gte, 8).should have_no_violations }
-        it { run(:gte, 9).should have_violation('x is 8.0, should be >= 9.0') }
+      describe '>=' do
+        it { assert_no_violations run(:gte, 7) }
+        it { assert_no_violations run(:gte, 8) }
+        it { assert_violation 'x is 8.0, should be >= 9.0', run(:gte, 9) }
       end
 
-      context '==' do
-        it { run(:eq, 7).should have_violation('x is 8.0, should be == 7.0') }
-        it { run(:eq, 8).should have_no_violations }
-        it { run(:eq, 9).should have_violation('x is 8.0, should be == 9.0') }
+      describe '==' do
+        it { assert_violation 'x is 8.0, should be == 7.0', run(:eq, 7) }
+        it { assert_no_violations run(:eq, 8) }
+        it { assert_violation 'x is 8.0, should be == 9.0', run(:eq, 9) }
       end
 
-      context '<=' do
-        it { run(:lte, 7).should have_violation('x is 8.0, should be <= 7.0') }
-        it { run(:lte, 8).should have_no_violations }
-        it { run(:lte, 9).should have_no_violations }
+      describe '<=' do
+        it { assert_violation 'x is 8.0, should be <= 7.0', run(:lte, 7) }
+        it { assert_no_violations run(:lte, 8) }
+        it { assert_no_violations run(:lte, 9) }
       end
 
-      context '<' do
-        it { run(:lt, 7).should have_violation('x is 8.0, should be < 7.0') }
-        it { run(:lt, 8).should have_violation('x is 8.0, should be < 8.0') }
-        it { run(:lt, 9).should have_no_violations }
+      describe '<' do
+        it { assert_violation 'x is 8.0, should be < 7.0', run(:lt, 7) }
+        it { assert_violation 'x is 8.0, should be < 8.0', run(:lt, 8) }
+        it { assert_no_violations run(:lt, 9) }
       end
     end
 
   end
 
-  context "normalizing a user supplied value to a threshold" do
+  describe "normalizing a user supplied value to a threshold" do
+    let(:subject) { Cane::ThresholdCheck.new({}) }
+
     it "normalizes an integer to itself" do
-      subject.normalized_limit(99).should == 99
+      assert_equal 99, subject.normalized_limit(99)
     end
 
     it "normalizes a float to itself" do
-      subject.normalized_limit(99.6).should == 99.6
+      assert_equal 99.6, subject.normalized_limit(99.6)
     end
 
     it "normalizes a valid file to its contents" do
-      subject.normalized_limit(make_file('99.5')).should == 99.5
+      assert_equal 99.5, subject.normalized_limit(make_file('99.5'))
     end
 
     it "normalizes an invalid file to an unavailable value" do
       limit = subject.normalized_limit("/File.does.not.exist")
-      limit.should be_a Cane::ThresholdCheck::UnavailableValue
+      assert limit.is_a?(Cane::ThresholdCheck::UnavailableValue)
     end
 
-
     it 'normalizes a json file to a float' do
-      subject.normalized_limit(make_file(simplecov_last_run)).should == 93.88
+      assert_equal 93.88,
+        subject.normalized_limit(make_file(simplecov_last_run))
     end
 
   end

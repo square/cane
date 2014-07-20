@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'xspec_helper'
 require 'tmpdir'
 
 require 'cane/file'
@@ -17,7 +17,7 @@ describe Cane::File do
           expected.each do |x|
             FileUtils.touch(x)
           end
-          Cane::File.case_insensitive_glob("README*").should =~ expected
+          assert_equal expected, Cane::File.case_insensitive_glob("README*")
         end
       end
     end

@@ -1,10 +1,10 @@
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/doc_check'
 
 describe Cane::DocCheck do
   def check(file_name, opts = {})
-    described_class.new(opts.merge(doc_glob: file_name))
+    Cane::DocCheck.new(opts.merge(doc_glob: file_name))
   end
 
   it 'creates a DocViolation for each undocumented class with a method' do
@@ -43,19 +43,16 @@ end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 3
+    assert_equal 3, violations.length
 
-    violations[0].values_at(:file, :line, :label).should == [
-      file_name, 3, "NoDoc"
-    ]
+    assert_equal [file_name, 3, "NoDoc"],
+      violations[0].values_at(:file, :line, :label)
 
-    violations[1].values_at(:file, :line, :label).should == [
-      file_name, 15, "AlsoNeedsDoc"
-    ]
+    assert_equal [file_name, 15, "AlsoNeedsDoc"],
+      violations[1].values_at(:file, :line, :label)
 
-    violations[2].values_at(:file, :line, :label).should == [
-      file_name, 17, "ButThisNeedsDoc"
-    ]
+    assert_equal [file_name, 17, "ButThisNeedsDoc"],
+      violations[2].values_at(:file, :line, :label)
   end
 
   it 'does not create violations for single line classes without methods' do
@@ -71,15 +68,13 @@ end
 RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 2
+    assert_equal 2, violations.length
 
-    violations[0].values_at(:file, :line, :label).should == [
-      file_name, 1, "NeedsDoc"
-    ]
+    assert_equal [file_name, 1, "NeedsDoc"],
+      violations[0].values_at(:file, :line, :label)
 
-    violations[1].values_at(:file, :line, :label).should == [
-      file_name, 2, "AlsoNeedsDoc"
-    ]
+    assert_equal [file_name, 2, "AlsoNeedsDoc"],
+      violations[1].values_at(:file, :line, :label)
   end
 
   it 'ignores magic encoding comments' do
@@ -93,39 +88,33 @@ class Doc; end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 2
+    assert_equal 2, violations.length
 
-    violations[0].values_at(:file, :line, :label).should == [
-      file_name, 2, "NoDoc"
-    ]
-    violations[1].values_at(:file, :line, :label).should == [
-      file_name, 4, "AlsoNoDoc"
-    ]
+    assert_equal [file_name, 2, "NoDoc"],
+      violations[0].values_at(:file, :line, :label)
+
+    assert_equal [file_name, 4, "AlsoNoDoc"],
+      violations[1].values_at(:file, :line, :label)
   end
 
   it 'creates a violation for missing README' do
-    file = class_double("Cane::File").as_stubbed_const
-    stub_const("Cane::File", file)
-    file.should_receive(:case_insensitive_glob).with("README*").and_return([])
+    file = class_double('Cane::File')
 
-    violations = check("").violations
-    violations.length.should == 1
+    expect(file).case_insensitive_glob("README*") { [] }
 
-    violations[0].values_at(:description, :label).should == [
-      "Missing documentation", "No README found"
-    ]
+    violations = check("", file: file).violations
+    assert_equal 1, violations.length
+
+    assert_equal ["Missing documentation", "No README found"],
+      violations[0].values_at(:description, :label)
   end
 
   it 'does not create a violation when readme exists' do
-    file = class_double("Cane::File").as_stubbed_const
-    stub_const("Cane::File", file)
-    file
-      .should_receive(:case_insensitive_glob)
-      .with("README*")
-      .and_return(%w(readme.md))
+    file = class_double('Cane::File')
+    expect(file).case_insensitive_glob("README*") { %w(readme.md) }
 
-    violations = check("").violations
-    violations.length.should == 0
+    violations = check("", file: file).violations
+    assert_equal [], violations
   end
 
   it 'skips declared exclusions' do
@@ -138,7 +127,7 @@ class Doc; end
       doc_exclude: [file_name]
     ).violations
 
-    violations.length.should == 0
+    assert_equal [], violations
   end
 
   it 'skips declared glob-based exclusions' do
@@ -151,7 +140,7 @@ class Doc; end
       doc_exclude: ["#{File.dirname(file_name)}/*"]
     ).violations
 
-    violations.length.should == 0
+    assert_equal [], violations
   end
 
   it 'skips class inside an array' do
@@ -163,6 +152,6 @@ class Doc; end
     RUBY
 
     violations = check(file_name).violations
-    violations.length.should == 0
+    assert_equal [], violations
   end
 end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/violation_formatter'
 
@@ -10,30 +10,31 @@ describe Cane::ViolationFormatter do
   end
 
   it 'includes number of violations in the group header' do
-    described_class.new([violation("FAIL")]).to_s.should include("(1)")
+    assert_include "(1)",
+      Cane::ViolationFormatter.new([violation("")]).to_s
   end
 
   it 'includes total number of violations' do
-    violations = [violation("FAIL1"), violation("FAIL2")]
-    result = described_class.new(violations).to_s
-    result.should include("Total Violations: 2")
+    violations = [violation(""), violation("")]
+    result = Cane::ViolationFormatter.new(violations).to_s
+    assert_include "Total Violations: 2", result
   end
 
   it 'does not colorize output by default' do
-    result = described_class.new([violation("FAIL")]).to_s
-    result.should_not include("\e[31m")
+    result = Cane::ViolationFormatter.new([violation("")]).to_s
+    assert !result.include?("\e[31m")
   end
 
   it 'colorizes output when passed color: true' do
-    result = described_class.new([violation("FAIL")], color: true).to_s
-    result.should include("\e[31m")
-    result.should include("\e[0m")
+    result = Cane::ViolationFormatter.new([violation("")], color: true).to_s
+    assert_include "\e[31m", result
+    assert_include "\e[0m", result
   end
 
   it 'does not colorize output if max_violations is not crossed' do
     options = { color: true, max_violations: 1 }
-    result = described_class.new([violation("FAIL")], options).to_s
+    result = Cane::ViolationFormatter.new([violation("")], options).to_s
 
-    result.should_not include("\e[31m")
+    assert !result.include?("\e[31m")
   end
 end

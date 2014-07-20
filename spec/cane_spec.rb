@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'xspec_helper'
 require "stringio"
 require 'cane/cli'
 
@@ -10,51 +10,56 @@ describe 'The cane application' do
   let(:class_name) { "C#{rand(10 ** 10)}" }
 
   it 'returns a non-zero exit code and a details of checks that failed' do
-    fn = make_file(<<-RUBY + "  ")
-      class Harness
-        def complex_method(a)
-          if a < 2
-            return "low"
-          else
-            return "high"
+    begin
+      fn = make_file(<<-RUBY + "  ")
+        class Harness
+          def complex_method(a)
+            if a < 2
+              return "low"
+            else
+              return "high"
+            end
           end
         end
-      end
-    RUBY
+      RUBY
 
-    check_file = make_file <<-RUBY
-      class #{class_name} < Struct.new(:opts)
-        def self.options
-          {
-            unhappy_file: ["File to check", default: [nil]]
-          }
+      check_file = make_file <<-RUBY
+        class #{class_name} < Struct.new(:opts)
+          def self.options
+            {
+              unhappy_file: ["File to check", default: [nil]]
+            }
+          end
+
+          def violations
+            [
+              description: "Files are unhappy",
+              file:        opts.fetch(:unhappy_file),
+              label:       ":("
+            ]
+          end
         end
+      RUBY
 
-        def violations
-          [
-            description: "Files are unhappy",
-            file:        opts.fetch(:unhappy_file),
-            label:       ":("
-          ]
-        end
+      output, exitstatus = run %(
+        --style-glob #{fn}
+        --doc-glob #{fn}
+        --abc-glob #{fn}
+        --abc-max 1
+        -r #{check_file}
+        --check #{class_name}
+        --unhappy-file #{fn}
+      )
+      assert_include "Lines violated style requirements", output
+      assert_include "Methods exceeded maximum allowed ABC complexity", output
+      assert_include "Class and Module definitions require explanatory",
+        output
+      assert_equal 1, exitstatus
+    ensure
+      if Object.const_defined?(class_name)
+        Object.send(:remove_const, class_name)
       end
-    RUBY
-
-    output, exitstatus = run %(
-      --style-glob #{fn}
-      --doc-glob #{fn}
-      --abc-glob #{fn}
-      --abc-max 1
-      -r #{check_file}
-      --check #{class_name}
-      --unhappy-file #{fn}
-    )
-    output.should include("Lines violated style requirements")
-    output.should include("Methods exceeded maximum allowed ABC complexity")
-    output.should include(
-      "Class and Module definitions require explanatory comments"
-    )
-    exitstatus.should == 1
+    end
   end
 
   it 'handles invalid unicode input' do
@@ -62,25 +67,19 @@ describe 'The cane application' do
 
     _, exitstatus = run("--style-glob #{fn} --abc-glob #{fn} --doc-glob #{fn}")
 
-    exitstatus.should == 0
+    assert_equal 0, exitstatus
   end
 
   it 'can run tasks in parallel' do
     # This spec isn't great, but there is no good way to actually observe that
     # tasks run in parallel and we want to verify the conditional is correct.
-    Cane.task_runner(parallel: true).should == Parallel
+    assert_equal Parallel, Cane.task_runner(parallel: true)
   end
 
   it 'colorizes output' do
     output, exitstatus = run("--color --abc-max 0")
 
-    output.should include("\e[31m")
-  end
-
-  after do
-    if Object.const_defined?(class_name)
-      Object.send(:remove_const, class_name)
-    end
+    assert_include "\e[31m", output
   end
 
   def run(cli_args)

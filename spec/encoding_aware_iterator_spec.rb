@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/encoding_aware_iterator'
 
@@ -7,27 +7,32 @@ require 'cane/encoding_aware_iterator'
 #   http://stackoverflow.com/questions/1301402/example-invalid-utf8-string
 describe Cane::EncodingAwareIterator do
   it 'handles non-UTF8 input' do
-    lines = ["\xc3\x28"]
-    result = described_class.new(lines).map.with_index do |line, number|
-      line.should be_kind_of(String)
+    lines    = ["\xc3\x28"]
+    iterator = Cane::EncodingAwareIterator.new(lines)
+    result   = iterator.map.with_index do |line, number|
+      assert line.is_a?(String)
       [line =~ /\s/, number]
     end
-    result.should == [[nil, 0]]
+    assert_equal [[nil, 0]], result
   end
 
   it 'does not enter an infinite loop on persistently bad input' do
-    ->{
-      described_class.new([""]).map.with_index do |line, number|
+    begin
+      iterator = Cane::EncodingAwareIterator.new([""])
+      iterator.map.with_index do |line, number|
         "\xc3\x28" =~ /\s/
       end
-    }.should raise_error(ArgumentError)
+      fail "no error raised"
+    rescue ArgumentError
+      assert true
+    end
   end
 
   it 'allows each with no block' do
     called_with_line = nil
-    described_class.new([""]).each.with_index do |line, number|
+    Cane::EncodingAwareIterator.new([""]).each.with_index do |line, number|
       called_with_line = line
     end
-    called_with_line.should == ""
+    assert_equal "", called_with_line
   end
 end

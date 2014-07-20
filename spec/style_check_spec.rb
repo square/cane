@@ -1,10 +1,10 @@
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/style_check'
 
 describe Cane::StyleCheck do
   def check(file_name, opts = {})
-    described_class.new(opts.merge(style_glob: file_name))
+    Cane::StyleCheck.new(opts.merge(style_glob: file_name))
   end
 
   let(:ruby_with_style_issue) do
@@ -19,7 +19,7 @@ describe Cane::StyleCheck do
     file_name = make_file(ruby_with_style_issue)
 
     violations = check(file_name, style_measure: 8).violations
-    violations.length.should == 3
+    assert_equal 3, violations.length
   end
 
   it 'skips declared exclusions' do
@@ -30,7 +30,7 @@ describe Cane::StyleCheck do
       style_exclude: [file_name]
     ).violations
 
-    violations.length.should == 0
+    assert_equal [], violations
   end
 
   it 'skips declared glob-based exclusions' do
@@ -41,7 +41,7 @@ describe Cane::StyleCheck do
       style_exclude: ["#{File.dirname(file_name)}/*"]
     ).violations
 
-    violations.length.should == 0
+    assert_equal [], violations
   end
 
   it 'does not include trailing new lines in the character count' do
@@ -52,7 +52,7 @@ describe Cane::StyleCheck do
       style_exclude: [file_name]
     ).violations
 
-    violations.length.should == 0
+    assert_equal [], violations
   end
 
 end

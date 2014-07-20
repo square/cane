@@ -19,8 +19,9 @@ module Cane
         new.parse(*args)
       end
 
-      def initialize(stdout = $stdout)
+      def initialize(stdout = $stdout, reader = Cane::File)
         @stdout = stdout
+        @reader = reader
 
         add_banner
         add_user_defined_checks
@@ -53,8 +54,8 @@ module Cane
       end
 
       def read_options_from_file(file)
-        if Cane::File.exists?(file)
-          Cane::File.contents(file).split(/\s+/m)
+        if reader.exists?(file)
+          reader.contents(file).split(/\s+/m)
         else
           []
         end
@@ -174,7 +175,7 @@ BANNER
         @parser ||= OptionParser.new
       end
 
-      attr_reader :stdout
+      attr_reader :stdout, :reader
     end
 
   end

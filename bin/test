@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -ex
+
+bundle exec xspec
+bundle exec bin/cane --abc-max 12 --gte coverage/covered_percent,100

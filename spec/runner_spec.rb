@@ -1,24 +1,25 @@
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/runner'
 
 describe Cane::Runner do
   describe '#run' do
     it 'returns true iff fewer violations than max allowed' do
-      described_class.new(checks: [], max_violations: 0).run.should be
-      described_class.new(checks: [], max_violations: -1).run.should_not be
+      assert  Cane::Runner.new(checks: [], max_violations: 0).run
+      assert !Cane::Runner.new(checks: [], max_violations: -1).run
     end
 
     it 'returns JSON output' do
-      formatter = class_double("Cane::JsonFormatter").as_stubbed_const
-      formatter.should_receive(:new).and_return("JSON")
       buffer = StringIO.new("")
 
-      described_class.new(
-        out: buffer, checks: [], max_violations: 0, json: true
+      Cane::Runner.new(
+        out:            buffer,
+        checks:         [],
+        max_violations: 0,
+        json:           true
       ).run
 
-      buffer.string.should == "JSON"
+      assert_equal "[]", buffer.string
     end
   end
 end

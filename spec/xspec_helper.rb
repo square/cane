@@ -3,12 +3,14 @@ require 'tempfile'
 require 'xspec'
 
 extend XSpec.dsl(
+  assertion_context: XSpec::AssertionContext.stack {
+    include XSpec::AssertionContext::Simple
+    include XSpec::AssertionContext::Doubles.with(:auto_verify, :strict)
+  },
   notifier: XSpec::Notifier::ColoredDocumentation.new +
             XSpec::Notifier::TimingsAtEnd.new +
             XSpec::Notifier::FailuresAtEnd.new
 )
-
-autorun!
 
 # Keep a reference to all tempfiles so they are not garbage collected until the
 # process exits.
@@ -28,13 +30,21 @@ def in_tmp_dir(&block)
   end
 end
 
-# TODO: Port to xspec
-  def assert_equal(expected, actual)
-    assert expected == actual, <<-EOS
+def capture_stdout
+  out = StringIO.new
+  $stdout = out
+  yield
+  return out.string
+ensure
+  $stdout = STDOUT
+end
 
+def assert_no_violations(check)
+  assert_equal [], check.violations
+end
 
-    want: #{expected}
-     got: #{actual}
-
-EOS
-  end
+def assert_violation(label, check)
+  violations = check.violations
+  assert_equal 1, violations.length
+  assert_equal label, violations[0][:label]
+end

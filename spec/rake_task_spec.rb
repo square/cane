@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'xspec_helper'
 
 require 'cane/rake_task'
 
@@ -11,7 +11,7 @@ describe Cane::RakeTask do
       end
     end
 
-    task = Cane::RakeTask.new(:quality) do |cane|
+    out = run_rake do |cane|
       cane.no_abc = true
       cane.no_doc = true
       cane.no_style = true
@@ -21,30 +21,17 @@ describe Cane::RakeTask do
       cane.parallel = false
     end
 
-    task.no_abc.should == true
-
-    task.should_receive(:abort)
-    out = capture_stdout do
-      Rake::Task['quality'].invoke
-    end
-
-    out.should include("Quality threshold crossed")
-    out.should include("theopt")
+    assert_include "Quality threshold crossed", out
+    assert_include "theopt", out
   end
 
   it 'can be configured using a .cane file' do
-    conf = "--gte 90,99"
 
-    task = Cane::RakeTask.new(:canefile_quality) do |cane|
-      cane.canefile = make_file(conf)
+    out = run_rake do |cane|
+      cane.canefile = make_file("--gte 90,99")
     end
 
-    task.should_receive(:abort)
-    out = capture_stdout do
-      Rake::Task['canefile_quality'].invoke
-    end
-
-    out.should include("Quality threshold crossed")
+    assert_include "Quality threshold crossed", out
   end
 
   it 'defaults to using a canefile without a block' do
@@ -52,18 +39,22 @@ describe Cane::RakeTask do
       conf = "--gte 90,99"
       conf_file = File.open('.cane', 'w') {|f| f.write conf }
 
-      task = Cane::RakeTask.new(:canefile_quality)
+      out = run_rake
 
-      task.should_receive(:abort)
-      out = capture_stdout do
-        Rake::Task['canefile_quality'].invoke
-      end
-
-      out.should include("Quality threshold crossed")
+      assert_include "Quality threshold crossed", out
     end
   end
 
-  after do
+  def run_rake(&block)
+    Cane::RakeTask.new(:quality, &block)
+
+    capture_stdout do
+      begin
+        Rake::Task['quality'].invoke
+      rescue SystemExit => e
+      end
+    end
+  ensure
     Rake::Task.clear
   end
 end

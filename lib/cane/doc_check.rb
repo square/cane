@@ -75,7 +75,7 @@ module Cane
       open_classes = []
       last_line = ""
 
-      Cane::File.iterator(file_name).each_with_index do |line, number|
+      file.iterator(file_name).each_with_index do |line, number|
         if class_definition? line
           if single_line_class_definition? line
             closed_classes
@@ -106,7 +106,7 @@ module Cane
       result = []
       return result if opts[:no_readme]
 
-      if Cane::File.case_insensitive_glob("README*").none?
+      if file.case_insensitive_glob("README*").none?
         result << { description: 'Missing documentation',
                     label: 'No README found' }
       end
@@ -149,6 +149,10 @@ module Cane
 
     def worker
       Cane.task_runner(opts)
+    end
+
+    def file
+      opts.fetch(:file, Cane::File)
     end
   end
 end
