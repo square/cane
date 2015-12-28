@@ -179,7 +179,7 @@ module Cane
     end
 
     def file_names
-      Dir[opts.fetch(:abc_glob)]
+      Dir.glob(opts.fetch(:abc_glob))
     end
 
     def order(result)

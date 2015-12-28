@@ -55,4 +55,35 @@ describe Cane::StyleCheck do
     expect(violations.length).to eq(0)
   end
 
+  describe "#file_list" do
+    context "style_glob is an array" do
+      it "returns an array of relative file paths" do
+        glob = [
+          'spec/fixtures/a/**/*.{rb,prawn}',
+          'spec/fixtures/b/**/*.haml'
+        ]
+        check = described_class.new(style_glob: glob)
+        expect(check.send(:file_list)).to eq([
+          'spec/fixtures/a/1.rb',
+          'spec/fixtures/a/3.prawn',
+          'spec/fixtures/b/3/i.haml'
+        ])
+      end
+    end
+
+    context "style_exclude is an array" do
+      it "returns an array of relative file paths" do
+        glob = [
+          'spec/fixtures/a/**/*.{rb,prawn}',
+          'spec/fixtures/b/**/*.haml'
+        ]
+        exclude = [
+          'spec/fixtures/a/**/*.prawn',
+          'spec/fixtures/b/**/*.haml'
+        ]
+        check = described_class.new(style_exclude: exclude, style_glob: glob)
+        expect(check.send(:file_list)).to eq(['spec/fixtures/a/1.rb'])
+      end
+    end
+  end
 end

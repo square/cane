@@ -114,7 +114,7 @@ module Cane
     end
 
     def file_names
-      Dir[opts.fetch(:doc_glob)].reject { |file| excluded?(file) }
+      Dir.glob(opts.fetch(:doc_glob)).reject { |file| excluded?(file) }
     end
 
     def method_definition?(line)
@@ -139,7 +139,7 @@ module Cane
 
     def exclusions
       @exclusions ||= opts.fetch(:doc_exclude, []).flatten.map do |i|
-        Dir[i]
+        Dir.glob(i)
       end.flatten.to_set
     end
 

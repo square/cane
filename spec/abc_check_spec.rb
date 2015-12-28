@@ -163,4 +163,21 @@ describe Cane::AbcCheck do
   it_should_extract_method_name 'GET'
   it_should_extract_method_name '`'
   it_should_extract_method_name '>='
+
+  describe "#file_names" do
+    context "abc_glob is an array" do
+      it "returns an array of relative file paths" do
+        glob = [
+          'spec/fixtures/a/**/*.{rb,prawn}',
+          'spec/fixtures/b/**/*.rb'
+        ]
+        check = described_class.new(abc_glob: glob)
+        expect(check.send(:file_names)).to eq([
+          'spec/fixtures/a/1.rb',
+          'spec/fixtures/a/3.prawn',
+          'spec/fixtures/b/1.rb'
+        ])
+      end
+    end
+  end
 end
