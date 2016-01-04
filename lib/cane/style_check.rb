@@ -60,7 +60,7 @@ module Cane
     end
 
     def file_list
-      Dir[opts.fetch(:style_glob)].reject {|f| excluded?(f) }
+      Dir.glob(opts.fetch(:style_glob)).reject {|f| excluded?(f) }
     end
 
     def measure
@@ -73,7 +73,7 @@ module Cane
 
     def exclusions
       @exclusions ||= opts.fetch(:style_exclude, []).flatten.map do |i|
-        Dir[i]
+        Dir.glob(i)
       end.flatten.to_set
     end
 
