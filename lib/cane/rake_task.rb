@@ -60,7 +60,7 @@ module Cane
         self.canefile = './.cane'
       end
 
-      unless ::Rake.application.last_comment
+      unless ::Rake.application.last_description
         desc %(Check code quality metrics with cane)
       end
 
