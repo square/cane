@@ -1,5 +1,11 @@
 # Cane History
 
+## 3.0.0 - 10 March 2016 (f602b9)
+
+* Compat: Rake 11 supported
+* Compat: Ruby 1.9 no longer supported.
+* Feature: Glob options now take arrays.
+
 ## 2.6.2 - 20 April 2014 (8f54b4)
 
 * Bugfix: Commented methods no longer trigger a documentation violation for

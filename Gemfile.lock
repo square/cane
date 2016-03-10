@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cane (2.6.2)
+    cane (3.0.0)
       parallel
 
 GEM
@@ -9,7 +9,7 @@ GEM
   specs:
     diff-lcs (1.2.4)
     multi_json (1.8.2)
-    parallel (1.0.0)
+    parallel (1.6.2)
     rake (10.1.0)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
@@ -35,3 +35,6 @@ DEPENDENCIES
   rspec (~> 2.0)
   rspec-fire
   simplecov
+
+BUNDLED WITH
+   1.11.2
