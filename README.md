@@ -190,7 +190,7 @@ If you have specific documentation elsewhere (say, in the README or a wiki), a
 link to that suffices.
 
 If the class is a known entry point, such as a regular background job that can
-potentially fail, then also provide enough context that it can be efficently
+potentially fail, then also provide enough context that it can be efficiently
 dealt with. In the background job case:
 
 * Should it be retried?

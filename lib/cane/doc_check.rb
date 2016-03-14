@@ -3,7 +3,7 @@ require 'cane/task_runner'
 
 module Cane
 
-  # Creates violations for class definitions that do not have an explantory
+  # Creates violations for class definitions that do not have an explanatory
   # comment immediately preceding.
   class DocCheck < Struct.new(:opts)
 
