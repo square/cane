@@ -61,6 +61,7 @@ Customize behaviour with a wealth of options:
     -f, --all FILE                   Apply all checks to given file
         --max-violations VALUE       Max allowed violations (default: 0)
         --json                       Output as JSON
+        --html                       Output as HTML
         --parallel                   Use all processors. Slower on small projects, faster on large.
         --color                      Colorize output
 

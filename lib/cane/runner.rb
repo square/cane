@@ -2,6 +2,7 @@ require 'parallel'
 
 require 'cane/violation_formatter'
 require 'cane/json_formatter'
+require 'cane/html_formatter'
 
 # Accepts a parsed configuration and passes those options to a new Runner
 module Cane
@@ -42,6 +43,8 @@ module Cane
     def formatter
       if opts[:json]
         JsonFormatter
+      elsif opts[:html]
+        HtmlFormatter
       else
         ViolationFormatter
       end

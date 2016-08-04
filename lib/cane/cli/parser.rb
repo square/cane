@@ -114,6 +114,9 @@ BANNER
         add_option %w(--json),
           "Output as JSON", default: false
 
+        add_option %w(--html),
+          "Output as HTML", default: false
+
         add_option %w(--parallel),
           "Use all processors. Slower on small projects, faster on large.",
             cast: ->(x) { x }
