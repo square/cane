@@ -4,6 +4,10 @@ Fails your build if code quality thresholds are not met.
 
 > Discipline will set you free.
 
+**Cane still technically works, but for new projects you're probably better off
+using [Rubocop](http://rubocop.readthedocs.io/en/latest/) and customizing it to
+your liking. It is far more comprehensive and more widely used.**
+
 ## Usage
 
     gem install cane
