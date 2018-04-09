@@ -1,4 +1,4 @@
-# Cane
+# Cane [![Build Status](https://travis-ci.org/square/cane.svg?branch=master)](https://travis-ci.org/square/cane)
 
 Fails your build if code quality thresholds are not met.
 
