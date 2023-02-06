@@ -19,7 +19,7 @@ module Cane
       end
 
       def exists?(path)
-        ::File.exists?(path)
+        ::File.exist?(path)
       end
 
       def case_insensitive_glob(glob)
